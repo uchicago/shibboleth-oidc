@@ -24,10 +24,11 @@
     <version>7</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
+  <groupId>net.unicon.shibidp</groupId>
   <artifactId>shibboleth-idp-webapp</artifactId>
   <packaging>war</packaging>
   <name>Shibboleth Identity Provider Web Application</name>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>3.1.1</version>
 
   <dependencies>
     <!-- Open SAML -->

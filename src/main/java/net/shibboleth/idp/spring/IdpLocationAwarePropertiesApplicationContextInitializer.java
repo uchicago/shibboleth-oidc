@@ -9,6 +9,4 @@ public class IdpLocationAwarePropertiesApplicationContextInitializer extends IdP
     public String[] getSearchLocations() {
         return  new String[] {"classpath:"};
     }
-
-    }
 }
