@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-init-method="initialize">
+
+    <import resource="../common-beans.xml" />
+
+    <!-- Action beans -->
+    <bean id="initializeProfileRequestContext"
+          class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+          p:profileId="#{T(net.shibboleth.idp.cas.config.LoginConfiguration).PROFILE_ID}"
+          p:loggingId="%{idp.service.logging.cas:SSO}"
+          p:browserProfile="true" />
+
+    <bean id="initializeLoginAction"
+          class="net.shibboleth.idp.cas.flow.InitializeLoginAction" />
+
+    <bean id="checkAuthenticationRequiredAction"
+          class="net.shibboleth.idp.cas.flow.CheckAuthenticationRequiredAction" />
+
+    <bean id="buildAuthenticationContextAction"
+          class="net.shibboleth.idp.cas.flow.BuildAuthenticationContextAction" />
+
+    <bean id="grantServiceTicketAction"
+          class="net.shibboleth.idp.cas.flow.GrantServiceTicketAction"
+          c:ticketService-ref="cas.ticketService" />
+
+    <bean id="populateSessionContext"
+          class="net.shibboleth.idp.session.impl.PopulateSessionContext"
+          scope="prototype"
+          p:activationCondition="%{idp.session.enabled:true}"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:sessionResolver-ref="shibboleth.SessionManager" />
+
+</beans>

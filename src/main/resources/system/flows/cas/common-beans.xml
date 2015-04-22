@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+          p:placeholderPrefix="%{"
+          p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+    <bean id="buildRelyingPartyContextAction"
+          class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
+          c:registry-ref="cas.serviceRegistry"/>
+
+    <bean id="buildSAMLMetadataContextAction"
+          class="net.shibboleth.idp.cas.flow.BuildSAMLMetadataContextAction" />
+
+    <bean id="publishProtocolRequestAction"
+          class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
+          c:isRequest="true" />
+
+    <bean id="publishProtocolResponseAction"
+          class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
+          c:isRequest="false" />
+
+    <bean id="selectProfileConfiguration"
+          class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
+          scope="prototype" />
+
+    <bean id="selectRelyingPartyConfiguration"
+          class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
+          scope="prototype"
+          p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+
+    <bean id="validateIdPSessionAction"
+          class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
+          c:resolver-ref="shibboleth.SessionManager" />
+</beans>

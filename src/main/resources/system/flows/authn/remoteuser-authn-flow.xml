@@ -1,0 +1,32 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+      parent="authn.abstract">
+
+    <!-- This is a login flow for external authentication handled outside the webflow engine. -->
+    
+    <action-state id="SetRPUIInformation">
+        <evaluate expression="SetRPUIInformation" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ExternalTransfer" />
+    </action-state>
+    
+    <view-state id="ExternalTransfer" view="externalRedirect:#{flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.RemoteUser.externalAuthnPath')}?conversation=#{flowExecutionContext.getKey().toString()}">
+        <on-render>
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getSubcontext(T(net.shibboleth.idp.authn.context.ExternalAuthenticationContext), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />
+            <evaluate expression="externalContext.getNativeRequest().getSession().setAttribute('conversation' + flowExecutionContext.getKey().toString(), new net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl(opensamlProfileRequestContext))" />
+        </on-render>
+        <transition to="ValidateExternalAuthentication" />
+    </view-state>
+    
+    <action-state id="ValidateExternalAuthentication">
+        <evaluate expression="ValidateExternalAuthentication" />
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="proceed" />
+    </action-state>
+
+    <bean-import resource="remoteuser-authn-beans.xml" />
+
+</flow>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+          http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <action-state id="initializeProxy">
+        <evaluate expression="initializeProfileRequestContext"/>
+        <evaluate expression="initializeProxyAction" />
+        <evaluate expression="buildRelyingPartyContextAction" />
+        <evaluate expression="buildSAMLMetadataContextAction" />
+        <evaluate expression="selectRelyingPartyConfiguration" />
+        <evaluate expression="selectProfileConfiguration" />
+        <evaluate expression="publishProtocolRequestAction" />
+        <evaluate expression="'proceed'" />
+        <transition on="serviceNotSpecified" to="proxyFailure" />
+        <transition on="ticketNotSpecified" to="proxyFailure" />
+        <transition on="ticketRetrievalError" to="proxyFailure" />
+        <transition on="ticketExpired" to="proxyFailure" />
+        <transition on="proceed" to="validateIdPSession" />
+    </action-state>
+
+    <action-state id="validateIdPSession">
+        <evaluate expression="validateIdPSessionAction" />
+        <transition on="sessionRetrievalError" to="proxyFailure" />
+        <transition on="sessionExpired" to="proxyFailure" />
+        <transition on="success" to="grantProxyTicket" />
+    </action-state>
+
+    <action-state id="grantProxyTicket">
+        <evaluate expression="grantProxyTicketAction" />
+        <transition on="ticketCreationError" to="proxyFailure" />
+        <transition on="success" to="proxySuccess" />
+    </action-state>
+
+    <!-- View end states -->
+    <end-state id="proxySuccess" view="cas/proxySuccess">
+        <on-entry>
+            <evaluate expression="publishProtocolResponseAction" />
+            <set name="flashScope.pt" value="requestScope.proxyTicketResponse.pt" />
+            <set name="flashScope.escapeUtils" value="T(org.apache.commons.lang.StringEscapeUtils)" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="proxyFailure" view="cas/proxyFailure">
+        <on-entry>
+            <set name="flashScope.code" value="currentEvent.attributes.code?:'INTERNAL_ERROR'" />
+            <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode?:'E_ILLEGAL_STATE'" />
+        </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
+    </end-state>
+
+    <global-transitions>
+        <transition on-exception="java.lang.RuntimeException" to="proxyFailure">
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.cas').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+        </transition>
+        <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
+                    to="proxyFailure" />
+        <transition on="illegalState" to="proxyFailure" />
+        <transition on="protocolViolation" to="proxyFailure" />
+    </global-transitions>
+
+    <bean-import resource="proxy-beans.xml" />
+
+</flow>
