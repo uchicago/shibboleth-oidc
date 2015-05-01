@@ -28,7 +28,7 @@
   <artifactId>shibboleth-idp-webapp</artifactId>
   <packaging>war</packaging>
   <name>Shibboleth Identity Provider Web Application</name>
-  <version>3.1.1</version>
+  <version>3.1.1-SNAPSHOT</version>
 
   <dependencies>
     <!-- Open SAML -->
