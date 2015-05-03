@@ -638,13 +638,6 @@
       </exclusions>
     </dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${servlet.api.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -729,7 +722,7 @@
   	<xml.apis.version>1.4.01</xml.apis.version>
   	<hibernate.commons.annotations.version>4.0.4.Final</hibernate.commons.annotations.version>
     <cas.client.version>3.3.3</cas.client.version>
-    <servlet.api.version>3.1.0</servlet.api.version>
+
 
     <project.build.sourceVersion>1.7</project.build.sourceVersion>
     <project.build.targetVersion>1.7</project.build.targetVersion>
