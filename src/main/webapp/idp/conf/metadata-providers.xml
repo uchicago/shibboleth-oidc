@@ -36,44 +36,10 @@
          that you will interoperate with.     
     -->   
 
-    <MetadataProvider id="HTTPMetadata"
-                      xsi:type="metadata:FileBackedHTTPMetadataProvider"
+    <MetadataProvider id="HTTPMetadataTestShib"
+                      xsi:type="FileBackedHTTPMetadataProvider"
                       backingFile="%{idp.home}/metadata/testshib-metadata.xml"
                       metadataURL="http://www.testshib.org/metadata/testshib-providers.xml" /> 
-  
-    <MetadataProvider id="HTTPMetadata"
-                      xsi:type="metadata:FileBackedHTTPMetadataProvider"
-                        backingFile="%{idp.home}/metadata/InCommon-metadata.xml"
-                        metadataURL="http://md.incommon.org/InCommon/InCommon-metadata.xml"> 
-          
-      <MetadataFilter xsi:type="SignatureValidation" requireSignedMetadata="true">
-        <PublicKey>
-                  MIIDgTCCAmmgAwIBAgIJAJRJzvdpkmNaMA0GCSqGSIb3DQEBCwUAMFcxCzAJBgNV
-          BAYTAlVTMRUwEwYDVQQKDAxJbkNvbW1vbiBMTEMxMTAvBgNVBAMMKEluQ29tbW9u
-          IEZlZGVyYXRpb24gTWV0YWRhdGEgU2lnbmluZyBLZXkwHhcNMTMxMjE2MTkzNDU1
-          WhcNMzcxMjE4MTkzNDU1WjBXMQswCQYDVQQGEwJVUzEVMBMGA1UECgwMSW5Db21t
-          b24gTExDMTEwLwYDVQQDDChJbkNvbW1vbiBGZWRlcmF0aW9uIE1ldGFkYXRhIFNp
-          Z25pbmcgS2V5MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Chdkrn+
-          dG5Zj5L3UIw+xeWgNzm8ajw7/FyqRQ1SjD4Lfg2WCdlfjOrYGNnVZMCTfItoXTSp
-          g4rXxHQsykeNiYRu2+02uMS+1pnBqWjzdPJE0od+q8EbdvE6ShimjyNn0yQfGyQK
-          CNdYuc+75MIHsaIOAEtDZUST9Sd4oeU1zRjV2sGvUd+JFHveUAhRc0b+JEZfIEuq
-          /LIU9qxm/+gFaawlmojZPyOWZ1JlswbrrJYYyn10qgnJvjh9gZWXKjmPxqvHKJcA
-          TPhAh2gWGabWTXBJCckMe1hrHCl/vbDLCmz0/oYuoaSDzP6zE9YSA/xCplaHA0mo
-          C1Vs2H5MOQGlewIDAQABo1AwTjAdBgNVHQ4EFgQU5ij9YLU5zQ6K75kPgVpyQ2N/
-          lPswHwYDVR0jBBgwFoAU5ij9YLU5zQ6K75kPgVpyQ2N/lPswDAYDVR0TBAUwAwEB
-          /zANBgkqhkiG9w0BAQsFAAOCAQEAaQkEx9xvaLUt0PNLvHMtxXQPedCPw5xQBd2V
-          WOsWPYspRAOSNbU1VloY+xUkUKorYTogKUY1q+uh2gDIEazW0uZZaQvWPp8xdxWq
-          Dh96n5US06lszEc+Lj3dqdxWkXRRqEbjhBFh/utXaeyeSOtaX65GwD5svDHnJBcl
-          AGkzeRIXqxmYG+I2zMm/JYGzEnbwToyC7yF6Q8cQxOr37hEpqz+WN/x3qM2qyBLE
-          CQFjmlJrvRLkSL15PCZiu+xFNFd/zx6btDun5DBlfDS9DG+SHCNH6Nq+NfP+ZQ8C
-          GzP/3TaZPzMlKPDCjp0XOQfyQqFIXdwjPFTWjEusDBlm4qJAlQ==
-        </PublicKey>
-      </MetadataFilter>
-      <MetadataFilter xsi:type="EntityRoleWhiteList">
-        <RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
-      </MetadataFilter>
-          
-    </MetadataProvider>
 
     <!-- Example file metadata provider.  Use this if you want to load metadata
          from a local file.  You might use this if you have some local SPs
