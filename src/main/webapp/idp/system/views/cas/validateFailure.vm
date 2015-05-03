@@ -1,5 +1,0 @@
-#include("cas/header.vm")
-  <cas:authenticationFailure code="$code">
-    $detailCode
-  </cas:authenticationFailure>
-#include("cas/footer.vm")

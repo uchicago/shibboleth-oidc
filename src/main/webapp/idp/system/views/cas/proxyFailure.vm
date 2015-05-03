@@ -1,5 +1,0 @@
-#include("cas/header.vm")
-  <cas:proxyFailure code="$code">
-    $detailCode
-  </cas:proxyFailure>
-#include("cas/footer.vm")
