@@ -101,7 +101,7 @@
 		<echo message="Deploying to Tomcat at ${catalina.home}" />
 		<copy overwrite="true"
 		      todir="${catalina.home}\webapps"
-		      file="target/${ant.project.name}.war"
+		      file="idp-webapp-overlay/target/${ant.project.name}.war"
 			  verbose="true"
 		/>
 	</target>
@@ -110,7 +110,7 @@
 		<echo message="Deploying to Jetty at ${jetty.home}" />
 		<copy overwrite="true"
 		      todir="${jetty.home}\webapps"
-		      file="target/${ant.project.name}.war"
+		      file="idp-webapp-overlay/target/${ant.project.name}.war"
 			  verbose="true"
 		/>
 	</target>

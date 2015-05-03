@@ -38,10 +38,10 @@
     
     <!-- Process log. -->
     <appender name="IDP_PROCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${idp.home}/logs/idp-process.log</File>
+        <File>${CATALINA_HOME}/logs/idp-process.log</File>
         
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${idp.home}/logs/idp-process-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${CATALINA_HOME}/logs/idp-process-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>180</maxHistory>
         </rollingPolicy>
 
@@ -57,10 +57,10 @@
             <level>WARN</level>
         </filter>
         
-        <File>${idp.home}/logs/idp-warn.log</File>
+        <File>${CATALINA_HOME}/logs/idp-warn.log</File>
         
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${idp.home}/logs/idp-warn-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${CATALINA_HOME}/logs/idp-warn-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>180</maxHistory>
         </rollingPolicy>
         
@@ -72,10 +72,10 @@
     
     <!-- Audit log. -->
     <appender name="IDP_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${idp.home}/logs/idp-audit.log</File>
+        <File>${CATALINA_HOME}/logs/idp-audit.log</File>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${idp.home}/logs/idp-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${CATALINA_HOME}/logs/idp-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>180</maxHistory>
         </rollingPolicy>
 
@@ -87,10 +87,10 @@
     
     <!-- Consent audit log. -->
     <appender name="IDP_CONSENT_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${idp.home}/logs/idp-consent-audit.log</File>
+        <File>${CATALINA_HOME}/logs/idp-consent-audit.log</File>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${idp.home}/logs/idp-consent-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${CATALINA_HOME}/logs/idp-consent-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>180</maxHistory>
         </rollingPolicy>
 
