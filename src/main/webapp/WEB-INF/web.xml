@@ -177,6 +177,16 @@
         <url-pattern>/shibboleth</url-pattern>
     </servlet-mapping>
 
+	<servlet>
+        <servlet-name>ShibCas Auth Servlet</servlet-name>
+        <servlet-class>net.unicon.idp.externalauth.ShibcasAuthServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ShibCas Auth Servlet</servlet-name>
+        <url-pattern>/Authn/ExtCas/*</url-pattern>
+    </servlet-mapping>
+
     <!--
     Uncomment to use container managed authentication. The new servlet spec (3.1)
     supports "**" as a wildcard syntax to avoid role usage, which is normally desirable.

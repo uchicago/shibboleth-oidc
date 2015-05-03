@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!-- Servlet context-relative path to wherever your implementation lives. -->
+    <bean id="shibboleth.authn.X509.externalAuthnPath" class="java.lang.String"
+        c:_0="contextRelative:x509-prompt.jsp" />
+
+    <!-- Populate RP UI info from metadata? -->
+    <util:constant id="shibboleth.authn.X509.populateUIInfo" static-field="java.lang.Boolean.TRUE" />
+
+    <!--
+    Define entries here to map error messages returned by external modules and classify them as particular
+    kinds of errors for use in your templates and as events in flows.
+    
+    The examples here just allow external signaling of an exact condition.
+    
+    If you want to "fall-through" to other login flows, include a mapping to "ReselectFlow".
+    -->
+    <util:map id="shibboleth.authn.X509.ClassifiedMessageMap">
+        <entry key="NoCredentials">
+            <list>
+                <value>ReselectFlow</value>
+            </list>
+        </entry>
+        <entry key="InvalidCredentials">
+            <list>
+                <value>ReselectFlow</value>
+            </list>
+        </entry>
+    </util:map>
+    
+</beans>

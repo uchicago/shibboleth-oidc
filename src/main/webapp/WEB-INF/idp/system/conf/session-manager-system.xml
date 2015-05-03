@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean id="shibboleth.SessionIDGenerator"
+        class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
+        c:identifierSize="%{idp.session.idSize:32}" />
+
+    <bean id="shibboleth.DefaultSPSessionSerializerRegistry" abstract="true"
+            class="net.shibboleth.idp.session.SPSessionSerializerRegistry">
+        <property name="mappings">
+            <map>
+                <entry key="#{ T(net.shibboleth.idp.session.BasicSPSession) }">
+                    <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer"
+                        c:offset="%{idp.session.slop:0}" />
+                </entry>
+                <entry key="#{ T(net.shibboleth.idp.saml.session.SAML1SPSession) }">
+                    <bean class="net.shibboleth.idp.saml.session.impl.SAML1SPSessionSerializer"
+                        c:offset="%{idp.session.slop:0}" />
+                </entry>
+                <entry key="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }">
+                    <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionSerializer"
+                        c:offset="%{idp.session.slop:0}"
+                        p:parserPool-ref="shibboleth.ParserPool" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.DefaultSessionTypeProtocolMap"
+            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <entry key="#{T(net.shibboleth.idp.saml.session.SAML1SPSession)}">
+                    <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
+                </entry>
+                <entry key="#{T(net.shibboleth.idp.saml.session.SAML2SPSession)}">
+                    <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
+            depends-on="shibboleth.OpenSAMLConfig"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+            p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(%{idp.authn.flows:})']}"
+            p:cookieManager-ref="shibboleth.CookieManager"
+            p:storageService-ref="%{idp.session.StorageService:shibboleth.ClientSessionStorageService}"
+            p:consistentAddress="%{idp.session.consistentAddress:true}"
+            p:sessionTimeout="%{idp.session.timeout:PT60M}"
+            p:sessionSlop="%{idp.session.slop:0}"
+            p:maskStorageFailure="%{idp.session.maskStorageFailure:false}"
+            p:trackSPSessions="%{idp.session.trackSPSessions:false}"
+            p:secondaryServiceIndex="%{idp.session.secondaryServiceIndex:false}"
+            p:IDGenerator-ref="shibboleth.SessionIDGenerator"
+            p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
+
+    <!-- Built-in logout propagation flows. -->
+    
+    <bean id="logoutprop/saml2" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor.ActivationCondition"
+                p:sessionType="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }" />
+        </property>
+    </bean>
+
+    <!-- The import is at the bottom to avoid a depends-on in a user-editable file. -->
+    <import resource="../../conf/session-manager.xml" />
+
+</beans>

@@ -1,11 +1,8 @@
 <%
     final org.springframework.web.context.WebApplicationContext springContext =
             org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
-    final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    final java.net.URL resource = classLoader.getResource("/metadata/idp-metadata.xml");
-    java.io.File file = new java.io.File(resource.toURI());
-
-    try (final java.io.FileInputStream in = new java.io.FileInputStream(file)) {
+    final String path = springContext.getEnvironment().getProperty("idp.home") + "/metadata/idp-metadata.xml";
+    try (final java.io.FileInputStream in = new java.io.FileInputStream(path)) {
         int i;
         while ((i = in.read()) != -1) {
             out.write(i);
@@ -21,5 +18,4 @@
     } else {
         response.setContentType("application/samlmetadata+xml");
     }
-
 %>
