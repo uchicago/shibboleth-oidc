@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+          http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      parent="cas.abstractValidate" >
+
+    <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
+    <action-state id="initializeValidate">
+        <evaluate expression="initializeProfileRequestContext"/>
+        <evaluate expression="decodeMessage" />
+        <evaluate expression="processSamlMessageAction" />
+        <evaluate expression="'proceed'" />
+        <transition on="serviceNotSpecified" to="validateFailure" />
+        <transition on="ticketNotSpecified" to="validateFailure" />
+        <transition on="proceed" to="initializeRelyingParty" />
+    </action-state>
+
+    <!-- End states that render the SAML message in the outgoing message context -->
+    <end-state id="validateSuccess">
+        <on-entry>
+            <evaluate expression="buildSamlValidationSuccessMessageAction" />
+            <evaluate expression="encodeMessage" />
+            <evaluate expression="recordResponseComplete" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="validateFailure">
+        <on-entry>
+            <evaluate expression="buildSamlValidationFailureMessageAction" />
+            <evaluate expression="encodeMessage" />
+            <evaluate expression="recordResponseComplete" />
+        </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
+    </end-state>
+
+    <bean-import resource="samlValidate-beans.xml" />
+
+</flow>
