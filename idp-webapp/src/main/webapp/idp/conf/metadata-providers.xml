@@ -36,11 +36,6 @@
          that you will interoperate with.     
     -->   
 
-    <MetadataProvider id="HTTPMetadataTestShib"
-                      xsi:type="FileBackedHTTPMetadataProvider"
-                      backingFile="%{idp.home}/metadata/testshib-metadata.xml"
-                      metadataURL="http://www.testshib.org/metadata/testshib-providers.xml" /> 
-
     <!-- Example file metadata provider.  Use this if you want to load metadata
          from a local file.  You might use this if you have some local SPs
          which are not "federated" but you wish to offer a service to.
