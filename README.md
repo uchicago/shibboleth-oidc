@@ -25,7 +25,7 @@ their local changes with that of the original bundle to ensure they are not miss
 4. A local Maven installation is required for the build. (Gradle can make this problem go away as it will know how to install and configure itself) 
 
 ## Modules
-This project is comprised the following modules:
+This project is comprised of the following modules:
 
 ### idp-webapp
 The base Shibboleth Identity Provider. Here are the differences with the original IdP:
