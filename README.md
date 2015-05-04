@@ -16,7 +16,8 @@ need to redeployed and repackaged to be included in the same webapp.
 
 2. Overlaying can be confusing, because components are not immediately available for modifications should they be needed. A deployer
 would have to find a way to place the to-be-overlaid file at the exact path in order for the entire process to work. Good documentation
-can be instrumental in this case. 
+can be instrumental in this case. In such cases, starting with a brand new overlay and gradually porting configuration over is the recommended
+approach.
 
 3. Upgrades can be difficult if there are A LOT of extensive local modifications to the overlay. A deployer would have to cross-compare
 their local changes with that of the original bundle to ensure they are not missing or going to break anything.

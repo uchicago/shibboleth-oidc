@@ -124,6 +124,7 @@
         <version>${maven.plugin.exec}</version>
         <executions>
           <execution>
+            <id>generate-sealer</id>
             <goals>
               <goal>java</goal>
             </goals>
