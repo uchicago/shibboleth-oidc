@@ -10,7 +10,7 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 script:
-- mvn clean install
+- mvn clean install -X
 after_success:
 - chmod -R 777 ./travis/deploy-to-sonatype.sh
 - ./travis/deploy-to-sonatype.sh
