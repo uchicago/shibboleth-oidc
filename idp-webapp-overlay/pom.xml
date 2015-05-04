@@ -40,8 +40,9 @@
 
   <properties>
     <credentialsDir>${basedir}/src/main/webapp/idp/credentials</credentialsDir>
+    <install.dir>${project.parent.basedir}</install.dir>
   </properties>
-  
+
   <build>
     <plugins>
   		<plugin>
@@ -58,6 +59,25 @@
           </overlays>
         </configuration>
   		</plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>${maven.plugin.properties}</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${basedir}/src/main/webapp/idp/conf/idp.properties</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -87,6 +107,8 @@
         </configuration>
       </plugin>
 
+      <!-- Signing Key Gen -->
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>keytool-maven-plugin</artifactId>
@@ -100,16 +122,16 @@
             <phase>generate-resources</phase>
             <configuration>
               <keystore>${credentialsDir}/idp-signing.jks</keystore>
-              <storepass>misagh</storepass>
-              <keypass>misagh</keypass>
+              <storepass>changeit</storepass>
+              <keypass>changeit</keypass>
               <alias>shib-idp-signing-key</alias>
               <keyalg>RSA</keyalg>
               <keysize>2048</keysize>
               <skipIfExist>false</skipIfExist>
               <storetype>JKS</storetype>
               <validity>7300</validity>
-              <dname>"CN=mmoayyed.unicon.net"</dname>
-              <ext>san=dns:mmoayyed.unicon.net,uri:https://mmoayyed.unicon.net/idp/shibboleth</ext>
+              <dname>"CN=${idp.hostname}"</dname>
+              <ext>san=dns:${idp.hostname},uri:https://${idp.hostname}/idp/shibboleth</ext>
             </configuration>
           </execution>
           <execution>
@@ -120,14 +142,14 @@
             <phase>generate-resources</phase>
             <configuration>
               <destkeystore>${credentialsDir}/idp-signing.key</destkeystore>
-              <destkeypass>misagh</destkeypass>
-              <deststorepass>misagh</deststorepass>
+              <destkeypass>changeit</destkeypass>
+              <deststorepass>changeit</deststorepass>
               <destalias>shib-idp-signing-key</destalias>
               <deststoretype>PKCS12</deststoretype>
               <srcalias>shib-idp-signing-key</srcalias>
-              <srckeypass>misagh</srckeypass>
+              <srckeypass>changeit</srckeypass>
               <srckeystore>${credentialsDir}/idp-signing.jks</srckeystore>
-              <srcstorepass>misagh</srcstorepass>
+              <srcstorepass>changeit</srcstorepass>
               <srcstoretype>JKS</srcstoretype>
             </configuration>
           </execution>
@@ -140,12 +162,14 @@
             <configuration>
               <keystore>${credentialsDir}/idp-signing.jks</keystore>
               <file>${credentialsDir}/idp-signing.crt</file>
-              <storepass>misagh</storepass>
+              <storepass>changeit</storepass>
               <alias>shib-idp-signing-key</alias>
               <storetype>JKS</storetype>
               <verbose>true></verbose>
             </configuration>
           </execution>
+
+          <!-- Idp Encryption Key -->
 
           <execution>
             <id>generateKeyPair-Enc</id>
@@ -155,16 +179,16 @@
             <phase>generate-resources</phase>
             <configuration>
               <keystore>${credentialsDir}/idp-encryption.jks</keystore>
-              <storepass>misagh</storepass>
-              <keypass>misagh</keypass>
+              <storepass>changeit</storepass>
+              <keypass>changeit</keypass>
               <alias>shib-idp-encryption-key</alias>
               <keyalg>RSA</keyalg>
               <keysize>2048</keysize>
               <skipIfExist>false</skipIfExist>
               <storetype>JKS</storetype>
               <validity>7300</validity>
-              <dname>"CN=mmoayyed.unicon.net"</dname>
-              <ext>san=dns:mmoayyed.unicon.net,uri:https://mmoayyed.unicon.net/idp/shibboleth</ext>
+              <dname>"CN=${idp.hostname}"</dname>
+              <ext>san=dns:${idp.hostname},uri:https://${idp.hostname}/idp/shibboleth</ext>
             </configuration>
           </execution>
           <execution>
@@ -175,14 +199,14 @@
             <phase>generate-resources</phase>
             <configuration>
               <destkeystore>${credentialsDir}/idp-encryption.key</destkeystore>
-              <destkeypass>misagh</destkeypass>
-              <deststorepass>misagh</deststorepass>
+              <destkeypass>changeit</destkeypass>
+              <deststorepass>changeit</deststorepass>
               <destalias>shib-idp-encryption-key</destalias>
               <deststoretype>PKCS12</deststoretype>
               <srcalias>shib-idp-encryption-key</srcalias>
-              <srckeypass>misagh</srckeypass>
+              <srckeypass>changeit</srckeypass>
               <srckeystore>${credentialsDir}/idp-encryption.jks</srckeystore>
-              <srcstorepass>misagh</srcstorepass>
+              <srcstorepass>changeit</srcstorepass>
               <srcstoretype>JKS</srcstoretype>
             </configuration>
           </execution>
@@ -195,12 +219,14 @@
             <configuration>
               <keystore>${credentialsDir}/idp-encryption.jks</keystore>
               <file>${credentialsDir}/idp-encryption.crt</file>
-              <storepass>misagh</storepass>
+              <storepass>changeit</storepass>
               <alias>shib-idp-encryption-key</alias>
               <storetype>JKS</storetype>
               <verbose>true></verbose>
             </configuration>
           </execution>
+
+          <!-- Idp BackChannel Key -->
 
           <execution>
             <id>generateKeyPair-Bck</id>
@@ -210,16 +236,16 @@
             <phase>generate-resources</phase>
             <configuration>
               <keystore>${credentialsDir}/idp-backchannel.jks</keystore>
-              <storepass>misagh</storepass>
-              <keypass>misagh</keypass>
+              <storepass>${idp.keystore.password}</storepass>
+              <keypass>${idp.keystore.password}</keypass>
               <alias>shib-idp-backchannel-key</alias>
               <keyalg>RSA</keyalg>
               <keysize>2048</keysize>
               <skipIfExist>false</skipIfExist>
               <storetype>JKS</storetype>
               <validity>7300</validity>
-              <dname>"CN=mmoayyed.unicon.net"</dname>
-              <ext>san=dns:mmoayyed.unicon.net,uri:https://mmoayyed.unicon.net/idp/shibboleth</ext>
+              <dname>"CN=${idp.hostname}"</dname>
+              <ext>san=dns:${idp.hostname},uri:https://${idp.hostname}/idp/shibboleth</ext>
             </configuration>
           </execution>
           <execution>
@@ -235,9 +261,9 @@
               <destalias>shib-idp-backchannel-key</destalias>
               <deststoretype>PKCS12</deststoretype>
               <srcalias>shib-idp-backchannel-key</srcalias>
-              <srckeypass>misagh</srckeypass>
+              <srckeypass>${idp.keystore.password}</srckeypass>
               <srckeystore>${credentialsDir}/idp-backchannel.jks</srckeystore>
-              <srcstorepass>misagh</srcstorepass>
+              <srcstorepass>${idp.keystore.password}</srcstorepass>
               <srcstoretype>JKS</srcstoretype>
             </configuration>
           </execution>
@@ -250,7 +276,7 @@
             <configuration>
               <keystore>${credentialsDir}/idp-backchannel.jks</keystore>
               <file>${credentialsDir}/idp-backchannel.crt</file>
-              <storepass>misagh</storepass>
+              <storepass>${idp.keystore.password}</storepass>
               <alias>shib-idp-backchannel-key</alias>
               <storetype>JKS</storetype>
               <verbose>true></verbose>
@@ -259,6 +285,8 @@
 
         </executions>
       </plugin>
+
+      <!-- Idp Sealer Gen -->
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -287,9 +315,9 @@
             <argument>--versionfile</argument>
             <argument>${credentialsDir}/sealer.kver</argument>
             <argument>--alias</argument>
-            <argument>misagh</argument>
+            <argument>${idp.sealer.aliasBase}</argument>
             <argument>--storepass</argument>
-            <argument>misagh</argument>
+            <argument>${idp.sealer.storePassword}</argument>
           </arguments>
         </configuration>
       </plugin>

@@ -53,7 +53,6 @@
     <module>idp-webapp-overlay</module>
   </modules>
 
-
   <build>
     <plugins>
   		<plugin>
@@ -65,27 +64,6 @@
             <target>${project.build.targetVersion}</target>
         </configuration>
   		</plugin>
-
-    <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <version>${maven.plugin.properties}</version>
-        <executions>
-          <execution>
-            <phase>initialize</phase>
-            <goals>
-              <goal>read-project-properties</goal>
-            </goals>
-            <configuration>
-              <files>
-                <file>etc/config/dev.properties</file>
-              </files>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    -->
     </plugins>
   </build>
 
@@ -147,6 +125,7 @@
     <maven.plugin.properties>1.0-alpha-2</maven.plugin.properties>
     <project.build.sourceVersion>1.7</project.build.sourceVersion>
     <project.build.targetVersion>1.7</project.build.targetVersion>
+    <install.dir>${project.basedir}</install.dir>
   </properties>
 
   <repositories>
