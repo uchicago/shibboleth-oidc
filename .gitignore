@@ -11,3 +11,4 @@ target/
 *.p12
 *.key
 *.kver
+testshib-metadata.xml
