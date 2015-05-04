@@ -24,19 +24,17 @@ their local changes with that of the original bundle to ensure they are not miss
 4. A local Maven installation is required for the build. (Gradle can make this problem go away as it will know how to install and configure itself) 
 
 ## Modules
-This project compromised of the following modules:
+This project is comprised the following modules:
 
 ### idp-webapp
-The base Shibboleth Identity Provider. Here are the differences:
+The base Shibboleth Identity Provider. Here are the differences with the original IdP:
 
 1. The IdP includes the necessary changes to integrate with a given CAS server for authentication, but does *NOT* enable that flow. 
 2. The `$IDP_HOME` directory is moved to `src/main/webapp/idp`. This includes all of the configuration required to run the IdP by default with the exception of `credentials` and `metadata`.
 3. The IdP is configured to initialize its configuration from the above location.
 
 Moving the configuration to the IdP web application itself allows the final `war` artifact to become available for overlays. Deployers can then pick and choose what they need to include
-in their own overlay and redeploy the application. 
-
-In practice, the produced `war` artifact would be released into some sort of central Maven repository. 
+in their own overlay and redeploy the application. In practice, the produced `war` artifact would be released into some sort of central Maven repository. 
  
 ### idp-webapp-support
 A utility module, at this point mostly to help with generation of IdP's metadata from command-line via `MetadataGeneratorTool`.
@@ -44,7 +42,7 @@ This module is used by the overlay in order to fully complete the installation.
 
 ### idp-webapp-overlay
 A maven overlay module that attempts to download the `idp-webapp` (i.e. from a central/local maven repository)
-and overlay its own configuration on top of it. These include changes for attribute resolution and release,
+and overlay his/her own configuration on top of it. These include changes for attribute resolution and release,
 providing metadata, CAS authentication and so on.
 
 Note that deployers are entirely responsible for this module. The sample that is provided here
@@ -55,7 +53,7 @@ In order to run the overlay build, examine the `/conf/idp.properties` inside the
 and adjust the values of hostname, entityId, passwords, etc. Then from the command prompt, execute:
 
 ```java
-mvn clean package`
+mvn clean package
 
 ```
 
