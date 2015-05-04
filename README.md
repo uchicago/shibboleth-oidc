@@ -52,7 +52,7 @@ attempts to fully complete the idp installation process by generating the needed
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,
 and adjust the values of hostname, entityId, passwords, etc. Then from the command prompt, execute:
 
-```java
+```bash
 mvn clean package
 
 ```
