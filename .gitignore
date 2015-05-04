@@ -6,3 +6,8 @@
 target/
 
 *.iml
+*.crt
+*.jks
+*.p12
+*.key
+*.kver

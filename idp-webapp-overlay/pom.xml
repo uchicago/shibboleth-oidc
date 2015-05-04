@@ -38,12 +38,16 @@
     </dependency>
   </dependencies>
 
+  <properties>
+    <credentialsDir>${basedir}/src/main/webapp/idp/credentials</credentialsDir>
+  </properties>
+  
   <build>
     <plugins>
   		<plugin>
   			<groupId>org.apache.maven.plugins</groupId>
   			<artifactId>maven-war-plugin</artifactId>
-  			<version>2.6</version>
+  			<version>${maven.plugin.war}</version>
         <configuration>
           <warName>idp</warName>
           <overlays>
@@ -52,9 +56,243 @@
                   <artifactId>idp-webapp</artifactId>
               </overlay>
           </overlays>
-      </configuration>
+        </configuration>
   		</plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>${maven.plugin.clean}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${credentialsDir}</directory>
+              <includes>
+                <include>**/*.jks</include>
+                <include>**/*.key</include>
+                <include>**/*.crt</include>
+                <include>**/*.p12</include>
+                <include>**/*.kver</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>keytool-maven-plugin</artifactId>
+        <version>${maven.plugin.keytool}</version>
+        <executions>
+          <execution>
+            <id>generateKeyPair-Sgn</id>
+            <goals>
+              <goal>generateKeyPair</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <keystore>${credentialsDir}/idp-signing.jks</keystore>
+              <storepass>misagh</storepass>
+              <keypass>misagh</keypass>
+              <alias>shib-idp-signing-key</alias>
+              <keyalg>RSA</keyalg>
+              <keysize>2048</keysize>
+              <skipIfExist>false</skipIfExist>
+              <storetype>JKS</storetype>
+              <validity>7300</validity>
+              <dname>"CN=mmoayyed.unicon.net"</dname>
+              <ext>san=dns:mmoayyed.unicon.net,uri:https://mmoayyed.unicon.net/idp/shibboleth</ext>
+            </configuration>
+          </execution>
+          <execution>
+            <id>importKeystore-Sgn</id>
+            <goals>
+              <goal>importKeystore</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <destkeystore>${credentialsDir}/idp-signing.key</destkeystore>
+              <destkeypass>misagh</destkeypass>
+              <deststorepass>misagh</deststorepass>
+              <destalias>shib-idp-signing-key</destalias>
+              <deststoretype>PKCS12</deststoretype>
+              <srcalias>shib-idp-signing-key</srcalias>
+              <srckeypass>misagh</srckeypass>
+              <srckeystore>${credentialsDir}/idp-signing.jks</srckeystore>
+              <srcstorepass>misagh</srcstorepass>
+              <srcstoretype>JKS</srcstoretype>
+            </configuration>
+          </execution>
+          <execution>
+            <id>exportCertificate-Sgn</id>
+            <goals>
+              <goal>exportCertificate</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <keystore>${credentialsDir}/idp-signing.jks</keystore>
+              <file>${credentialsDir}/idp-signing.crt</file>
+              <storepass>misagh</storepass>
+              <alias>shib-idp-signing-key</alias>
+              <storetype>JKS</storetype>
+              <verbose>true></verbose>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generateKeyPair-Enc</id>
+            <goals>
+              <goal>generateKeyPair</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <keystore>${credentialsDir}/idp-encryption.jks</keystore>
+              <storepass>misagh</storepass>
+              <keypass>misagh</keypass>
+              <alias>shib-idp-encryption-key</alias>
+              <keyalg>RSA</keyalg>
+              <keysize>2048</keysize>
+              <skipIfExist>false</skipIfExist>
+              <storetype>JKS</storetype>
+              <validity>7300</validity>
+              <dname>"CN=mmoayyed.unicon.net"</dname>
+              <ext>san=dns:mmoayyed.unicon.net,uri:https://mmoayyed.unicon.net/idp/shibboleth</ext>
+            </configuration>
+          </execution>
+          <execution>
+            <id>importKeystore-Enc</id>
+            <goals>
+              <goal>importKeystore</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <destkeystore>${credentialsDir}/idp-encryption.key</destkeystore>
+              <destkeypass>misagh</destkeypass>
+              <deststorepass>misagh</deststorepass>
+              <destalias>shib-idp-encryption-key</destalias>
+              <deststoretype>PKCS12</deststoretype>
+              <srcalias>shib-idp-encryption-key</srcalias>
+              <srckeypass>misagh</srckeypass>
+              <srckeystore>${credentialsDir}/idp-encryption.jks</srckeystore>
+              <srcstorepass>misagh</srcstorepass>
+              <srcstoretype>JKS</srcstoretype>
+            </configuration>
+          </execution>
+          <execution>
+            <id>exportCertificate-Enc</id>
+            <goals>
+              <goal>exportCertificate</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <keystore>${credentialsDir}/idp-encryption.jks</keystore>
+              <file>${credentialsDir}/idp-encryption.crt</file>
+              <storepass>misagh</storepass>
+              <alias>shib-idp-encryption-key</alias>
+              <storetype>JKS</storetype>
+              <verbose>true></verbose>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generateKeyPair-Bck</id>
+            <goals>
+              <goal>generateKeyPair</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <keystore>${credentialsDir}/idp-backchannel.jks</keystore>
+              <storepass>misagh</storepass>
+              <keypass>misagh</keypass>
+              <alias>shib-idp-backchannel-key</alias>
+              <keyalg>RSA</keyalg>
+              <keysize>2048</keysize>
+              <skipIfExist>false</skipIfExist>
+              <storetype>JKS</storetype>
+              <validity>7300</validity>
+              <dname>"CN=mmoayyed.unicon.net"</dname>
+              <ext>san=dns:mmoayyed.unicon.net,uri:https://mmoayyed.unicon.net/idp/shibboleth</ext>
+            </configuration>
+          </execution>
+          <execution>
+            <id>importKeystore-Bck</id>
+            <goals>
+              <goal>importKeystore</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <destkeystore>${credentialsDir}/idp-backchannel.p12</destkeystore>
+              <destkeypass>misagh</destkeypass>
+              <deststorepass>misagh</deststorepass>
+              <destalias>shib-idp-backchannel-key</destalias>
+              <deststoretype>PKCS12</deststoretype>
+              <srcalias>shib-idp-backchannel-key</srcalias>
+              <srckeypass>misagh</srckeypass>
+              <srckeystore>${credentialsDir}/idp-backchannel.jks</srckeystore>
+              <srcstorepass>misagh</srcstorepass>
+              <srcstoretype>JKS</srcstoretype>
+            </configuration>
+          </execution>
+          <execution>
+            <id>exportCertificate-Bck</id>
+            <goals>
+              <goal>exportCertificate</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <keystore>${credentialsDir}/idp-backchannel.jks</keystore>
+              <file>${credentialsDir}/idp-backchannel.crt</file>
+              <storepass>misagh</storepass>
+              <alias>shib-idp-backchannel-key</alias>
+              <storetype>JKS</storetype>
+              <verbose>true></verbose>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven.plugin.exec}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool</mainClass>
+          <workingDirectory>${credentialsDir}</workingDirectory>
+          <includeProjectDependencies>true</includeProjectDependencies>
+          <includePluginDependencies>false</includePluginDependencies>
+          <executableDependency>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+          </executableDependency>
+          <arguments>
+            <argument>--storefile</argument>
+            <argument>${credentialsDir}/sealer.jks</argument>
+            <argument>--versionfile</argument>
+            <argument>${credentialsDir}/sealer.kver</argument>
+            <argument>--alias</argument>
+            <argument>misagh</argument>
+            <argument>--storepass</argument>
+            <argument>misagh</argument>
+          </arguments>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
-

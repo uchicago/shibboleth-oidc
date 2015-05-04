@@ -30,22 +30,62 @@
   <name>Shibboleth Identity Provider Web Application Parent</name>
   <version>3.1.1-SNAPSHOT</version>
 
+  <dependencies>
+    <dependency>
+      <groupId>net.shibboleth.utilities</groupId>
+      <artifactId>java-support</artifactId>
+      <version>${java.support.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>${jcommander.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+  </dependencies>
+
   <modules>
     <module>idp-webapp</module>
     <module>idp-webapp-overlay</module>
   </modules>
+
 
   <build>
     <plugins>
   		<plugin>
   			<groupId>org.apache.maven.plugins</groupId>
   			<artifactId>maven-compiler-plugin</artifactId>
-  			<version>3.3</version>
-              <configuration>
-                  <source>${project.build.sourceVersion}</source>
-                  <target>${project.build.targetVersion}</target>
-              </configuration>
+  			<version>${maven.plugin.compiler}</version>
+        <configuration>
+            <source>${project.build.sourceVersion}</source>
+            <target>${project.build.targetVersion}</target>
+        </configuration>
   		</plugin>
+
+    <!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>${maven.plugin.properties}</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>etc/config/dev.properties</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    -->
     </plugins>
   </build>
 
@@ -99,26 +139,38 @@
   	<hibernate.commons.annotations.version>4.0.4.Final</hibernate.commons.annotations.version>
     <cas.client.version>3.3.3</cas.client.version>
 
-
+    <maven.plugin.exec>1.4.0</maven.plugin.exec>
+    <maven.plugin.war>2.6</maven.plugin.war>
+    <maven.plugin.clean>2.6.1</maven.plugin.clean>
+    <maven.plugin.keytool>1.5</maven.plugin.keytool>
+    <maven.plugin.compiler>3.3</maven.plugin.compiler>
+    <maven.plugin.properties>1.0-alpha-2</maven.plugin.properties>
     <project.build.sourceVersion>1.7</project.build.sourceVersion>
     <project.build.targetVersion>1.7</project.build.targetVersion>
   </properties>
 
   <repositories>
-        <repository>
-            <id>shib-release</id>
-            <url>https://build.shibboleth.net/nexus/content/groups/public</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>shib-snapshot</id>
-            <url>https://build.shibboleth.net/nexus/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
+    <repository>
+        <id>shib-release</id>
+        <url>https://build.shibboleth.net/nexus/content/groups/public</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+    </repository>
+    <repository>
+        <id>shib-snapshot</id>
+        <url>https://build.shibboleth.net/nexus/content/repositories/snapshots</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+
+  </repositories>
 </project>
 
