@@ -36,10 +36,18 @@
         <type>war</type>
         <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>net.unicon.idp</groupId>
+      <artifactId>idp-webapp-support</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <properties>
     <credentialsDir>${basedir}/src/main/webapp/idp/credentials</credentialsDir>
+    <metadataDir>${basedir}/src/main/webapp/idp/metadata</metadataDir>
     <install.dir>${project.parent.basedir}</install.dir>
   </properties>
 
@@ -101,6 +109,7 @@
                 <include>**/*.crt</include>
                 <include>**/*.p12</include>
                 <include>**/*.kver</include>
+                <include>**/idp-metadata.xml</include>
               </includes>
             </fileset>
           </filesets>
@@ -108,185 +117,6 @@
       </plugin>
 
       <!-- Signing Key Gen -->
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>keytool-maven-plugin</artifactId>
-        <version>${maven.plugin.keytool}</version>
-        <executions>
-          <execution>
-            <id>generateKeyPair-Sgn</id>
-            <goals>
-              <goal>generateKeyPair</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <keystore>${credentialsDir}/idp-signing.jks</keystore>
-              <storepass>changeit</storepass>
-              <keypass>changeit</keypass>
-              <alias>shib-idp-signing-key</alias>
-              <keyalg>RSA</keyalg>
-              <keysize>2048</keysize>
-              <skipIfExist>false</skipIfExist>
-              <storetype>JKS</storetype>
-              <validity>7300</validity>
-              <dname>"CN=${idp.hostname}"</dname>
-              <ext>san=dns:${idp.hostname},uri:https://${idp.hostname}/idp/shibboleth</ext>
-            </configuration>
-          </execution>
-          <execution>
-            <id>importKeystore-Sgn</id>
-            <goals>
-              <goal>importKeystore</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <destkeystore>${credentialsDir}/idp-signing.key</destkeystore>
-              <destkeypass>changeit</destkeypass>
-              <deststorepass>changeit</deststorepass>
-              <destalias>shib-idp-signing-key</destalias>
-              <deststoretype>PKCS12</deststoretype>
-              <srcalias>shib-idp-signing-key</srcalias>
-              <srckeypass>changeit</srckeypass>
-              <srckeystore>${credentialsDir}/idp-signing.jks</srckeystore>
-              <srcstorepass>changeit</srcstorepass>
-              <srcstoretype>JKS</srcstoretype>
-            </configuration>
-          </execution>
-          <execution>
-            <id>exportCertificate-Sgn</id>
-            <goals>
-              <goal>exportCertificate</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <keystore>${credentialsDir}/idp-signing.jks</keystore>
-              <file>${credentialsDir}/idp-signing.crt</file>
-              <storepass>changeit</storepass>
-              <alias>shib-idp-signing-key</alias>
-              <storetype>JKS</storetype>
-              <verbose>true></verbose>
-            </configuration>
-          </execution>
-
-          <!-- Idp Encryption Key -->
-
-          <execution>
-            <id>generateKeyPair-Enc</id>
-            <goals>
-              <goal>generateKeyPair</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <keystore>${credentialsDir}/idp-encryption.jks</keystore>
-              <storepass>changeit</storepass>
-              <keypass>changeit</keypass>
-              <alias>shib-idp-encryption-key</alias>
-              <keyalg>RSA</keyalg>
-              <keysize>2048</keysize>
-              <skipIfExist>false</skipIfExist>
-              <storetype>JKS</storetype>
-              <validity>7300</validity>
-              <dname>"CN=${idp.hostname}"</dname>
-              <ext>san=dns:${idp.hostname},uri:https://${idp.hostname}/idp/shibboleth</ext>
-            </configuration>
-          </execution>
-          <execution>
-            <id>importKeystore-Enc</id>
-            <goals>
-              <goal>importKeystore</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <destkeystore>${credentialsDir}/idp-encryption.key</destkeystore>
-              <destkeypass>changeit</destkeypass>
-              <deststorepass>changeit</deststorepass>
-              <destalias>shib-idp-encryption-key</destalias>
-              <deststoretype>PKCS12</deststoretype>
-              <srcalias>shib-idp-encryption-key</srcalias>
-              <srckeypass>changeit</srckeypass>
-              <srckeystore>${credentialsDir}/idp-encryption.jks</srckeystore>
-              <srcstorepass>changeit</srcstorepass>
-              <srcstoretype>JKS</srcstoretype>
-            </configuration>
-          </execution>
-          <execution>
-            <id>exportCertificate-Enc</id>
-            <goals>
-              <goal>exportCertificate</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <keystore>${credentialsDir}/idp-encryption.jks</keystore>
-              <file>${credentialsDir}/idp-encryption.crt</file>
-              <storepass>changeit</storepass>
-              <alias>shib-idp-encryption-key</alias>
-              <storetype>JKS</storetype>
-              <verbose>true></verbose>
-            </configuration>
-          </execution>
-
-          <!-- Idp BackChannel Key -->
-
-          <execution>
-            <id>generateKeyPair-Bck</id>
-            <goals>
-              <goal>generateKeyPair</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <keystore>${credentialsDir}/idp-backchannel.jks</keystore>
-              <storepass>${idp.keystore.password}</storepass>
-              <keypass>${idp.keystore.password}</keypass>
-              <alias>shib-idp-backchannel-key</alias>
-              <keyalg>RSA</keyalg>
-              <keysize>2048</keysize>
-              <skipIfExist>false</skipIfExist>
-              <storetype>JKS</storetype>
-              <validity>7300</validity>
-              <dname>"CN=${idp.hostname}"</dname>
-              <ext>san=dns:${idp.hostname},uri:https://${idp.hostname}/idp/shibboleth</ext>
-            </configuration>
-          </execution>
-          <execution>
-            <id>importKeystore-Bck</id>
-            <goals>
-              <goal>importKeystore</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <destkeystore>${credentialsDir}/idp-backchannel.p12</destkeystore>
-              <destkeypass>misagh</destkeypass>
-              <deststorepass>misagh</deststorepass>
-              <destalias>shib-idp-backchannel-key</destalias>
-              <deststoretype>PKCS12</deststoretype>
-              <srcalias>shib-idp-backchannel-key</srcalias>
-              <srckeypass>${idp.keystore.password}</srckeypass>
-              <srckeystore>${credentialsDir}/idp-backchannel.jks</srckeystore>
-              <srcstorepass>${idp.keystore.password}</srcstorepass>
-              <srcstoretype>JKS</srcstoretype>
-            </configuration>
-          </execution>
-          <execution>
-            <id>exportCertificate-Bck</id>
-            <goals>
-              <goal>exportCertificate</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <keystore>${credentialsDir}/idp-backchannel.jks</keystore>
-              <file>${credentialsDir}/idp-backchannel.crt</file>
-              <storepass>${idp.keystore.password}</storepass>
-              <alias>shib-idp-backchannel-key</alias>
-              <storetype>JKS</storetype>
-              <verbose>true></verbose>
-            </configuration>
-          </execution>
-
-        </executions>
-      </plugin>
-
-      <!-- Idp Sealer Gen -->
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -298,28 +128,149 @@
               <goal>java</goal>
             </goals>
             <phase>generate-resources</phase>
+            <configuration>
+              <mainClass>net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool</mainClass>
+              <workingDirectory>${credentialsDir}</workingDirectory>
+              <includeProjectDependencies>true</includeProjectDependencies>
+              <includePluginDependencies>false</includePluginDependencies>
+              <executableDependency>
+                <groupId>net.shibboleth.utilities</groupId>
+                <artifactId>java-support</artifactId>
+              </executableDependency>
+              <arguments>
+                <argument>--storefile</argument>
+                <argument>${credentialsDir}/sealer.jks</argument>
+                <argument>--versionfile</argument>
+                <argument>${credentialsDir}/sealer.kver</argument>
+                <argument>--alias</argument>
+                <argument>${idp.sealer.aliasBase}</argument>
+                <argument>--storepass</argument>
+                <argument>${idp.sealer.storePassword}</argument>
+              </arguments>
+            </configuration>
           </execution>
+
+          <execution>
+            <id>generateKeyPair-Sgn</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <mainClass>net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator</mainClass>
+              <workingDirectory>${credentialsDir}</workingDirectory>
+              <includeProjectDependencies>true</includeProjectDependencies>
+              <includePluginDependencies>false</includePluginDependencies>
+              <executableDependency>
+                <groupId>net.shibboleth.utilities</groupId>
+                <artifactId>java-support</artifactId>
+              </executableDependency>
+              <arguments>
+                <argument>--hostname</argument>
+                <argument>${idp.hostname}</argument>
+                <argument>--keyfile</argument>
+                <argument>${credentialsDir}/idp-signing.key</argument>
+                <argument>--certfile</argument>
+                <argument>${credentialsDir}/idp-signing.crt</argument>
+                <argument>--uriAltName</argument>
+                <argument>https://${idp.hostname}/idp/shibboleth</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generateKeyPair-Enc</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <mainClass>net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator</mainClass>
+              <workingDirectory>${credentialsDir}</workingDirectory>
+              <includeProjectDependencies>true</includeProjectDependencies>
+              <includePluginDependencies>false</includePluginDependencies>
+              <executableDependency>
+                <groupId>net.shibboleth.utilities</groupId>
+                <artifactId>java-support</artifactId>
+              </executableDependency>
+              <arguments>
+                <argument>--hostname</argument>
+                <argument>${idp.hostname}</argument>
+                <argument>--keyfile</argument>
+                <argument>${credentialsDir}/idp-encryption.key</argument>
+                <argument>--certfile</argument>
+                <argument>${credentialsDir}/idp-encryption.crt</argument>
+                <argument>--uriAltName</argument>
+                <argument>https://${idp.hostname}/idp/shibboleth</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generateKeyPair-Bck</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <mainClass>net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator</mainClass>
+              <workingDirectory>${credentialsDir}</workingDirectory>
+              <includeProjectDependencies>true</includeProjectDependencies>
+              <includePluginDependencies>false</includePluginDependencies>
+              <executableDependency>
+                <groupId>net.shibboleth.utilities</groupId>
+                <artifactId>java-support</artifactId>
+              </executableDependency>
+              <arguments>
+                <argument>--hostname</argument>
+                <argument>${idp.hostname}</argument>
+                <argument>--storefile</argument>
+                <argument>${credentialsDir}/idp-encryption.p12</argument>
+                <argument>--certfile</argument>
+                <argument>${credentialsDir}/idp-backchannel.crt</argument>
+                <argument>--storepass</argument>
+                <argument>${idp.keystore.password}</argument>
+                <argument>--uriAltName</argument>
+                <argument>https://${idp.hostname}/idp/shibboleth</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>metadata-gen</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <mainClass>net.shibboleth.idp.installer.metadata.MetadataGeneratorTool</mainClass>
+              <workingDirectory>${metadataDir}</workingDirectory>
+              <includeProjectDependencies>true</includeProjectDependencies>
+              <includePluginDependencies>false</includePluginDependencies>
+              <executableDependency>
+                <groupId>net.unicon.idp</groupId>
+                <artifactId>idp-webapp-support</artifactId>
+              </executableDependency>
+              <arguments>
+                <argument>--backchannel-cert</argument>
+                <argument>${credentialsDir}/idp-backchannel.crt</argument>
+                <argument>--dnsName</argument>
+                <argument>${idp.hostname}</argument>
+                <argument>--output</argument>
+                <argument>${metadataDir}/idp-metadata.xml</argument>
+                <argument>--encryption-cert</argument>
+                <argument>${credentialsDir}/idp-encryption.crt</argument>
+                <argument>--signing-cert</argument>
+                <argument>${credentialsDir}/idp-signing.crt</argument>
+                <argument>--entityID</argument>
+                <argument>${idp.entityID}</argument>
+                <argument>--scope</argument>
+                <argument>${idp.scope}</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
         </executions>
-        <configuration>
-          <mainClass>net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool</mainClass>
-          <workingDirectory>${credentialsDir}</workingDirectory>
-          <includeProjectDependencies>true</includeProjectDependencies>
-          <includePluginDependencies>false</includePluginDependencies>
-          <executableDependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-          </executableDependency>
-          <arguments>
-            <argument>--storefile</argument>
-            <argument>${credentialsDir}/sealer.jks</argument>
-            <argument>--versionfile</argument>
-            <argument>${credentialsDir}/sealer.kver</argument>
-            <argument>--alias</argument>
-            <argument>${idp.sealer.aliasBase}</argument>
-            <argument>--storepass</argument>
-            <argument>${idp.sealer.storePassword}</argument>
-          </arguments>
-        </configuration>
       </plugin>
     </plugins>
   </build>

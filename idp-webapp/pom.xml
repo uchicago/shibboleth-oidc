@@ -605,6 +605,7 @@
       <version>${jboss.transaction.api.1.2.spec.version}</version>
     </dependency>
 
+
     <dependency>
       <groupId>org.jasig.cas.client</groupId>
       <artifactId>cas-client-core</artifactId>
@@ -641,6 +642,13 @@
   			      </includes>
   			    </resource>
   			  </webResources>
+              <archive>
+                <manifest>
+                  <addClasspath>true</addClasspath>
+                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                  <mainClass>net.shibboleth.idp.installer.metadata.MetadataGeneratorCommandLine</mainClass>
+                </manifest>
+              </archive>
   			</configuration>
   		</plugin>
     </plugins>

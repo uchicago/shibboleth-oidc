@@ -12,3 +12,4 @@ target/
 *.key
 *.kver
 testshib-metadata.xml
+idp-metadata.xml
