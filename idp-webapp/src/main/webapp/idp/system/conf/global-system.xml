@@ -12,11 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-
     <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
-          class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-          p:placeholderPrefix="%{" p:placeholderSuffix="}"
-          p:locations-ref="idpPropertiesLocations"/>
+        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <!-- This bean MUST be called "conversionService" to work properly. -->
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
@@ -48,7 +46,7 @@
     <import resource="subject-c14n-system.xml" />
     <import resource="profile-intercept-system.xml" />
     <import resource="cas-protocol-system.xml" />
-    <import resource="utilities.xml" />
+    <import resource="${idp.system.conf.home}/utilities.xml" />
 
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
         depends-on="shibboleth.LoggingService,shibboleth.ParserPool" p:parserPool-ref="shibboleth.ParserPool" />
