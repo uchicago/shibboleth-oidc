@@ -37,14 +37,14 @@ The base Shibboleth Identity Provider. Here are the differences with the origina
 3. The IdP is configured to initialize its configuration from the above location.
 
 Moving the configuration to the IdP web application itself allows the final `war` artifact to become available for overlays. Deployers can then pick and choose what they need to include
-in their own overlay and redeploy the application. In practice, the produced `war` artifact would be released into some sort of central Maven repository. 
+in their own overlay and redeploy the application. In practice, the produced `war` artifact would be released into some sort of remote Maven repository. 
  
 ### idp-webapp-support
 A utility module, at this point mostly to help with generation of IdP's metadata from command-line via `MetadataGeneratorTool`.
 This module is used by the overlay in order to fully complete the installation.
 
 ### idp-webapp-overlay
-A maven overlay module that attempts to download the `idp-webapp` (i.e. from a central/local maven repository)
+A maven overlay module that attempts to download the `idp-webapp` (i.e. from a remote maven repository, which will be cached into a local)
 and overlay its own configuration on top of it. These include changes for attribute resolution and release,
 providing metadata, CAS authentication and so on.
 
@@ -71,7 +71,7 @@ mvn clean package
 ```
 
 ### Artifact Signature Verification
-Given that maven itself is unable to verify artifact signatures, a profile s developed to take advantage of the
+Given that maven itself is unable to verify artifact signatures, a profile is developed to take advantage of the
 `pgpverify-maven-plugin` plugin, to ensure all artifacts are legitimate. Those that fail the verification step will
 cause the build to fail.
 
