@@ -4,21 +4,9 @@
  
     <display-name>Shibboleth Identity Provider</display-name>
 
-    <!-- Spring application context files. Files are loaded in the order they appear with subsequent files overwriting 
-        same named beans in previous files. -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>${idp.home}/system/conf/global-system.xml</param-value>
-    </context-param>
-    
     <context-param>
         <param-name>contextClass</param-name>
         <param-value>net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext</param-value>
-    </context-param>
-    
-    <context-param>
-        <param-name>contextInitializerClasses</param-name>
-        <param-value>net.shibboleth.idp.spring.IdpLocationAwarePropertiesApplicationContextInitializer</param-value>
     </context-param>
 
     <!-- Spring listener used to load up the configuration -->

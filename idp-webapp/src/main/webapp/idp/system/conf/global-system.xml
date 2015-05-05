@@ -12,9 +12,11 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+
     <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
-        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+          class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+          p:placeholderPrefix="%{" p:placeholderSuffix="}"
+          p:locations-ref="idpPropertiesLocations"/>
 
     <!-- This bean MUST be called "conversionService" to work properly. -->
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
