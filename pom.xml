@@ -62,33 +62,15 @@
 
   <build>
     <plugins>
-  		<plugin>
-  			<groupId>org.apache.maven.plugins</groupId>
-  			<artifactId>maven-compiler-plugin</artifactId>
-  			<version>${maven.plugin.compiler}</version>
-        <configuration>
-            <source>${project.build.sourceVersion}</source>
-            <target>${project.build.targetVersion}</target>
-        </configuration>
-  		</plugin>
-
-      <!--      
-      <plugin>
-        <groupId>com.github.s4u.plugins</groupId>
-        <artifactId>pgpverify-maven-plugin</artifactId>
-        <executions>
-            <execution>
-                <goals>
-                    <goal>check</goal>
-                </goals>
-            </execution>
-         </executions>
-         <configuration>
-          <failNoSignature>false</failNoSignature>
-         </configuration>
-      </plugin>
-      -->
-      
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>${maven.plugin.compiler}</version>
+			<configuration>
+			    <source>${project.build.sourceVersion}</source>
+			    <target>${project.build.targetVersion}</target>
+			</configuration>
+		</plugin>
     </plugins>
   </build>
 
@@ -148,10 +130,43 @@
     <maven.plugin.keytool>1.5</maven.plugin.keytool>
     <maven.plugin.compiler>3.3</maven.plugin.compiler>
     <maven.plugin.properties>1.0-alpha-2</maven.plugin.properties>
+    <maven.plugin.pgpverify>1.0.0</maven.plugin.pgpverify>
     <project.build.sourceVersion>1.7</project.build.sourceVersion>
     <project.build.targetVersion>1.7</project.build.targetVersion>
     <install.dir>${project.basedir}</install.dir>
   </properties>
+
+  <profiles>
+  	<profile>
+  		<activation>
+	        <activeByDefault>false</activeByDefault>
+      	</activation>
+  		<id>pgp</id>
+  		<build>
+  			<plugins>
+  				<plugin>
+					<groupId>com.github.s4u.plugins</groupId>
+					<artifactId>pgpverify-maven-plugin</artifactId>
+					<version>${maven.plugin.pgpverify}</version>
+					<executions>
+					    <execution>
+					        <goals>
+					            <goal>check</goal>
+					        </goals>
+					    </execution>
+					</executions>
+					<configuration>
+						<pgpKeyServer>hkp://pool.sks-keyservers.net</pgpKeyServer>
+						<pgpKeysCachePath>${settings.localRepository}/pgpkeys-cache</pgpKeysCachePath>
+						<scope>test</scope>
+						<verifyPomFiles>true</verifyPomFiles>
+					 	<failNoSignature>false</failNoSignature>
+					</configuration>
+				</plugin>
+  			</plugins>
+  		</build>
+  	</profile>
+  </profiles>
 
   <repositories>
     <repository>

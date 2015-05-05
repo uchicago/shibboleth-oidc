@@ -8,6 +8,8 @@ The objective of this project is to demonstrate that the Shibboleth Identity Pro
 2. A Maven overlay mechanism attempts to "hide" some of the more system-level configuration files that are not immediately required for user modifications.
 3. The upgrade process for patches and minor releases can be very comfortable by simply modifying pom versions.
 4. The size of the Maven overlay installation packaged is considerably reduced.
+5. A Maven overlay easily allows one to extend the IdP's Java classes. Developed extensions are compiled via Maven and added to the classpath.
+6. A Maven overlay allows one to override the existing IdP Java `final` classes. A copy of the class may be placed at the exact package path, which will be compiled via Maven, added to classpath and used before the original component by the classloader.
 
 ## Tread Lightly
 1. Redeployments are required for changes, because the IdP runtime is modified to not point to an external location outside the webapp,
@@ -68,7 +70,24 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 mvn clean package
 ```
 
-The final artifact from `idp-webapp-overlay/target/idp.war` will be at your service.
+### Artifact Signature Verification
+Given that maven itself is unable to verify artifact signatures, a profile s developed to take advantage of the
+`pgpverify-maven-plugin` plugin, to ensure all artifacts are legitimate. Those that fail the verification step will
+cause the build to fail.
+
+
+```bash
+mvn clean package -Ppgp
+```
+
+Note that dependency resolution is only limited to the following repositories:
+
+```bash
+- Releases: https://build.shibboleth.net/nexus/content/groups/public
+- Snapshots: https://build.shibboleth.net/nexus/content/repositories/snapshots
+```
+
+Maven central is turned off.
 
 ## Versions
 - [Shibboleth Identity Provider v3.1.1](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
