@@ -45,7 +45,7 @@ This module is used by the overlay in order to fully complete the installation.
 
 ### idp-webapp-overlay
 A maven overlay module that attempts to download the `idp-webapp` (i.e. from a central/local maven repository)
-and overlay his/her own configuration on top of it. These include changes for attribute resolution and release,
+and overlay its own configuration on top of it. These include changes for attribute resolution and release,
 providing metadata, CAS authentication and so on.
 
 Note that deployers are entirely responsible for this module. The sample that is provided here
