@@ -1,6 +1,11 @@
 # Shibboleth Identity Provider Web Application
 The [Shibboleth Identity Provider](https://shibboleth.net) web application built using Apache Maven.
 
+
+> This project was developed as part of Unicon's [Open Source Support program](https://unicon.net/opensource).
+Professional Support / Integration Assistance for this module is available. For more information [visit](https://unicon.net/opensource/cas).
+
+
 ## Goals
 The objective of this project is to demonstrate that the Shibboleth Identity Provider can be deployed via a Maven overlay mechanism. In this approach, the build is driven by not the Shibboleth IdP's installer and/or ant, but entirely by Maven. The following goals and benefits are considered:
 
