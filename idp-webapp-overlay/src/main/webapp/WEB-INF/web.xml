@@ -16,9 +16,9 @@
         <param-value>net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext</param-value>
     </context-param>
     
-    <context-param>
+	<context-param>
         <param-name>contextInitializerClasses</param-name>
-        <param-value>net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer</param-value>
+        <param-value>net.shibboleth.idp.spring.IdpLocationAwarePropertiesApplicationContextInitializer</param-value>
     </context-param>
 
     <!-- Spring listener used to load up the configuration -->
