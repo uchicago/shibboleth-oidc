@@ -181,6 +181,6 @@
 
     <end-state id="proceed" />
 
-    <bean-import resource="../../se-beans.xml" />
+    <bean-import resource="../../../system/flows/intercept/attribute-release-beans.xml" />
 
 </flow>

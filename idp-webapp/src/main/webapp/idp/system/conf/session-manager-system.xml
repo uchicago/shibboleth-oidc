@@ -33,6 +33,10 @@
                         c:offset="%{idp.session.slop:0}"
                         p:parserPool-ref="shibboleth.ParserPool" />
                 </entry>
+                <entry key="#{T(net.shibboleth.idp.cas.session.CASSPSession)}">
+                    <bean class="net.shibboleth.idp.cas.session.CASSPSessionSerializer"
+                        c:offset="%{idp.session.slop:PT0S}" />
+                </entry>
             </map>
         </property>
     </bean>
@@ -46,6 +50,9 @@
                 </entry>
                 <entry key="#{T(net.shibboleth.idp.saml.session.SAML2SPSession)}">
                     <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
+                </entry>
+                <entry key="#{T(net.shibboleth.idp.cas.session.CASSPSession)}">
+                    <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
                 </entry>
             </map>
         </property>

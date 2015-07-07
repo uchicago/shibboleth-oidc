@@ -33,7 +33,33 @@
          party publishing the metadata
          
          The EntityRoleWhiteList saves memory by only loading metadata from entity types
-         that you will interoperate with.     
+         that you will interoperate with. 
+    
+    <MetadataProvider id="HTTPMetadata"
+                      xsi:type="FileBackedHTTPMetadataProvider"
+                      backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
+                      metadataURL="http://WHATEVER"> 
+        
+        <MetadataFilter xsi:type="SignatureValidation"
+            requireSignedMetadata="false">
+            <PublicKey>
+                THIS IS AN EXAMPLE
+            
+                MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
+                uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
+                LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88
+                NenXKxY+HMxMs0sT0UKYh1cAEqadrHRBO65aDBcm5a0sBVYt9K6pgaOHrp/zSIbh
+                nR5tFFLjBbtFktDpHL3AdGBH3OYidNGKBO3tJ3Ms7LeKXsM0+0Y4P+9fHZINL2X3
+                E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
+                4wIDAQAB
+            </PublicKey>
+        </MetadataFilter>
+        <MetadataFilter xsi:type="EntityRoleWhiteList">
+            <RetainedRole>md:SPSSODescriptor</RetainedRole>
+        </MetadataFilter>
+        
+    </MetadataProvider>
+    
     -->   
 
     <!-- Example file metadata provider.  Use this if you want to load metadata

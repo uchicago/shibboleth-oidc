@@ -53,10 +53,10 @@
 
   <build>
     <plugins>
-  		<plugin>
-  			<groupId>org.apache.maven.plugins</groupId>
-  			<artifactId>maven-war-plugin</artifactId>
-  			<version>${maven.plugin.war}</version>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>${maven.plugin.war}</version>
         <configuration>
           <warName>idp</warName>
           <overlays>
@@ -66,7 +66,7 @@
               </overlay>
           </overlays>
         </configuration>
-  		</plugin>
+        </plugin>
     </plugins>
   </build>
 

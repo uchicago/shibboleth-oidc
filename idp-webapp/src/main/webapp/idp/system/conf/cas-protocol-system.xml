@@ -11,7 +11,7 @@
        default-destroy-method="destroy">
 
     <bean id="cas.ticketService" class="net.shibboleth.idp.cas.ticket.SimpleTicketService"
-          c:service-ref="shibboleth.StorageService" />
+          c:service-ref="%{idp.cas.StorageService:shibboleth.StorageService}" />
 
     <bean id="cas.proxyAuthenticator" class="net.shibboleth.idp.cas.proxy.HttpClientProxyAuthenticator" />
 

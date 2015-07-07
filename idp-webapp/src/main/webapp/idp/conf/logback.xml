@@ -2,7 +2,7 @@
 <configuration>
 
     <!-- Logs IdP, but not OpenSAML, messages -->
-    <logger name="net.shibboleth.idp" level="DEBUG"/>
+    <logger name="net.shibboleth.idp" level="INFO"/>
 
     <!-- Logs OpenSAML, but not IdP, messages -->
     <logger name="org.opensaml.saml" level="INFO"/>
@@ -84,15 +84,7 @@
             <Pattern>%msg%n</Pattern>
         </encoder>
     </appender>
-
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-        <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
-        </encoder>
-    </appender>
-
+    
     <!-- Consent audit log. -->
     <appender name="IDP_CONSENT_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${idp.home}/logs/idp-consent-audit.log</File>
@@ -117,7 +109,6 @@
     </logger>
     
     <root level="INFO">
-        <appender-ref ref="STDOUT"/>
         <appender-ref ref="IDP_PROCESS"/>
         <appender-ref ref="IDP_WARN" />
     </root>

@@ -64,6 +64,6 @@
 
     <end-state id="proceed" />
 
-    <bean-import resource="../../ans.xml" />
+    <bean-import resource="../../../system/flows/intercept/terms-of-use-beans.xml" />
 
 </flow>

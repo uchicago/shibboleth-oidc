@@ -18,7 +18,7 @@
     
     <context-param>
         <param-name>contextInitializerClasses</param-name>
-        <param-value>net.shibboleth.idp.spring.IdpLocationAwarePropertiesApplicationContextInitializer</param-value>
+        <param-value>net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer</param-value>
     </context-param>
 
     <!-- Spring listener used to load up the configuration -->
@@ -175,16 +175,6 @@
     <servlet-mapping>
         <servlet-name>shibboleth_jsp</servlet-name>
         <url-pattern>/shibboleth</url-pattern>
-    </servlet-mapping>
-
-	<servlet>
-        <servlet-name>ShibCas Auth Servlet</servlet-name>
-        <servlet-class>net.unicon.idp.externalauth.ShibcasAuthServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ShibCas Auth Servlet</servlet-name>
-        <url-pattern>/Authn/ExtCas/*</url-pattern>
     </servlet-mapping>
 
     <!--

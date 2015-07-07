@@ -8,6 +8,6 @@
             then="proceed" else="ContextCheckDenied" />
     </decision-state>
     
-    <bean-import resource="../../eans.xml" />
+    <bean-import resource="../../../system/flows/intercept/context-check-beans.xml" />
 
 </flow>
