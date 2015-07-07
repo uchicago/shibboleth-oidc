@@ -13,3 +13,5 @@ target/
 *.kver
 testshib-metadata.xml
 idp-metadata.xml
+
+**/overlays/
