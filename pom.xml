@@ -72,7 +72,7 @@
     <properties>
         <spring.version>4.1.5.RELEASE</spring.version>
         <opensaml.version>3.1.1</opensaml.version>
-        <idp.version>3.1.1</idp.version>
+        <idp.version>${project.version}</idp.version>
         <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
         <guava.version>18.0</guava.version>
@@ -179,16 +179,6 @@
             </releases>
             <snapshots>
                 <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>central</id>
-            <url>http://repo1.maven.org/maven2</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>

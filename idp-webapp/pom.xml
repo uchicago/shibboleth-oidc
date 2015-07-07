@@ -626,22 +626,22 @@
 
   <build>
     <plugins>
-  		<plugin>
-  			<groupId>org.apache.maven.plugins</groupId>
-  			<artifactId>maven-war-plugin</artifactId>
-  			<version>${maven.plugin.war}</version>
-  			<configuration>
-  			  <warName>idp</warName>
-  			  <webResources>
-  			    <resource>
-  			      <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-  			      <filtering>true</filtering>
-  			      <targetPath>WEB-INF</targetPath>
-  			      <includes>
-  			        <include>**/web.xml</include>
-  			      </includes>
-  			    </resource>
-  			  </webResources>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>${maven.plugin.war}</version>
+            <configuration>
+              <warName>idp</warName>
+              <webResources>
+                <resource>
+                  <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                  <filtering>true</filtering>
+                  <targetPath>WEB-INF</targetPath>
+                  <includes>
+                    <include>**/web.xml</include>
+                  </includes>
+                </resource>
+              </webResources>
               <archive>
                 <manifest>
                   <addClasspath>true</addClasspath>
@@ -649,8 +649,8 @@
                   <mainClass>net.shibboleth.idp.installer.metadata.MetadataGeneratorCommandLine</mainClass>
                 </manifest>
               </archive>
-  			</configuration>
-  		</plugin>
+            </configuration>
+        </plugin>
     </plugins>
   </build>
 </project>
