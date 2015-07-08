@@ -33,7 +33,7 @@ mvn clean install
 
 You will also need to set up a keystore under `/etc/jetty` and name it `thekeystore`. The keystore password and the key password should both be `changeit`.
  
-A sample keystore is provided under the `idp-webapp-overlay/etc/` directory that is empty, and can be used to set up the environment. 
+A sample keystore is provided under the `idp-webapp-overlay/etc/jetty` directory that is empty, and can be used to set up the environment. 
 
 ### Run Jetty
 From the root directory, run the following command:
