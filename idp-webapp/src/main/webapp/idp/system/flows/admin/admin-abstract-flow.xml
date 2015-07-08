@@ -1,0 +1,56 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    abstract="true">
+
+    <!-- Abstract base for administrative flows. -->
+
+    <!-- Passthrough state if an exception is thrown. -->
+
+    <action-state id="LogRuntimeException">
+        <on-entry>
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+        </on-entry>
+        <evaluate expression="'RuntimeException'" />
+        <transition to="HandleErrorWithView" />
+    </action-state>
+
+    <!-- Unsuccessful terminal states. -->
+    
+    <decision-state id="HandleErrorWithView">
+        <if test="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').containsKey(currentEvent.id) and flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').get(currentEvent.id)"
+            then="AuditedErrorView" else="ErrorView" />
+    </decision-state>
+
+    <end-state id="AuditedErrorView" view="#{MapEventToView.apply(currentEvent)}">
+        <on-entry>
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
+    </end-state>
+
+    <end-state id="ErrorView" view="#{MapEventToView.apply(currentEvent)}">
+        <on-entry>
+            <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
+    </end-state>
+
+    <!-- Default is to turn non-proceed events into an error. -->
+    <global-transitions>
+        <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleErrorWithView" />
+    </global-transitions>
+
+    <bean-import resource="admin-abstract-beans.xml" />
+
+</flow>

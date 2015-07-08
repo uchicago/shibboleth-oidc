@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!--
+    This file configures the IdP with the set of SAML bindings to support for sending messages back through
+    a browser to SPs. Separate binding lists are provided for SAML 1, SAML 2 SSO, and SAML 2 SLO.
+    
+    For advanced use cases, it's possible to configure an activationCondition property that can evaluate the
+    profile request context to determine whether a binding applies, for example based on the SP identity.
+    
+    In most cases, simply leaving this alone, or reordering the bindings to fit your preferences, is enough.
+    
+    Note: the p:id syntax MUST be used to specify the binding URI. Using id alone will cause problems due to
+    duplicate bean IDs. 
+    -->
+    
+    <bean id="shibboleth.BindingDescriptor" class="net.shibboleth.idp.saml.binding.BindingDescriptor" abstract="true" />
+    
+    <util:list id="shibboleth.OutgoingSAML1SSOBindings">
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
+            p:encoderBeanId="shibboleth.Encoders.SAML1PostEncoder" />
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01"
+            p:encoderBeanId="shibboleth.Encoders.SAML1ArtifactEncoder" p:artifact="true" />
+    </util:list>
+
+    <util:list id="shibboleth.OutgoingSAML2SSOBindings">
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            p:encoderBeanId="shibboleth.Encoders.SAML2PostEncoder" />
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+            p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" />
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
+    </util:list>
+
+    <util:list id="shibboleth.OutgoingSAML2SLOBindings">
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            p:encoderBeanId="shibboleth.Encoders.SAML2RedirectEncoder" />
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            p:encoderBeanId="shibboleth.Encoders.SAML2PostEncoder" />
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+            p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" />
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
+    </util:list>
+
+    <util:list id="shibboleth.OutgoingSOAPBindings">
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding"
+            p:encoderBeanId="shibboleth.Encoders.SAML1SOAPEncoder" p:synchronous="true" />
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+            p:encoderBeanId="shibboleth.Encoders.SAML2SOAPEncoder" p:synchronous="true" />
+    </util:list>
+
+    <util:list id="shibboleth.OutgoingECPBindings">
+        <!-- Special case, the binding is technically SOAP, but response endpoint checking based on PAOS. -->
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+            p:encoderBeanId="shibboleth.Encoders.SAML2SOAPEncoder" />
+    </util:list>
+
+    <!--
+    These are the actual MessageEncoder beans that implement the outgoing binding requirements.
+    There is generally never any reason to change these. The init-method is being nulled below to
+    prevent explicit initialization by Spring, as this is deferred to the code to do.
+    -->
+
+    <bean id="shibboleth.Encoders.SAML1PostEncoder"
+          class="org.opensaml.saml.saml1.binding.encoding.impl.HTTPPostEncoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:velocityEngine-ref="shibboleth.VelocityEngine" />
+
+    <bean id="shibboleth.Encoders.SAML1ArtifactEncoder"
+          class="org.opensaml.saml.saml1.binding.encoding.impl.HTTPArtifactEncoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:artifactMap-ref="shibboleth.SAMLArtifactMap" />
+
+    <bean id="shibboleth.Encoders.SAML1SOAPEncoder"
+          class="org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
+
+    <bean id="shibboleth.Encoders.SAML2RedirectEncoder"
+          class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
+
+    <bean id="shibboleth.Encoders.SAML2PostEncoder"
+          class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:velocityEngine-ref="shibboleth.VelocityEngine" />
+
+    <bean id="shibboleth.Encoders.SAML2PostSimpleSignEncoder"
+          class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostSimpleSignEncoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:velocityEngine-ref="shibboleth.VelocityEngine" />
+
+    <bean id="shibboleth.Encoders.SAML2ArtifactEncoder"
+          class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPArtifactEncoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:artifactMap-ref="shibboleth.SAMLArtifactMap" />
+          
+    <bean id="shibboleth.Encoders.SAML2SOAPEncoder"
+          class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPSOAP11Encoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
+
+</beans>

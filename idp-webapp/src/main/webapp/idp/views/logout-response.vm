@@ -1,0 +1,29 @@
+##
+## Velocity Template for responding to a SAML 2 LogoutResponse
+##
+## Velocity context will contain the following properties
+## profileRequestContext - root of context tree
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
+##
+<!DOCTYPE html>
+<html>
+	<body></body>
+</html>
+
+#set ( $success = false )
+#set ( $logout = $profileRequestContext.getInboundMessageContext().getMessage() )
+#if ( $logout and $logout.getStatus() )
+	#set ( $sc = $logout.getStatus().getStatusCode() )
+	#if ( $sc and $sc.getValue() and $sc.getValue().contains('Success') )
+		#set ( $success = true )
+	#end
+#end
+
+#if ( $success )
+	$response.setStatus(200)
+#else
+	$response.setStatus(500)
+#end

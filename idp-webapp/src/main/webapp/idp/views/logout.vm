@@ -1,0 +1,86 @@
+##
+## Velocity Template for logout flow's concluding view-state
+##
+## Velocity context will contain the following properties
+## flowExecutionUrl - the form action location
+## flowRequestContext - the Spring Web Flow RequestContext
+## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
+## profileRequestContext - root of context tree
+## logoutContext - context with SPSession details for logout operation
+## multiRPContext - context with RelyingPartyContexts and possibly SP UI information from the metadata
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
+##
+<!DOCTYPE html>
+<html>
+  	<head>
+        <meta charset="utf-8">
+        <title>#springMessageText("idp.title", "Web Login Service")</title>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <style type="text/css">
+        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
+        </style>
+  	</head>
+
+  	<body>
+    <div class="wrapper">
+      <div class="container">
+        <header>
+          <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
+        </header>
+
+        <div class="content">
+          <div class="column one">
+            <p>This logout page is an example and should be customized. It is not internationalized because the
+            presentation will be a highly localized decision, and we don't have a good suggestion for a default.</p>
+
+            <p>This page is displayed when a logout operation at the Identity Provider completes.</p>
+    
+            <p><strong>It does NOT result in the user being logged out of any of the applications he/she
+            has accessed during a session, with the possible exception of a Service Provider that may have
+            initiated the logout operation.</strong></p>
+
+            #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
+                <p>The following is a list of services accessed during the session that has been terminated:</p>
+                <br>
+                <ul>
+                #foreach ($sp in $logoutContext.getSessionMap().keySet())
+                    #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
+                    #if ($rpCtx)
+                      #set ($rpUIContext = $rpCtx.getSubcontext("net.shibboleth.idp.ui.context.RelyingPartyUIContext"))
+                    #end
+                    #if ($rpUIContext and $rpUIContext.getServiceName())
+                      <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
+                    #else
+                      <li>$encoder.encodeForHTML($sp)</li>
+                    #end
+                #end
+                </ul>	
+            #end
+
+          </div>
+          <div class="column two">
+            <ul class="list list-help">
+              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.forgotPassword", "Forgot your password?")</a></li>
+              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.needHelp", "Need Help?")</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- If flowExecutionUrl set, complete the flow by adding a hidden iframe. -->
+      #if ($flowExecutionUrl)
+          <iframe id="buffer" src="$flowExecutionUrl&_eventId_proceed">
+      #end
+      
+      <footer>
+        <div class="container container-footer">
+          <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
+        </div>
+      </footer>
+    </div>
+    
+ 	</body>
+</html>

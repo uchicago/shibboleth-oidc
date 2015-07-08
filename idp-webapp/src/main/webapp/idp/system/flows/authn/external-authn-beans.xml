@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+       
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <import resource="../../../conf/authn/external-authn-config.xml" />
+
+    <bean id="SetRPUIInformation"
+            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+            p:activationCondition-ref="shibboleth.authn.External.populateUIInfo"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="fallbackLanguages">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+        </property>
+    </bean>
+
+    <bean id="ValidateExternalAuthentication"
+            class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
+            p:classifiedMessages-ref="shibboleth.authn.External.ClassifiedMessageMap"
+            p:resultCachingPredicate="#{getObject('shibboleth.authn.External.resultCachingPredicate')}" />
+
+</beans>

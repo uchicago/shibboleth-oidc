@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>net.unicon.idp</groupId>
+    <artifactId>shibboleth-idp-webapp-parent</artifactId>
+    <version>3.1.3-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>idp-webapp-support</artifactId>
+  <packaging>jar</packaging>
+  <name>Shibboleth Identity Provider Web Application Support</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <version>${bcprov.jdk15on.version}</version>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <install.dir>${project.parent.basedir}</install.dir>
+  </properties>
+
+</project>

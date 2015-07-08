@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+          http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <action-state id="initializeLogin">
+        <evaluate expression="initializeProfileRequestContext"/>
+        <evaluate expression="populateSessionContext"/>
+        <evaluate expression="initializeLoginAction" />
+        <evaluate expression="buildRelyingPartyContextAction" />
+        <evaluate expression="buildSAMLMetadataContextAction" />
+        <evaluate expression="selectRelyingPartyConfiguration" />
+        <evaluate expression="selectProfileConfiguration" />
+        <evaluate expression="publishProtocolRequestAction" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="checkAuthenticationRequired" />
+        <transition on="serviceNotSpecified" to="error" />
+    </action-state>
+
+    <action-state id="checkAuthenticationRequired">
+        <evaluate expression="checkAuthenticationRequiredAction"/>
+        <transition on="sessionNotFound" to="buildAuthenticationContext" />
+        <transition on="sessionFound" to="grantServiceTicket" />
+        <transition on="renewRequested" to="buildAuthenticationContext" />
+        <transition on="gatewayRequested" to="gatewayRedirect" />
+    </action-state>
+
+    <action-state id="buildAuthenticationContext">
+        <evaluate expression="buildAuthenticationContextAction"/>
+        <transition on="proceed" to="authenticate" />
+    </action-state>
+
+    <subflow-state id="authenticate" subflow="authn">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="grantServiceTicket" />
+    </subflow-state>
+
+    <action-state id="grantServiceTicket">
+        <evaluate expression="grantServiceTicketAction" />
+        <transition on="success" to="redirectToService" />
+        <transition on="ticketCreationError" to="error" />
+    </action-state>
+
+    <!-- Redirect end states -->
+    <end-state id="redirectToService" view="externalRedirect:#{requestScope.serviceTicketResponse.redirectUrl}">
+        <on-entry>
+            <evaluate expression="publishProtocolResponseAction" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="gatewayRedirect" view="externalRedirect:#{requestScope.serviceTicketRequest.service}" />
+
+    <!-- View end state -->
+    <end-state id="error" view="error">
+        <on-entry>
+            <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
+    </end-state>
+
+    <global-transitions>
+        <transition on-exception="java.lang.RuntimeException" to="error">
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.cas').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+        </transition>
+        <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
+                    to="error" />
+        <transition on="illegalState" to="error" />
+        <transition on="protocolViolation" to="error" />
+    </global-transitions>
+
+    <bean-import resource="login-beans.xml" />
+
+</flow>

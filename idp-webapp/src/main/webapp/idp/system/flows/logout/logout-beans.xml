@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
+    <import resource="../../conf/audit-system.xml" />
+
+    <bean id="InitializeProfileRequestContext"
+        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
+        p:profileId="http://shibboleth.net/ns/profiles/logout"
+        p:loggingId="%{idp.service.logging.logout:Logout}"
+        p:browserProfile="true" />
+
+    <bean id="ProcessLogout"
+        class="net.shibboleth.idp.session.impl.ProcessLogout" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:sessionManager-ref="shibboleth.SessionManager"
+        p:sessionResolver-ref="shibboleth.SessionManager" />
+    
+    <bean id="LogoutPopulateAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+        
+    <bean id="PopulateMultiRPContextFromLogoutContext"
+        class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
+        p:activationCondition="%{idp.logout.elaboration:false}"
+        p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
+        p:sessionTypeProtocolMap-ref="shibboleth.SessionTypeProtocolMap" />
+        
+    <bean id="SetRPUIInformation"
+            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+            p:activationCondition="%{idp.logout.elaboration:false}"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="fallbackLanguages">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+        </property>
+        <property name="metadataContextLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <ref bean="shibboleth.ChildLookup.SAMLMetadataContext" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean class="net.shibboleth.idp.profile.context.navigate.RelyingPartyContextLookupByCurrent" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.MultiRelyingParty" />
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="RPUIContextCreateStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <ref bean="shibboleth.ChildLookupOrCreate.RelyingPartyUIContext" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean class="net.shibboleth.idp.profile.context.navigate.RelyingPartyContextLookupByCurrent" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.MultiRelyingParty" />
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
+    <bean id="ErrorViewPopulateAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    
+    <bean id="MapEventToView"
+        class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
+        p:defaultView-ref="shibboleth.DefaultErrorView"
+        p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
+
+</beans>

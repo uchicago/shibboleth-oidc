@@ -1,0 +1,143 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <!--
+    Define custom flows by using the filesystem directly. Flows will be named based
+    on the directories between the base-path and the flow file ending in -flow.xml
+    -->
+    <webflow:flow-registry id="flowRegistry" base-path="%{idp.home}/flows" flow-builder-services="flowBuilderServices">
+        <webflow:flow-location-pattern value="/**/*-flow.xml" />
+
+        <!-- Abstract base flow for admin flows. -->
+        <webflow:flow-location id="admin.abstract" path="../system/flows/admin/admin-abstract-flow.xml" />
+
+        <!-- Status flow (location is for backward compatibility). -->
+        <webflow:flow-location id="status" path="../system/flows/admin/status-flow.xml" />
+
+        <!-- New administrative and debugging flows. -->
+        <webflow:flow-location id="admin/resolvertest" path="../system/flows/admin/resolvertest-flow.xml" />
+        <webflow:flow-location id="admin/reload-service" path="../system/flows/admin/reload-service-flow.xml" />
+        <webflow:flow-location id="admin/reload-metadata" path="../system/flows/admin/reload-metadata-flow.xml" />
+        
+        <!-- Proprietary logout flow. -->
+        <webflow:flow-location id="Logout" path="../system/flows/logout/logout-flow.xml" />
+
+        <!-- Logout propagation master flow. -->
+        <webflow:flow-location id="PropagateLogout" path="../system/flows/logout/logout-propagation-flow.xml" />
+
+        <!-- Abstract flows underpinning SAML profiles. -->
+        <webflow:flow-location id="saml.abstract" path="../system/flows/saml/saml-abstract-flow.xml" />
+        <webflow:flow-location id="saml1.sso.abstract" path="../system/flows/saml/saml1/sso-abstract-flow.xml" />
+        <webflow:flow-location id="saml2.sso.abstract" path="../system/flows/saml/saml2/sso-abstract-flow.xml" />
+        <webflow:flow-location id="saml2.slo.front.abstract" path="../system/flows/saml/saml2/slo-front-abstract-flow.xml" />
+
+        <!-- SAML profile flows. -->
+        <webflow:flow-location id="Shibboleth/SSO" path="../system/flows/saml/saml1/sso-unsolicited-flow.xml" />
+        <webflow:flow-location id="SAML1/SOAP/AttributeQuery" path="../system/flows/saml/saml1/attribute-query-flow.xml" />
+        <webflow:flow-location id="SAML1/SOAP/ArtifactResolution" path="../system/flows/saml/saml1/artifact-resolution-flow.xml" />
+        <webflow:flow-location id="SAML2/POST/SSO" path="../system/flows/saml/saml2/sso-post-flow.xml" />
+        <webflow:flow-location id="SAML2/POST-SimpleSign/SSO" path="../system/flows/saml/saml2/sso-post-flow.xml" />
+        <webflow:flow-location id="SAML2/Redirect/SSO" path="../system/flows/saml/saml2/sso-redirect-flow.xml" />
+        <webflow:flow-location id="SAML2/Unsolicited/SSO" path="../system/flows/saml/saml2/sso-unsolicited-flow.xml" />
+        <webflow:flow-location id="SAML2/SOAP/ECP" path="../system/flows/saml/saml2/sso-ecp-flow.xml" />
+        <webflow:flow-location id="SAML2/POST/SLO" path="../system/flows/saml/saml2/slo-post-flow.xml" />
+        <webflow:flow-location id="SAML2/POST-SimpleSign/SLO" path="../system/flows/saml/saml2/slo-post-flow.xml" />
+        <webflow:flow-location id="SAML2/Redirect/SLO" path="../system/flows/saml/saml2/slo-redirect-flow.xml" />
+        <webflow:flow-location id="SAML2/SOAP/SLO" path="../system/flows/saml/saml2/slo-back-flow.xml" />
+        <webflow:flow-location id="SAML2/SOAP/AttributeQuery" path="../system/flows/saml/saml2/attribute-query-flow.xml" />
+        <webflow:flow-location id="SAML2/SOAP/ArtifactResolution" path="../system/flows/saml/saml2/artifact-resolution-flow.xml" />
+
+        <!-- Master flow for authentication. -->
+        <webflow:flow-location id="authn.events" path="../conf/authn/authn-events-flow.xml" />
+        <webflow:flow-location id="authn.abstract" path="../system/flows/authn/authn-abstract-flow.xml" />
+        <webflow:flow-location id="authn-initial" path="../system/flows/authn/initial-authn-flow.xml" />
+        <webflow:flow-location id="authn" path="../system/flows/authn/authn-flow.xml" />
+
+        <!-- Login methods. -->
+        <webflow:flow-location id="authn/IPAddress" path="../system/flows/authn/ipaddress-authn-flow.xml" />
+        <webflow:flow-location id="authn/RemoteUserInternal" path="../system/flows/authn/remoteuser-internal-authn-flow.xml" />
+        <webflow:flow-location id="authn/Password" path="../system/flows/authn/password-authn-flow.xml" />
+        <webflow:flow-location id="authn/RemoteUser" path="../system/flows/authn/remoteuser-authn-flow.xml" />
+        <webflow:flow-location id="authn/X509" path="../system/flows/authn/x509-authn-flow.xml" />
+        <webflow:flow-location id="authn/X509Internal" path="../system/flows/authn/x509-internal-authn-flow.xml" />
+        <webflow:flow-location id="authn/External" path="../system/flows/authn/external-authn-flow.xml" />
+
+        <!-- Master flows for post-authn and SAML subject c14n. -->
+        <webflow:flow-location id="c14n.events" path="../conf/c14n/subject-c14n-events-flow.xml" />
+        <webflow:flow-location id="c14n.abstract" path="../system/flows/c14n/subject-c14n-abstract-flow.xml" />
+        <webflow:flow-location id="c14n/authn" path="../system/flows/c14n/subject-c14n-authn-flow.xml" />
+        <webflow:flow-location id="c14n/saml" path="../system/flows/c14n/subject-c14n-saml-flow.xml" />
+
+        <!-- Standard post-login C14N methods. -->
+        <webflow:flow-location id="c14n/simple" path="../system/flows/c14n/simple-subject-c14n-flow.xml" />
+        <webflow:flow-location id="c14n/x500" path="../system/flows/c14n/x500-subject-c14n-flow.xml" />
+        <webflow:flow-location id="c14n/attribute" path="../system/flows/c14n/attribute-sourced-subject-c14n-flow.xml" />
+
+        <!--
+        Standard SAML C14N methods, including one supporting legacy use of the attribute resolver.
+        These all map to the same flow, and they derive the bean ID of an action to run based on the
+        flow id after the slash.
+        -->
+        <webflow:flow-location id="c14n/SAML2Transient" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/SAML2CryptoTransient" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/SAML2Persistent" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/SAML2Transform" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/SAML1Transient" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/SAML1CryptoTransient" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/SAML1Transform" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/LegacyPrincipalConnector" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+
+        <!-- Master intercept flow. -->
+        <webflow:flow-location id="intercept.events" path="../conf/intercept/intercept-events-flow.xml" />
+        <webflow:flow-location id="intercept.abstract" path="../system/flows/intercept/intercept-abstract-flow.xml" />
+        <webflow:flow-location id="intercept" path="../system/flows/intercept/intercept-flow.xml" />
+
+        <!-- Built-in intercept flows. -->
+        <webflow:flow-location id="intercept/context-check" path="../system/flows/intercept/context-check-flow.xml" />
+        <webflow:flow-location id="intercept/terms-of-use" path="../system/flows/intercept/terms-of-use-flow.xml" />
+        <webflow:flow-location id="intercept/attribute-release" path="../system/flows/intercept/attribute-release-flow.xml" />
+
+        <!-- Inbound security processing of SAML messages, implemented as intercept flows. -->
+        <webflow:flow-location id="security-policy.abstract" path="../system/flows/saml/security-abstract-flow.xml" />
+        <webflow:flow-location id="intercept/security-policy/shibboleth-sso" path="../system/flows/saml/saml1/sso-security-flow.xml" />
+        <webflow:flow-location id="intercept/security-policy/saml2-sso" path="../system/flows/saml/saml2/sso-security-flow.xml" />
+        <webflow:flow-location id="intercept/security-policy/saml2-ecp" path="../system/flows/saml/saml2/ecp-security-flow.xml" />
+        <webflow:flow-location id="intercept/security-policy/saml2-slo" path="../system/flows/saml/saml2/slo-security-flow.xml" />
+        <webflow:flow-location id="intercept/security-policy/saml-soap" path="../system/flows/saml/soap-security-flow.xml" />
+
+        <!-- CAS protocol flows. -->
+        <webflow:flow-location id="cas/login" path="../system/flows/cas/login/login-flow.xml" />
+        <webflow:flow-location id="cas/proxy" path="../system/flows/cas/proxy/proxy-flow.xml" />
+        <webflow:flow-location id="cas.abstractValidate" path="../system/flows/cas/abstractValidate/abstractValidate-flow.xml" />
+        <webflow:flow-location id="cas/serviceValidate" path="../system/flows/cas/serviceValidate/serviceValidate-flow.xml" />
+        <webflow:flow-location id="cas/proxyValidate" path="../system/flows/cas/proxyValidate/proxyValidate-flow.xml" />
+        <webflow:flow-location id="cas/samlValidate" path="../system/flows/cas/samlValidate/samlValidate-flow.xml" />
+
+    </webflow:flow-registry>
+
+    <webflow:flow-executor id="flowExecutor">
+        <webflow:flow-execution-repository max-execution-snapshots="0" />
+    </webflow:flow-executor>
+
+    <webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator" />
+
+    <bean id="mvcViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+        <property name="viewResolvers">
+            <list>
+                <ref bean="shibboleth.VelocityViewResolver" />
+                <ref bean="shibboleth.InternalViewResolver" />
+            </list>
+        </property>
+    </bean>
+
+</beans>
