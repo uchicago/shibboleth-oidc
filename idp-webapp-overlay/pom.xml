@@ -12,14 +12,28 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.unicon.idp</groupId>
+            <groupId>net.shibboleth.idp</groupId>
             <artifactId>idp-webapp</artifactId>
             <version>${project.version}</version>
             <type>war</type>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>net.unicon.idp</groupId>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-oidc-api</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-oidc-impl</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
             <artifactId>idp-webapp-support</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
