@@ -58,7 +58,7 @@
                     <warName>idp</warName>
                     <overlays>
                         <overlay>
-                            <groupId>net.unicon.idp</groupId>
+                            <groupId>net.shibboleth.idp</groupId>
                             <artifactId>idp-webapp</artifactId>
                         </overlay>
                     </overlays>
@@ -96,6 +96,7 @@
                     <jettyXml>${project.basedir}/etc/jetty/jetty.xml,${project.basedir}/etc/jetty/jetty-ssl.xml,${project.basedir}/etc/jetty/jetty-https.xml</jettyXml>
                     <webApp>
                         <contextPath>/idp</contextPath>
+                        <overrideDescriptor>${project.basedir}/etc/jetty/web.xml</overrideDescriptor>
                     </webApp>
                     <webAppConfig>
                         <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
@@ -315,7 +316,7 @@
                                     <includeProjectDependencies>true</includeProjectDependencies>
                                     <includePluginDependencies>false</includePluginDependencies>
                                     <executableDependency>
-                                        <groupId>net.unicon.idp</groupId>
+                                        <groupId>net.shibboleth.idp</groupId>
                                         <artifactId>idp-webapp-support</artifactId>
                                     </executableDependency>
                                     <arguments>
