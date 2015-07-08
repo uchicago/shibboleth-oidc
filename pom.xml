@@ -50,6 +50,13 @@
             <version>${idp.version}</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
     <modules>
         <module>idp-webapp</module>
@@ -74,6 +81,7 @@
         <opensaml.version>3.1.1</opensaml.version>
         <idp.version>${project.version}</idp.version>
         <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
+        <servlet.version>3.1.0</servlet.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
         <guava.version>18.0</guava.version>
         <ldaptive.version>1.0.6</ldaptive.version>
