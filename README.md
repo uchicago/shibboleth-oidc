@@ -39,7 +39,7 @@ A sample keystore is provided under the `idp-webapp-overlay/etc/jetty` directory
 From the root directory, run the following command:
 
 ```bash
-mvn verify
+mvn verify -Dhost=jetty
 ```
 
 This will spin up an embedded Jetty server to load the IdP context. Remote debugging is available under port 5000 from your IDE. 
