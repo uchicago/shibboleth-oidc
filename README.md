@@ -28,7 +28,7 @@ mvn clean install
 ```
 
 ## Run
-Navigate to the `idp-webapp-overlay` module and run the following command:
+From the root directory, run the following command:
 
 ```bash
 mvn verify
