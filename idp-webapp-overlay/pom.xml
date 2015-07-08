@@ -28,8 +28,8 @@
     </dependencies>
 
     <properties>
-        <credentialsDir>${basedir}/src/main/webapp/idp/credentials</credentialsDir>
-        <metadataDir>${basedir}/src/main/webapp/idp/metadata</metadataDir>
+        <credentialsDir>${project.basedir}/src/main/webapp/idp/credentials</credentialsDir>
+        <metadataDir>${project.basedir}/src/main/webapp/idp/metadata</metadataDir>
         <install.dir>${project.parent.basedir}</install.dir>
     </properties>
 
@@ -61,7 +61,7 @@
                         <goals>
                             <goal>set-system-properties</goal>
                         </goals>
-                        <phase>validate</phase>
+                        <phase>verify</phase>
                         <configuration>
                             <properties>
                                 <property>
@@ -79,7 +79,7 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.3.0.v20150612</version>
                 <configuration>
-                    <jettyXml>/etc/jetty/jetty.xml,/etc/jetty/jetty-ssl.xml,/etc/jetty/jetty-https.xml</jettyXml>
+                    <jettyXml>${project.basedir}/etc/jetty/jetty.xml,${project.basedir}/etc/jetty/jetty-ssl.xml,${project.basedir}/etc/jetty/jetty-https.xml</jettyXml>
                     <webApp>
                         <contextPath>/idp</contextPath>
                     </webApp>
@@ -94,7 +94,7 @@
                         </systemProperty>
                         <systemProperty>
                             <name>logback.configurationFile</name>
-                            <value>/etc/jetty/logback.xml</value>
+                            <value>${project.basedir}/etc/jetty/logback.xml</value>
                         </systemProperty>
                     </systemProperties>
                     <jvmArgs>-Didp.home=${project.build.directory}/${project.build.finalName}/idp -Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n</jvmArgs>
@@ -102,7 +102,7 @@
                 <executions>
                     <execution>
                         <id>deploy</id>
-                        <phase>validate</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>run-forked</goal>
                         </goals>

@@ -26,12 +26,18 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 ```bash
 mvn clean package
 ```
+
 ## Run
 Navigate to the `idp-webapp-overlay` module and run the following command:
 
 ```bash
-mvn validate
+mvn verify
 ```
 
-This will spin up an embedded Jetty server to load the IdP context. Remote debugging
-is available under port 5000 from your IDE.
+This will spin up an embedded Jetty server to load the IdP context. 
+
+* Remote debugging is available under port 5000 from your IDE. 
+* You will also need to set up a keystore under `/etc/jetty` and name it `thekeystore`
+* The keystore password and the key password should both be `changeit`.
+ 
+A sample keystore is provided under the `idp-webapp-overlay/etc/` directory that is empty, and can be used to set up the environment.  
