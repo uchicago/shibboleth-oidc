@@ -5,7 +5,7 @@
         <version>7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.unicon.idp</groupId>
+    <groupId>net.shibboleth.idp</groupId>
     <artifactId>shibboleth-idp-webapp-parent</artifactId>
     <packaging>pom</packaging>
     <name>Shibboleth Identity Provider Web Application Parent</name>
@@ -40,11 +40,15 @@
         </dependency>
 
     </dependencies>
+    
     <modules>
         <module>idp-webapp</module>
         <module>idp-webapp-support</module>
+        <module>idp-oidc-api</module>
+        <module>idp-oidc-impl</module>
         <module>idp-webapp-overlay</module>
     </modules>
+
     <build>
         <plugins>
             <plugin>
