@@ -1,6 +1,7 @@
 # shibboleth-oidc
 OpenIDConnect support for the Shibboleth Identity Provider version 3
 
+![Travis Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)
 
 ## Versions
 - [Shibboleth Identity Provider v3.1.3-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
