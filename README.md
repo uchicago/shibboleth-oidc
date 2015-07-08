@@ -55,7 +55,7 @@ providing metadata, CAS authentication and so on.
 Note that deployers are entirely responsible for this module. The sample that is provided here
 attempts to fully complete the idp installation process by generating the needed keystores, certs and metadata.
 
-## Run
+## Build
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,
 and adjust the values of hostname, entityId, passwords, etc. Then from the command prompt, execute:
 
@@ -92,6 +92,16 @@ Note that dependency resolution is only limited to the following repositories:
 ```
 
 Maven central is turned off.
+
+## Run
+Navigate to the `idp-webapp-overlay` module and run the following command:
+
+```bash
+mvn validate
+```
+
+This will spin up an embedded Jetty server to load the IdP context. Remote debugging
+is available under port 5000 from your IDE.
 
 ## Versions
 - [Shibboleth Identity Provider v3.1.3-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
