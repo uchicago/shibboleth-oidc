@@ -28,16 +28,19 @@ mvn clean install
 ```
 
 ## Run
+
+### Prepare HTTPS
+
+You will also need to set up a keystore under `/etc/jetty` and name it `thekeystore`. The keystore password and the key password should both be `changeit`.
+ 
+A sample keystore is provided under the `idp-webapp-overlay/etc/` directory that is empty, and can be used to set up the environment. 
+
+### Run Jetty
 From the root directory, run the following command:
 
 ```bash
 mvn verify
 ```
 
-This will spin up an embedded Jetty server to load the IdP context. 
-
-* Remote debugging is available under port 5000 from your IDE. 
-* You will also need to set up a keystore under `/etc/jetty` and name it `thekeystore`
-* The keystore password and the key password should both be `changeit`.
+This will spin up an embedded Jetty server to load the IdP context. Remote debugging is available under port 5000 from your IDE. 
  
-A sample keystore is provided under the `idp-webapp-overlay/etc/` directory that is empty, and can be used to set up the environment.  
