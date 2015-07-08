@@ -19,7 +19,7 @@ The objective of this project is to demonstrate that the Shibboleth Identity Pro
 ## Tread Lightly
 1. Redeployments are required for changes, because the IdP runtime is modified to not point to an external location outside the webapp,
 as it did previously with references to `/opt/shibboleth-idp` for instance by default, but inside its own context. Therefore, any changes that are applied to a local overlay
-need to redeployed and repackaged to be included in the same webapp. 
+need to redeployed and repackaged to be included in the same webapp.
 
 2. Overlaying can be confusing, because components are not immediately available for modifications should they be needed. A deployer
 would have to find a way to place the to-be-overlaid file at the exact path in order for the entire process to work. Good documentation
@@ -29,7 +29,7 @@ approach.
 3. Upgrades can be difficult if there are A LOT of extensive local modifications to the overlay. A deployer would have to cross-compare
 their local changes with that of the original bundle to ensure they are not missing or going to break anything.
 
-4. A local Maven installation is required for the build. (Gradle can make this problem go away as it will know how to install and configure itself) 
+4. A local Maven installation is required for the build. (Gradle can make this problem go away as it will know how to install and configure itself)
 
 ## Modules
 This project is comprised of the following modules:
@@ -37,13 +37,12 @@ This project is comprised of the following modules:
 ### idp-webapp
 The base Shibboleth Identity Provider. Here are the differences with the original IdP:
 
-1. The IdP includes the necessary changes to integrate with a given CAS server for authentication, but does *NOT* enable that flow. 
-2. The `$IDP_HOME` directory is moved to `src/main/webapp/idp`. This includes all of the configuration required to run the IdP by default with the exception of `credentials` and `metadata`.
-3. The IdP is configured to initialize its configuration from the above location.
+1. The `$IDP_HOME` directory is moved to `src/main/webapp/idp`. This includes all of the configuration required to run the IdP by default with the exception of `credentials` and `metadata`.
+2. The IdP is configured to initialize its configuration from the above location.
 
 Moving the configuration to the IdP web application itself allows the final `war` artifact to become available for overlays. Deployers can then pick and choose what they need to include
-in their own overlay and redeploy the application. In practice, the produced `war` artifact would be released into some sort of remote Maven repository. 
- 
+in their own overlay and redeploy the application. In practice, the produced `war` artifact would be released into some sort of remote Maven repository.
+
 ### idp-webapp-support
 A utility module, at this point mostly to help with generation of IdP's metadata from command-line via `MetadataGeneratorTool`.
 This module is used by the overlay in order to fully complete the installation.
@@ -63,7 +62,7 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 ### Initial installs
 
 ```bash
-mvn clean package -Pnew
+mvn clean package -P new
 ```
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
@@ -82,7 +81,7 @@ cause the build to fail.
 
 
 ```bash
-mvn clean package -Ppgp
+mvn clean package -P pgp
 ```
 
 Note that dependency resolution is only limited to the following repositories:
@@ -95,9 +94,9 @@ Note that dependency resolution is only limited to the following repositories:
 Maven central is turned off.
 
 ## Versions
-- [Shibboleth Identity Provider v3.1.1](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
+- [Shibboleth Identity Provider v3.1.3-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - Apache Maven v3 (required)
-- JDK 7 (required)
+- JDK 8 (required)
 
 ## Build Status
 * [![Build Status](https://secure.travis-ci.org/UniconLabs/shibboleth-idp-webapp.png)](http://travis-ci.org/UniconLabs/shibboleth-idp-webapp)
