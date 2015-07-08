@@ -15,7 +15,7 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 ### Initial installs
 
 ```bash
-mvn clean package -P new
+mvn clean install -P new
 ```
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
@@ -24,7 +24,7 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 ### Subsequent installs
 
 ```bash
-mvn clean package
+mvn clean install
 ```
 
 ## Run
