@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>7</version>
+        <version>9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.shibboleth.idp</groupId>
@@ -74,6 +74,7 @@
     </modules>
 
     <build>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -111,11 +112,13 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>${license.plugin}</version>
                 <configuration>
+
                     <header>${install.dir}/src/licensing/header.txt</header>
                     <skipExistingHeaders>true</skipExistingHeaders>
                     <strictCheck>true</strictCheck>
@@ -130,18 +133,13 @@
                         <conf>JAVADOC_STYLE</conf>
                     </mapping>
                     <excludes>
-                        <exclude>**/bin/**</exclude>
-                        <exclude>**/idp-webapp/**</exclude>
-                        <exclude>**/etc/jetty/**</exclude>
                         <exclude>LICENSE</exclude>
-                        <exclude>**/INSTALL*</exclude>
                         <exclude>**/NOTICE*</exclude>
-                        <exclude>**/README*</exclude>
-                        <exclude>**/readme*</exclude>
                         <exclude>**/.donotdel</exclude>
                         <exclude>**/sample-keystore</exclude>
                         <exclude>**/idp-metadata.xml</exclude>
                         <exclude>**/*.log</exclude>
+                        <exclude>**/*.tld</exclude>
                         <exclude>**/*.p12</exclude>
                         <exclude>**/*.kver</exclude>
                         <exclude>**/*.license</exclude>
@@ -153,26 +151,18 @@
                         <exclude>**/*.key</exclude>
                         <exclude>**/*.json</exclude>
                         <exclude>**/*.checkstyle</exclude>
-                        <exclude>**/*.properties</exclude>
                         <exclude>**/.gitignore</exclude>
                         <exclude>**/overlays/**</exclude>
                         <exclude>src/licensing/**</exclude>
-                        <exclude>**/testCA/**</exclude>
-                        <exclude>**/.idea/**</exclude>
-                        <exclude>**/*.keystore</exclude>
-                        <exclude>**/*.example</exclude>
-                        <exclude>**/*.jmx</exclude>
-                        <exclude>**/*.pandoc</exclude>
-                        <exclude>**/*.sample</exclude>
-                        <exclude>**/*.doc</exclude>
                         <exclude>**/*.md</exclude>
-                        <exclude>**/*.pdf</exclude>
                         <exclude>**/*.pem</exclude>
                         <exclude>**/*.p8</exclude>
+                        <exclude>**/etc/jetty/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>check-license</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>check</goal>
