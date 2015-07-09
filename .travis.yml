@@ -8,4 +8,4 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 script:
-- mvn clean install -X
+- mvn clean install
