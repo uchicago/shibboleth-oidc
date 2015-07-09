@@ -114,6 +114,18 @@
             </plugin>
 
             <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <version>1.0.6.1</version>
+                <configuration>
+                    <noticeTemplate>${jasig-notice-template-url}</noticeTemplate>
+                    <licenseMapping>
+                        <param>${jasig-license-lookup-url}</param>
+                    </licenseMapping>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>${license.plugin}</version>
@@ -235,6 +247,9 @@
         <project.build.sourceVersion>1.8</project.build.sourceVersion>
         <project.build.targetVersion>1.8</project.build.targetVersion>
         <install.dir>${project.basedir}</install.dir>
+
+        <jasig-license-lookup-url>https://source.jasig.org/licenses/license-mappings.xml</jasig-license-lookup-url>
+        <jasig-notice-template-url>https://source.jasig.org/licenses/NOTICE.template</jasig-notice-template-url>
     </properties>
     <profiles>
         <profile>
