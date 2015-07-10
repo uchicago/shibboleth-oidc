@@ -3,6 +3,36 @@ OpenIDConnect support for the Shibboleth Identity Provider version 3
 
 [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
 
+## Scope
+We are working on adding support for the OpenID Connect protocol to the Shibboleth Identity Provider v3. Realistically, these
+are the items we are planning to address:
+
+* Authorization code workflow
+* Administration and registration of OIDC RPs with the IdP. 
+* Ability to resolve, consume and release OIDC claims, taking advantage of IdP's machinery to release attributes. 
+* Ability to configure an expiration and revocation policy around OIDC access and refresh tokens from an admin perspective. 
+
+Note that no significant UI enhancements are taken into account. All configuration and changes are directly assumed to be applied to the IdP config without the presence of a web interface to facilitate. This includes administration and management of metadata, authZ codes and more.
+
+### Resources
+* http://openid.net/specs/openid-connect-basic-1_0.html
+* http://openid.net/specs/openid-connect-implicit-1_0.html
+ 
+### Planned
+
+The following may be considered in future versions:
+
+* Dynamic discovery
+* Implicit flow
+* Hybrid flow
+* Dynamic RP registration
+* Logout
+* Web UIs that facilitate managing tokens, whitelisted/blacklisted RPs, etc. 
+
+### Toolkit
+[MITREid Connect](https://github.com/mitreid-connect/) will be used as a starting point and a foundation on top of which
+adaptors will be built to close the gap.
+
 ## Versions
 - [Shibboleth Identity Provider v3.1.3-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - Apache Maven v3.x
