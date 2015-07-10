@@ -249,7 +249,7 @@
         <install.dir>${project.basedir}</install.dir>
 
         <jasig-license-lookup-url>https://source.jasig.org/licenses/license-mappings.xml</jasig-license-lookup-url>
-        <jasig-notice-template-url>https://source.jasig.org/licenses/NOTICE.template</jasig-notice-template-url>
+        <jasig-notice-template-url>https://raw.githubusercontent.com/uchicago/shibboleth-oidc/master/NOTICE.template</jasig-notice-template-url>
     </properties>
     <profiles>
         <profile>
