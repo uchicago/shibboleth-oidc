@@ -29,3 +29,5 @@ idp-metadata.xml
 
 **/overlays/
 >>>>>>> 99d4d207d50fa2b45bca1dacd61c3de55d395d98
+/.settings/
+/.project
