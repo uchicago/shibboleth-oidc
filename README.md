@@ -1,8 +1,6 @@
 # shibboleth-oidc
 OpenIDConnect support for the Shibboleth Identity Provider version 3
 
-[![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
-
 ## Scope
 We are working on adding support for the OpenID Connect protocol to the Shibboleth Identity Provider v3. Realistically, these
 are the items we are planning to address:
@@ -38,7 +36,7 @@ adaptors will be built to close the gap.
 - Apache Maven v3.x
 - JDK 8
 
-## Build
+## Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,
 and adjust the values of hostname, entityId, passwords, etc. Then from the command prompt, execute:
 
