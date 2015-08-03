@@ -62,7 +62,6 @@
             <version>6.9.4</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
     
     <modules>
@@ -242,7 +241,7 @@
         <maven.plugin.keytool>1.5</maven.plugin.keytool>
         <maven.plugin.compiler>3.3</maven.plugin.compiler>
         <maven.plugin.properties>1.0-alpha-2</maven.plugin.properties>
-        <maven.plugin.pgpverify>1.0.0</maven.plugin.pgpverify>
+        <maven.plugin.pgpverify>1.1.0</maven.plugin.pgpverify>
         <maven-checkstyle-plugin>2.15</maven-checkstyle-plugin>
         <project.build.sourceVersion>1.8</project.build.sourceVersion>
         <project.build.targetVersion>1.8</project.build.targetVersion>
