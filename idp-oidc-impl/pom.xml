@@ -29,7 +29,11 @@
     <name>Shibboleth Identity Provider OpenID Connect Implementation</name>
 
     <dependencies>
-
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-oidc-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <properties>
