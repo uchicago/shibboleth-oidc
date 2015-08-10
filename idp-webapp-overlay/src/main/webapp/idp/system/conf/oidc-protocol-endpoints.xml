@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the University Corporation for Advanced Internet Development,
+    Inc. (UCAID) under one or more contributor license agreements.  See the
+    NOTICE file distributed with this work for additional information regarding
+    copyright ownership. The UCAID licenses this file to You under the Apache
+    License, Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <security:http pattern="/token"
+                   create-session="stateless"
+                   authentication-manager-ref="clientAuthenticationManager"
+                   entry-point-ref="oauthAuthenticationEntryPoint"
+                   use-expressions="true">
+        <security:intercept-url pattern="/token" access="permitAll" method="OPTIONS" /> <!-- allow OPTIONS calls without auth for CORS stuff -->
+        <security:intercept-url pattern="/token" access="isAuthenticated()" />
+        <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
+        <!-- include this only if you need to authenticate clients via request parameters -->
+        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
+        <security:custom-filter ref="clientCredentialsEndpointFilter" after="BASIC_AUTH_FILTER" />
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+        <security:access-denied-handler ref="oauthAccessDeniedHandler" />
+    </security:http>
+
+    <!-- Allow open access to discovery endpoints -->
+    <security:http pattern="/#{T(org.mitre.openid.connect.web.JWKSetPublishingEndpoint).URL}**" use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
+        <security:intercept-url pattern="/#{T(org.mitre.openid.connect.web.JWKSetPublishingEndpoint).URL}**" access="permitAll"/>
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+    </security:http>
+    <security:http pattern="/#{T(org.mitre.discovery.web.DiscoveryEndpoint).WELL_KNOWN_URL}/**" use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
+        <security:intercept-url pattern="/#{T(org.mitre.discovery.web.DiscoveryEndpoint).WELL_KNOWN_URL}/**" access="permitAll"/>
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+    </security:http>
+
+    <!-- Allow open access to all static resources -->
+    <security:http pattern="/resources/**" use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
+        <security:intercept-url pattern="/resources/**" access="permitAll"/>
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+    </security:http>
+
+    <!-- OAuth-protect API and other endpoints -->
+    <security:http pattern="/#{T(org.mitre.openid.connect.web.DynamicClientRegistrationEndpoint).URL}/**" use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
+        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+        <security:expression-handler ref="oauthWebExpressionHandler" />
+        <security:intercept-url pattern="/register/**" access="permitAll"/>
+    </security:http>
+
+    <security:http pattern="/#{T(org.mitre.openid.connect.web.ProtectedResourceRegistrationEndpoint).URL}/**" use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
+        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+        <security:expression-handler ref="oauthWebExpressionHandler" />
+        <security:intercept-url pattern="/resource/**" access="permitAll"/>
+    </security:http>
+
+    <security:http pattern="/#{T(org.mitre.openid.connect.web.UserInfoEndpoint).URL}**" use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
+        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+        <security:expression-handler ref="oauthWebExpressionHandler" />
+    </security:http>
+
+    <security:http pattern="/#{T(org.mitre.openid.connect.web.RootController).API_URL}/**" use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="never">
+        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <security:expression-handler ref="oauthWebExpressionHandler" />
+    </security:http>
+
+    <security:http pattern="/#{T(org.mitre.oauth2.web.IntrospectionEndpoint).URL}**"
+                   use-expressions="true"
+                   entry-point-ref="oauthAuthenticationEntryPoint"
+                   create-session="stateless"
+                   authentication-manager-ref="clientAuthenticationManager">
+        <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
+        <!-- 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" /> -->
+        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+        <security:custom-filter ref="clientCredentialsEndpointFilter" after="BASIC_AUTH_FILTER" />
+    </security:http>
+
+    <security:http pattern="/#{T(org.mitre.oauth2.web.RevocationEndpoint).URL}**"
+                   use-expressions="true"
+                   entry-point-ref="oauthAuthenticationEntryPoint"
+                   create-session="stateless"
+                   authentication-manager-ref="clientAuthenticationManager">
+        <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
+        <!-- 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" /> -->
+        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+        <security:custom-filter ref="clientCredentialsEndpointFilter" after="BASIC_AUTH_FILTER" />
+    </security:http>
+</beans>
