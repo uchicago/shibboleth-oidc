@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the University Corporation for Advanced Internet Development,
+    Inc. (UCAID) under one or more contributor license agreements.  See the
+    NOTICE file distributed with this work for additional information regarding
+    copyright ownership. The UCAID licenses this file to You under the Apache
+    License, Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="packagesToScan" value="org.mitre" />
+        <property name="persistenceUnitName" value="oidcstorageservice" />
+        <!--
+        <property name="persistenceProviderClass" value="org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider" />
+        -->
+        <property name="persistenceProviderClass" value="org.eclipse.persistence.jpa.PersistenceProvider" />
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter" ref="jpaAdapter" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="eclipselink.weaving" value="false" />
+                <entry key="eclipselink.logging.level" value="INFO" />
+                <entry key="eclipselink.logging.level.sql" value="INFO" />
+                <entry key="eclipselink.cache.shared.default" value="false" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="jdbcUrl" value="jdbc:hsqldb:mem:oic;sql.syntax_mys=true" />
+        <property name="username" value="oic" />
+        <property name="password" value="oic" />
+    </bean>
+
+    <!-- Use the following to set up the OIC tables in the in-memory DB
+           If you are using a file based HSQLDB you should not run this every time. -->
+    <jdbc:initialize-database data-source="dataSource">
+        <jdbc:script location="classpath:/db/tables/hsql_database_tables.sql"/>
+        <jdbc:script location="classpath:/db/tables/security-schema.sql"/>
+
+    </jdbc:initialize-database>
+
+    <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+        <!--
+        <property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
+        -->
+        <property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
+        <property name="showSql" value="true" />
+    </bean>
+
+</beans>

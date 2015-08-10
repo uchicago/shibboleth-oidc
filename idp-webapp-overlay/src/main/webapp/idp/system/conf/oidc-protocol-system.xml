@@ -34,7 +34,7 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.1.xsd
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!-- Application Context -->
@@ -218,96 +218,9 @@
     <bean id="oauthRequestValidator" class="org.mitre.oauth2.token.StructuredScopeAwareOAuth2RequestValidator" />
 
     <!-- Encryption and Signing -->
-    <bean id="defaultKeyStore" class="org.mitre.jose.keystore.JWKSetKeyStore">
-        <property name="location" value="classpath:keystore.jwks" />
-    </bean>
-
-    <bean id="defaultsignerService" class="org.mitre.jwt.signer.service.impl.DefaultJWTSigningAndValidationService">
-        <constructor-arg name="keyStore" ref="defaultKeyStore" />
-        <property name="defaultSignerKeyId" value="rsa1" />
-        <property name="defaultSigningAlgorithmName" value="RS256" />
-    </bean>
-
-    <bean id="defaultEncryptionService" class="org.mitre.jwt.encryption.service.impl.DefaultJWTEncryptionAndDecryptionService">
-        <constructor-arg name="keyStore" ref="defaultKeyStore" />
-        <property name="defaultAlgorithm" value="RSA1_5" />
-        <property name="defaultDecryptionKeyId" value="rsa1" />
-        <property name="defaultEncryptionKeyId" value="rsa1" />
-    </bean>
-
-    <!-- JPA Storage Service Config -->
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
-
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="packagesToScan" value="org.mitre" />
-        <property name="persistenceUnitName" value="oidcstorageservice" />
-        <!--
-        <property name="persistenceProviderClass" value="org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider" />
-        -->
-        <property name="persistenceProviderClass" value="org.eclipse.persistence.jpa.PersistenceProvider" />
-        <property name="dataSource" ref="dataSource" />
-        <property name="jpaVendorAdapter" ref="jpaAdapter" />
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="eclipselink.weaving" value="false" />
-                <entry key="eclipselink.logging.level" value="INFO" />
-                <entry key="eclipselink.logging.level.sql" value="INFO" />
-                <entry key="eclipselink.cache.shared.default" value="false" />
-            </map>
-        </property>
-    </bean>
-
-    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-        <property name="jdbcUrl" value="jdbc:hsqldb:mem:oic;sql.syntax_mys=true" />
-        <property name="username" value="oic" />
-        <property name="password" value="oic" />
-    </bean>
-
-    <!-- Use the following to set up the OIC tables in the in-memory DB
-           If you are using a file based HSQLDB you should not run this every time. -->
-    <jdbc:initialize-database data-source="dataSource">
-        <jdbc:script location="classpath:/db/tables/hsql_database_tables.sql"/>
-        <jdbc:script location="classpath:/db/tables/security-schema.sql"/>
-
-    </jdbc:initialize-database>
-
-    <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
-        <!--
-        <property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
-        -->
-        <property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
-        <property name="showSql" value="true" />
-    </bean>
-
-    <!-- User Context -->
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider>
-            <security:jdbc-user-service data-source-ref="dataSource"/>
-        </security:authentication-provider>
-    </security:authentication-manager>
-
-    <mvc:view-controller path="/login" view-name="login" />
-
-    <security:http pattern="/login**" use-expressions="true" entry-point-ref="http403EntryPoint">
-        <security:intercept-url pattern="/login**" access="permitAll"/>
-    </security:http>
-
-    <security:http disable-url-rewriting="true" use-expressions="true">
-        <security:form-login login-page="/login" authentication-failure-url="/login?error=failure"
-                             authentication-success-handler-ref="authenticationTimeStamper" />
-        <security:intercept-url pattern="/**" access="permitAll" />
-        <security:custom-filter ref="authRequestFilter" after="SECURITY_CONTEXT_FILTER" />
-        <security:logout logout-url="/logout" />
-        <security:anonymous />
-        <security:expression-handler ref="oauthWebExpressionHandler" />
-        <security:headers>
-            <security:frame-options policy="DENY" />
-        </security:headers>
-    </security:http>
-
-    <!-- Import User Specific Settings -->
+    <import resource="oidc-protocol-encryption.xml" />
+    <import resource="oidc-protocol-storage.xml" />
+    <import resource="oidc-protocol-user-context.xml" />
     <import resource="../../conf/oidc-protocol.xml" />
+
 </beans>
