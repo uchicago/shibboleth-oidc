@@ -36,10 +36,6 @@
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>spring-security-core</artifactId>
-                    <groupId>org.springframework.security</groupId>
-                </exclusion>
-                <exclusion>
                     <artifactId>spring-webmvc</artifactId>
                     <groupId>org.springframework</groupId>
                 </exclusion>
