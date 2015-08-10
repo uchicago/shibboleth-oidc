@@ -91,7 +91,7 @@
 
 
     <properties>
-        <mitreid.version>1.2.0-RC2</mitreid.version>
+        <mitreid.version>1.2.0</mitreid.version>
         <install.dir>${project.parent.basedir}</install.dir>
     </properties>
 
