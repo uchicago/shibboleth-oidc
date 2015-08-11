@@ -59,7 +59,10 @@
                 <ref bean="SAML2.ECP" />
                 <ref bean="SAML2.Logout" />
                 <ref bean="SAML2.AttributeQuery" />
+                <ref bean="CAS.LoginConfiguration" />
                 <ref bean="SAML2.ArtifactResolution" />
+                <ref bean="CAS.ProxyConfiguration" />
+                <ref bean="CAS.ValidateConfiguration" />
             </list>
         </property>
     </bean>

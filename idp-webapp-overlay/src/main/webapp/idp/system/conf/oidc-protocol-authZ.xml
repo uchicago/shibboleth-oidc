@@ -44,10 +44,9 @@
             user-approval-handler-ref="tofuUserApprovalHandler"
             request-validator-ref="oauthRequestValidator"
             redirect-resolver-ref="blacklistAwareRedirectResolver"
-            authorization-endpoint-url="/authorize"
-            token-endpoint-url="/token"
+            authorization-endpoint-url="/oidc/authorize"
+            token-endpoint-url="/oidc/token"
             error-page="/error">
-
         <oauth:authorization-code authorization-code-services-ref="defaultOAuth2AuthorizationCodeService"/>
         <oauth:implicit />
         <oauth:refresh-token/>
@@ -112,5 +111,6 @@
 
     <oauth:web-expression-handler id="oauthWebExpressionHandler" />
 
-    <oauth:resource-server id="resourceServerFilter" token-services-ref="defaultOAuth2ProviderTokenService" />
+    <oauth:resource-server id="resourceServerFilter"
+                           token-services-ref="defaultOAuth2ProviderTokenService" />
 </beans>

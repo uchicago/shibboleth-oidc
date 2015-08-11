@@ -159,10 +159,6 @@
                                     <name>org.eclipse.jetty.annotations.maxWait</name>
                                     <value>240</value>
                                 </systemProperty>
-                                <systemProperty>
-                                    <name>logback.configurationFile</name>
-                                    <value>${project.basedir}/etc/jetty/logback.xml</value>
-                                </systemProperty>
                             </systemProperties>
                             <jvmArgs>-Didp.home=${project.build.directory}/${project.build.finalName}/idp -Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n</jvmArgs>
                         </configuration>

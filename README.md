@@ -52,7 +52,7 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 ### Subsequent installs
 
 ```bash
-mvn clean install
+mvn clean package
 ```
 
 ## Run
@@ -68,6 +68,12 @@ From the root directory, run the following command:
 
 ```bash
 mvn verify -Dhost=jetty
+```
+
+Or all in one attempt:
+
+```bash
+mvn clean package verify -Dhost=jetty
 ```
 
 This will spin up an embedded Jetty server to load the IdP context. Remote debugging is available under port 5000 from your IDE. 

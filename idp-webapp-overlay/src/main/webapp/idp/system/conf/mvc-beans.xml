@@ -49,16 +49,14 @@
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
     
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
-    
+
+    <!-- Required by Spring Security OIDC -->
     <bean class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver">
-        <!-- We can map specific exceptions to views here if needed. -->
-        <!--
-        <property name="exceptionMappings">
-            <props>
-                <prop key="FlowExecutionRestorationFailureException">error</prop>
-            </props>
+        <property name="excludedExceptions">
+            <array>
+                <value>org.springframework.security.authentication.InsufficientAuthenticationException</value>
+            </array>
         </property>
-        -->
         <property name="defaultErrorView" value="%{idp.errors.defaultView:error}"/>
     </bean>
     

@@ -39,6 +39,7 @@
 
     <!-- Application Context -->
     <context:component-scan annotation-config="true" base-package="org.mitre" />
+    <context:component-scan annotation-config="true" base-package="net.shibboleth.idp.oidc" />
     <tx:annotation-driven transaction-manager="transactionManager" />
 
     <mvc:annotation-driven ignore-default-model-on-redirect="true">
@@ -55,7 +56,7 @@
 
     <mvc:default-servlet-handler />
 
-    <import resource="oidc-protocol-authN.xml" />
+    <import resource="oidc-protocol-authZ.xml" />
     <import resource="oidc-protocol-endpoints.xml" />
     <import resource="oidc-protocol-encryption.xml" />
     <import resource="oidc-protocol-storage.xml" />

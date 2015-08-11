@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the University Corporation for Advanced Internet Development,
+    Inc. (UCAID) under one or more contributor license agreements.  See the
+    NOTICE file distributed with this work for additional information regarding
+    copyright ownership. The UCAID licenses this file to You under the Apache
+    License, Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-init-method="initialize">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+          p:placeholderPrefix="%{"
+          p:placeholderSuffix="}" />
+
+    <bean id="initializeProfileRequestContext"
+          class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+          p:profileId="#{T(net.shibboleth.idp.oidc.config.LoginConfiguration).PROFILE_ID}"
+          p:loggingId="%{idp.service.logging.oidc:OIDC}"
+          p:browserProfile="true" />
+
+    <bean id="initializeLoginAction"
+          class="net.shibboleth.idp.oidc.flow.InitializeLoginAction" />
+
+    <bean id="checkAuthenticationRequiredAction"
+          class="net.shibboleth.idp.oidc.flow.CheckAuthenticationRequiredAction" />
+
+    <bean id="buildAuthenticationContextAction"
+          class="net.shibboleth.idp.oidc.flow.BuildAuthenticationContextAction" />
+
+    <bean id="populateSessionContext"
+          class="net.shibboleth.idp.session.impl.PopulateSessionContext"
+          scope="prototype"
+          p:activationCondition="%{idp.session.enabled:true}"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:sessionResolver-ref="shibboleth.SessionManager" />
+
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+    <bean id="buildRelyingPartyContextAction"
+          class="net.shibboleth.idp.oidc.flow.BuildRelyingPartyContextAction"/>
+
+    <!--
+<bean id="buildSAMLMetadataContextAction"
+      class="net.shibboleth.idp.oidc.flow.BuildSAMLMetadataContextAction" />
+
+<bean id="publishProtocolRequestAction"
+      class="net.shibboleth.idp.oidc.flow.PublishProtocolMessageAction"
+      c:isRequest="true" />
+
+<bean id="publishProtocolResponseAction"
+      class="net.shibboleth.idp.oidc.flow.PublishProtocolMessageAction"
+      c:isRequest="false" />
+
+<bean id="selectProfileConfiguration"
+      class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
+      scope="prototype" />
+
+<bean id="selectRelyingPartyConfiguration"
+      class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
+      scope="prototype"
+      p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+
+<bean id="validateIdPSessionAction"
+      class="net.shibboleth.idp.oidc.flow.ValidateIdpSessionAction"
+      c:resolver-ref="shibboleth.SessionManager" />
+      -->
+</beans>

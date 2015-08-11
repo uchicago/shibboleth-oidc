@@ -20,14 +20,14 @@
 <configuration>
 
     <!-- Logs IdP, but not OpenSAML, messages -->
-    <logger name="net.shibboleth.idp" level="DEBUG"/>
+    <logger name="net.shibboleth.idp" level="INFO"/>
 
     <!-- Logs OpenSAML, but not IdP, messages -->
     <logger name="org.opensaml.saml" level="INFO"/>
-    
+
     <!-- Logs LDAP related messages -->
     <logger name="org.ldaptive" level="WARN"/>
-    
+
     <!-- Logs inbound and outbound protocols messages at DEBUG level -->
     <!--
     <logger name="PROTOCOL_MESSAGE" level="DEBUG" />
@@ -39,27 +39,65 @@
     -->
 
     <!-- Logs standard system properties during startup at DEBUG level -->
-    <!-- 
+    <!--
     <logger name="net.shibboleth.idp.log.LogbackLoggingService" level="DEBUG" />
     -->
+
+    <logger name="net.shibboleth.idp.oidc" level="DEBUG" additivity="false">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+
+    <logger name="org.mitre" level="DEBUG" additivity="false">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+
+    <logger name="org.hibernate" level="INFO">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+
+    <logger name="org.springframework.web" level="INFO">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+    <logger name="org.springframework.webflow" level="INFO">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+
+    <logger name="org.springframework.security.oauth2" level="DEBUG">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+
+    <logger name="org.springframework.security" level="INFO">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+
+    <logger name="org.springframework.web" level="INFO">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
 
     <!-- Especially chatty. -->
     <logger name="net.shibboleth.idp.saml.attribute.mapping" level="INFO" />
     <logger name="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" level="INFO" />
-   
+
     <logger name="org.apache.xml.security" level="INFO" />
-    <logger name="org.springframework" level="ERROR"/>
     <logger name="org.apache.catalina" level="ERROR"/>
     <logger name="org.eclipse.jetty" level="ERROR"/>
-    
+
     <!-- Note that ${idp.home} is the only property available for variable substitution. -->
-    
+
     <!-- Process log. -->
     <appender name="IDP_PROCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${CATALINA_HOME}/logs/idp-process.log</File>
-        
+        <File>${idp.home}/logs/idp-process.log</File>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${CATALINA_HOME}/logs/idp-process-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${idp.home}/logs/idp-process-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>180</maxHistory>
         </rollingPolicy>
 
@@ -68,32 +106,32 @@
             <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
         </encoder>
     </appender>
-    
+
     <appender name="IDP_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- Suppress anything below WARN. -->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
         </filter>
-        
-        <File>${CATALINA_HOME}/logs/idp-warn.log</File>
-        
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${CATALINA_HOME}/logs/idp-warn-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
-            <maxHistory>180</maxHistory>
-        </rollingPolicy>
-        
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <charset>UTF-8</charset>
-            <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
-        </encoder>
-    </appender>
-    
-    <!-- Audit log. -->
-    <appender name="IDP_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${CATALINA_HOME}/logs/idp-audit.log</File>
+
+        <File>${idp.home}/logs/idp-warn.log</File>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${CATALINA_HOME}/logs/idp-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${idp.home}/logs/idp-warn-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>180</maxHistory>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- Audit log. -->
+    <appender name="IDP_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.home}/logs/idp-audit.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${idp.home}/logs/idp-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>180</maxHistory>
         </rollingPolicy>
 
@@ -102,13 +140,21 @@
             <Pattern>%msg%n</Pattern>
         </encoder>
     </appender>
-    
+
+    <appender name="IDP_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%-4relative [%thread] %-5level %logger - %msg %n</pattern>
+        </encoder>
+    </appender>
+
     <!-- Consent audit log. -->
     <appender name="IDP_CONSENT_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${CATALINA_HOME}/logs/idp-consent-audit.log</File>
+        <File>${idp.home}/logs/idp-consent-audit.log</File>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${CATALINA_HOME}/logs/idp-consent-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${idp.home}/logs/idp-consent-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>180</maxHistory>
         </rollingPolicy>
 
@@ -125,10 +171,11 @@
     <logger name="Shibboleth-Consent-Audit" level="ALL">
         <appender-ref ref="IDP_CONSENT_AUDIT"/>
     </logger>
-    
-    <root level="INFO">
+
+    <root level="WARN">
         <appender-ref ref="IDP_PROCESS"/>
         <appender-ref ref="IDP_WARN" />
+        <appender-ref ref="IDP_CONSOLE" />
     </root>
 
 </configuration>
