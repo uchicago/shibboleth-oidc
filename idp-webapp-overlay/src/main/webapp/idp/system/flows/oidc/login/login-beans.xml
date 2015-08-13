@@ -52,35 +52,21 @@
           p:httpServletRequest-ref="shibboleth.HttpServletRequest"
           p:sessionResolver-ref="shibboleth.SessionManager" />
 
-
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <bean id="buildRelyingPartyContextAction"
           class="net.shibboleth.idp.oidc.flow.BuildRelyingPartyContextAction"/>
 
-    <!--
-<bean id="buildSAMLMetadataContextAction"
+    <bean id="buildSAMLMetadataContextAction"
       class="net.shibboleth.idp.oidc.flow.BuildSAMLMetadataContextAction" />
 
-<bean id="publishProtocolRequestAction"
-      class="net.shibboleth.idp.oidc.flow.PublishProtocolMessageAction"
-      c:isRequest="true" />
+    <bean id="selectProfileConfiguration"
+          class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
+          scope="prototype" />
 
-<bean id="publishProtocolResponseAction"
-      class="net.shibboleth.idp.oidc.flow.PublishProtocolMessageAction"
-      c:isRequest="false" />
+    <bean id="selectRelyingPartyConfiguration"
+          class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
+          scope="prototype"
+          p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
-<bean id="selectProfileConfiguration"
-      class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
-      scope="prototype" />
-
-<bean id="selectRelyingPartyConfiguration"
-      class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
-      scope="prototype"
-      p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
-
-<bean id="validateIdPSessionAction"
-      class="net.shibboleth.idp.oidc.flow.ValidateIdpSessionAction"
-      c:resolver-ref="shibboleth.SessionManager" />
-      -->
 </beans>

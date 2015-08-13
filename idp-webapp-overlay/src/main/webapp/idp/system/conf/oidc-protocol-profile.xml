@@ -37,31 +37,6 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- Application Context -->
-    <context:component-scan annotation-config="true" base-package="org.mitre" />
-    <context:component-scan annotation-config="true" base-package="net.shibboleth.idp.oidc" />
-    <tx:annotation-driven transaction-manager="transactionManager" />
-
-    <mvc:annotation-driven ignore-default-model-on-redirect="true">
-        <mvc:message-converters>
-            <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
-            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
-        </mvc:message-converters>
-    </mvc:annotation-driven>
-
-    <mvc:interceptors>
-        <bean id="userInfoInterceptor" class="org.mitre.openid.connect.web.UserInfoInterceptor" />
-        <bean id="serverConfigInterceptor" class="org.mitre.openid.connect.web.ServerConfigInterceptor" />
-    </mvc:interceptors>
-
-    <mvc:default-servlet-handler />
-
-    <import resource="oidc-protocol-authZ.xml" />
-    <import resource="oidc-protocol-endpoints.xml" />
-    <import resource="oidc-protocol-encryption.xml" />
-    <import resource="oidc-protocol-storage.xml" />
-    <import resource="oidc-protocol-context.xml" />
-    <import resource="oidc-protocol-profile.xml" />
-    <import resource="../../conf/oidc-protocol.xml" />
-
+    <bean id="OIDC.LoginConfiguration"
+          class="net.shibboleth.idp.oidc.config.LoginConfiguration" />
 </beans>

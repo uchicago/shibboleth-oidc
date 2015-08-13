@@ -26,47 +26,50 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
-
+                           
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-          p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
-    <bean id="shibboleth.authn.Cas.externalAuthnPath" class="java.lang.String"
-          c:_0="contextRelative:Authn/ExtCas" />
-
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-
-    <bean id="SetRPUIInformation"
-          class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-          p:activationCondition-ref="shibboleth.authn.Cas.populateUIInfo"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest">
-        <property name="fallbackLanguages">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+    <!--
+    Unverified RP configuration, defaults to no support for any profiles. Add <ref> elements to the list
+    to enable specific default profile settings (as below), or create new beans inline to override defaults.
+    
+    "Unverified" typically means the IdP has no metadata, or equivalent way of assuring the identity and
+    legitimacy of a requesting system. To run an "open" IdP, you can enable profiles here.
+    -->
+    <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
+        <property name="profileConfigurations">
+            <list>
+            <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
+            </list>
         </property>
     </bean>
 
-    <bean id="ValidateExternalAuthentication"
-          class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
-          p:classifiedMessages-ref="shibboleth.authn.Cas.ClassifiedMessageMap"
-          p:resultCachingPredicate="#{getObject('shibboleth.authn.Cas.resultCachingPredicate')}" />
-
-    <util:constant id="shibboleth.authn.Cas.populateUIInfo" static-field="java.lang.Boolean.FALSE" />
-
-    <util:map id="shibboleth.authn.Cas.ClassifiedMessageMap">
-        <entry key="NoPassive">
+    <!--
+    Default configuration, with default settings applied for all profiles, and enables
+    the attribute-release consent flow.
+    -->
+    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
+        <property name="profileConfigurations">
             <list>
-                <value>NoPassive</value>
+                <bean parent="Shibboleth.SSO" p:postAuthenticationFlows="attribute-release" />
+                <ref bean="SAML1.AttributeQuery" />
+                <ref bean="SAML1.ArtifactResolution" />
+                <bean parent="SAML2.SSO" p:postAuthenticationFlows="attribute-release" />
+                <ref bean="SAML2.ECP" />
+                <ref bean="SAML2.Logout" />
+                <ref bean="SAML2.AttributeQuery" />
+                <ref bean="CAS.LoginConfiguration" />
+                <ref bean="SAML2.ArtifactResolution" />
+                <ref bean="CAS.ProxyConfiguration" />
+                <ref bean="CAS.ValidateConfiguration" />
+                <ref bean="OIDC.LoginConfiguration" />
             </list>
-        </entry>
-        <entry key="InvalidTicket">
-            <list>
-                <value>NoCredential</value>
-            </list>
-        </entry>
+        </property>
+    </bean>
 
-    </util:map>
+    <util:list id="shibboleth.RelyingPartyOverrides">
+
+    </util:list>
 
 </beans>

@@ -26,17 +26,18 @@
         <evaluate expression="initializeProfileRequestContext"/>
         <evaluate expression="populateSessionContext"/>
         <evaluate expression="initializeLoginAction" />
-
-
         <evaluate expression="buildRelyingPartyContextAction" />
-        <!--
         <evaluate expression="buildSAMLMetadataContextAction" />
         <evaluate expression="selectRelyingPartyConfiguration" />
         <evaluate expression="selectProfileConfiguration" />
-        <evaluate expression="publishProtocolRequestAction" />
-        -->
         <evaluate expression="'proceed'" />
+        <transition on="proceed" to="checkAuthenticationRequired" />
+    </action-state>
 
+    <action-state id="checkAuthenticationRequired">
+        <evaluate expression="checkAuthenticationRequiredAction"/>
+        <transition on="sessionNotFound" to="buildAuthenticationContext" />
+        <transition on="sessionFound" to="redirectToService" />
     </action-state>
 
     <action-state id="buildAuthenticationContext">
@@ -46,8 +47,11 @@
 
     <subflow-state id="authenticate" subflow="authn">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="misagh" />
+        <transition on="proceed" to="redirectToService" />
     </subflow-state>
+
+    <end-state id="redirectToService" view="externalRedirect:www.google.com">
+    </end-state>
 
     <bean-import resource="login-beans.xml" />
 

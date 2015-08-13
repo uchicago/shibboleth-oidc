@@ -20,7 +20,7 @@
 <configuration>
 
     <!-- Logs IdP, but not OpenSAML, messages -->
-    <logger name="net.shibboleth.idp" level="INFO"/>
+    <logger name="net.shibboleth.idp" level="DEBUG"/>
 
     <!-- Logs OpenSAML, but not IdP, messages -->
     <logger name="org.opensaml.saml" level="INFO"/>
@@ -43,48 +43,38 @@
     <logger name="net.shibboleth.idp.log.LogbackLoggingService" level="DEBUG" />
     -->
 
-    <logger name="net.shibboleth.idp.oidc" level="DEBUG" additivity="false">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
     <logger name="org.mitre" level="DEBUG" additivity="false">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.hibernate" level="INFO">
+    <logger name="org.hibernate" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.web" level="INFO">
+    <logger name="org.springframework.web" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
-    <logger name="org.springframework.webflow" level="INFO">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
-    <logger name="org.springframework.security.oauth2" level="DEBUG">
+    <logger name="org.springframework.webflow" level="DEBUG">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.security" level="INFO">
+    <logger name="org.springframework.security.oauth2" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.web" level="INFO">
+    <logger name="org.springframework.security" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
     <!-- Especially chatty. -->
-    <logger name="net.shibboleth.idp.saml.attribute.mapping" level="INFO" />
-    <logger name="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" level="INFO" />
+    <logger name="net.shibboleth.idp.saml.attribute.mapping" level="WARN" />
+    <logger name="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" level="WARN" />
 
     <logger name="org.apache.xml.security" level="INFO" />
     <logger name="org.apache.catalina" level="ERROR"/>

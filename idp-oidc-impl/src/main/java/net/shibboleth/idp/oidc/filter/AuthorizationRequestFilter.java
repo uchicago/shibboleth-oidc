@@ -60,7 +60,15 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession();
 
-        String path = request.getServletPath().concat(request.getPathInfo());
+        String servletPath = request.getServletPath();
+        String pathInfo = request.getPathInfo();
+        if (Strings.isNullOrEmpty(servletPath) || Strings.isNullOrEmpty(pathInfo)) {
+            log.debug("No servlet path available. Not an authorization request. Invoking filter chain normally");
+            chain.doFilter(req, res);
+            return;
+        }
+
+        String path = servletPath.concat(pathInfo);
         if (!path.startsWith("/profile/oidc/authorize")) {
             log.debug("Not an authorization request. Invoking filter chain normally");
             chain.doFilter(req, res);

@@ -11,7 +11,6 @@ import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -51,7 +50,7 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
 
         rpc.setVerified(true);
         rpc.setRelyingPartyId(client.getClientId());
-        this.log.debug("{} Setting up RP context for verified relying party {}",
+        log.debug("{} Setting up RP context for verified relying party {}",
                 getLogPrefix(), client.getClientId());
         profileRequestContext.addSubcontext(rpc);
         return ActionSupport.buildProceedEvent(this);

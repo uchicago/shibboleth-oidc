@@ -34,8 +34,9 @@
     Define custom flows by using the filesystem directly. Flows will be named based
     on the directories between the base-path and the flow file ending in -flow.xml
     -->
-    <webflow:flow-registry id="flowRegistry" base-path="%{idp.home}/flows" flow-builder-services="flowBuilderServices">
-        <webflow:flow-location-pattern value="/**/*-flow.xml" />
+    <webflow:flow-registry id="flowRegistry" base-path="%{idp.home}/flows"
+                           flow-builder-services="flowBuilderServices">
+        <webflow:flow-location-pattern  value="/**/*-flow.xml" />
 
         <!-- Abstract base flow for admin flows. -->
         <webflow:flow-location id="admin.abstract" path="../system/flows/admin/admin-abstract-flow.xml" />
