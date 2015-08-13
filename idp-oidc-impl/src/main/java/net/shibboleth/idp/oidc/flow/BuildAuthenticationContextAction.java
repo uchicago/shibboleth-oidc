@@ -34,6 +34,9 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Builds an authentication context message from an incoming request.
+ */
 public class BuildAuthenticationContextAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(BuildAuthenticationContextAction.class);
 
@@ -42,11 +45,19 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
     @Nullable
     private AuthnRequest authnRequest;
 
+    /**
+     * Instantiates a new authentication context action.
+     */
     public BuildAuthenticationContextAction() {
         requestLookupStrategy =
                 Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
     }
 
+    /**
+     * Sets request lookup strategy.
+     *
+     * @param strategy the strategy
+     */
     public void setRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         requestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");

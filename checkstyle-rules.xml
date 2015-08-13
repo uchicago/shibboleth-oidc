@@ -52,7 +52,7 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Qualifying  with the &quot;this&quot; keyword"/>
             <property name="severity" value="error"/>
-            <property name="format" value="((this\.)|(super\.))\w+\("/>
+            <property name="format" value="(this\.)\w+\("/>
             <property name="message" value="Do not use the this keyword"/>
         </module>
         <module name="RegexpSinglelineJava">

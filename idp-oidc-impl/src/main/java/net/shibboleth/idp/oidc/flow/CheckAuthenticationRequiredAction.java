@@ -28,12 +28,24 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Determines whether authentication is required by examining both SSO session state.
+ * Returns one of the following events:
+ *
+ * <ul>
+ *     <li>{@link Events#SessionFound sessionFound} - Authentication not required since session already exists.</li>
+ *     <li>{@link Events#SessionNotFound sessionNotFound} - Authentication required since no active session exists.</li>
+ * </ul>
+ */
 public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(CheckAuthenticationRequiredAction.class);
 
-    public CheckAuthenticationRequiredAction() {
-    }
-
+    /**
+     * Gets session bound to the idp.
+     *
+     * @param prc the prc
+     * @return the idp session
+     */
     @Nonnull
     protected IdPSession getIdPSession(ProfileRequestContext prc) {
         SessionContext sessionContext = (SessionContext) prc.getSubcontext(SessionContext.class);

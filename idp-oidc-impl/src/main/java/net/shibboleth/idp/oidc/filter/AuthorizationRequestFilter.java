@@ -49,15 +49,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Authorization initial filter that is executed by Spring Security.
+ * Evaluates the OpenId Connect authorization request, builds it and passes
+ * it down to underlying flows.
+ */
 @Component("authzRequestFilter")
 public class AuthorizationRequestFilter extends GenericFilterBean {
 
+    /** Attribute name to store the authorization request. */
     public static final String ATTRIBUTE_OIDC_AUTHZ_REQUEST = "OIDC_AUTHZ_REQUEST";
-    public static final  String ATTRIBUTE_OIDC_CLIENT = "OIDC_CLIENT";
+
+    /** Attribute name to store the openid connect client. */
+    public static final String ATTRIBUTE_OIDC_CLIENT = "OIDC_CLIENT";
 
     private static final String PROMPTED = "PROMPT_FILTER_PROMPTED";
     private static final String PROMPT_REQUESTED = "PROMPT_FILTER_REQUESTED";
-
+    private static final String PROFILE_OIDC_AUTHORIZE = "/profile/oidc/authorize";
 
     private final Logger log = LoggerFactory.getLogger(AuthorizationRequestFilter.class);
 
@@ -112,8 +120,8 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
             String prompt = (String) authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
             if (prompt != null) {
                 log.debug("Authorization request contains prompt {}");
-                if (checkForPrompts(prompt, req, res, chain,
-                        response, session, client, authRequest)) {
+                if (checkForPrompts(prompt, response, session, client, authRequest)) {
+                    chain.doFilter(req, res);
                     return;
                 }
             } else if (authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE) != null ||
@@ -132,6 +140,19 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         }
     }
 
+    /**
+     * Determine profile path for filter execution.
+     * Ignores all request patterns that do not start
+     * with {@value #PROFILE_OIDC_AUTHORIZE}.
+     *
+     * @param req the req
+     * @param res the res
+     * @param chain the chain
+     * @param request the request
+     * @return the boolean
+     * @throws IOException the iO exception
+     * @throws ServletException the servlet exception
+     */
     private boolean determineProfilePathForExceution(final ServletRequest req,
                                                      final ServletResponse res,
                                                      final FilterChain chain,
@@ -146,7 +167,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         }
 
         String path = servletPath.concat(pathInfo);
-        if (!path.startsWith("/profile/oidc/authorize")) {
+        if (!path.startsWith(PROFILE_OIDC_AUTHORIZE)) {
             log.debug("Not an authorization request. Invoking filter chain normally");
             chain.doFilter(req, res);
             return true;
@@ -154,6 +175,18 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         return false;
     }
 
+    /**
+     * Check for max age. Determines max-age either from client configuration
+     * or from the authorization request. Tries to figure out if an existing
+     * authentication session bound to spring security is too old, and if so,
+     * it will clear it out.
+     *
+     * @param session the session
+     * @param client the client
+     * @param authRequest the auth request
+     * @throws IOException the iO exception
+     * @throws ServletException the servlet exception
+     */
     private void checkForMaxAge(final HttpSession session,
                                 final ClientDetailsEntity client,
                                 final AuthorizationRequest authRequest)
@@ -182,6 +215,21 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         log.debug("Resuming with filter chain");
     }
 
+    /**
+     * Check for prompts in the authorization request. Evaluates
+     * if redirects to the client should execute
+     * or authentication cleared forcing the user
+     * to authenticate again.
+     *
+     * @param prompt the prompt
+     * @param response the response
+     * @param session the session
+     * @param client the client
+     * @param authRequest the auth request
+     * @return the boolean
+     * @throws IOException the iO exception
+     * @throws ServletException the servlet exception
+     */
     private boolean checkForPrompts(final String prompt, final HttpServletResponse response,
                                     final HttpSession session, final ClientDetailsEntity client,
                                     final AuthorizationRequest authRequest)
