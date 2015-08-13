@@ -44,11 +44,13 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
         }
     }
 
+    @Override
     @Nonnull
-    protected Event doExecute(@Nonnull RequestContext springRequestContext, @Nonnull ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(@Nonnull RequestContext springRequestContext,
+                              @Nonnull ProfileRequestContext profileRequestContext) {
         log.debug("{} Checking whether authentication is required", getLogPrefix());
         try {
-            IdPSession e = this.getIdPSession(profileRequestContext);
+            IdPSession e = getIdPSession(profileRequestContext);
             this.log.debug("Found session ID {}", e.getId());
 
             try {

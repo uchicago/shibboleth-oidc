@@ -35,13 +35,15 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+/**
+ * Creates the {@link RelyingPartyContext} as a child of the {@link ProfileRequestContext}.
+ */
 public class BuildRelyingPartyContextAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(BuildRelyingPartyContextAction.class);
 
-    public BuildRelyingPartyContextAction() {
-    }
 
     @Nonnull
+    @Override
     protected Event doExecute(@Nonnull RequestContext springRequestContext,
                               @Nonnull ProfileRequestContext profileRequestContext) {
 

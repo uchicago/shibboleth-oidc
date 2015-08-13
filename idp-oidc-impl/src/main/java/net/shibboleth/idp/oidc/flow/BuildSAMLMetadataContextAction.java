@@ -27,10 +27,18 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Builds a {@link SAMLMetadataContext} child of {@link RelyingPartyContext}
+ * to facilitate relying party selection by group name.
+ */
 public class BuildSAMLMetadataContextAction extends AbstractProfileAction {
+    /**
+     * Instantiates a new SAML metadata context action.
+     */
     public BuildSAMLMetadataContextAction() {
     }
 
+    @Override
     protected Event doExecute(@Nonnull RequestContext springRequestContext,
                               @Nonnull ProfileRequestContext profileRequestContext) {
         RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);

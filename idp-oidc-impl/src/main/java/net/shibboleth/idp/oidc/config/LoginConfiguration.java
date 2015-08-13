@@ -38,7 +38,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * OIDC protocol configuration that applies to the <code>/login</code> URI.
+ */
 public class LoginConfiguration extends AbstractProfileConfiguration implements AuthenticationProfileConfiguration {
+    /**
+     * The profile identifier, mapped to <code>{@value #PROFILE_ID}</code>.
+     */
     public static final String PROFILE_ID = "http://openid.net/connect/login";
 
     @Nonnull
@@ -54,10 +60,15 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
     @NonnullElements
     private List<String> nameIDFormatPrecedence = Collections.emptyList();
 
+    /**
+     * Instantiates a new login configuration instance.
+     * Sets the profile identifier to {@link #PROFILE_ID}.
+     */
     public LoginConfiguration() {
         super(PROFILE_ID);
     }
 
+    @Override
     @Nonnull
     @NonnullElements
     @NotLive
@@ -66,11 +77,18 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
         return ImmutableList.copyOf(this.defaultAuthenticationContexts);
     }
 
-    public void setDefaultAuthenticationMethods(@Nonnull @NonnullElements List<AuthnContextClassRefPrincipal> contexts) {
+    /**
+     * Sets default authentication methods.
+     *
+     * @param contexts the contexts
+     */
+    public void setDefaultAuthenticationMethods(
+            @Nonnull @NonnullElements List<AuthnContextClassRefPrincipal> contexts) {
         Constraint.isNotNull(contexts, "List of contexts cannot be null");
         this.defaultAuthenticationContexts = new ArrayList(Collections2.filter(contexts, Predicates.notNull()));
     }
 
+    @Override
     @Nonnull
     @NonnullElements
     @NotLive
@@ -79,11 +97,17 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
         return ImmutableSet.copyOf(this.authenticationFlows);
     }
 
+    /**
+     * Sets authentication flows.
+     *
+     * @param flows the flows
+     */
     public void setAuthenticationFlows(@Nonnull @NonnullElements Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         this.authenticationFlows = new HashSet(Collections2.filter(flows, Predicates.notNull()));
     }
 
+    @Override
     @Nonnull
     @NonnullElements
     @NotLive
@@ -92,11 +116,17 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
         return this.postAuthenticationFlows;
     }
 
+    /**
+     * Sets post authentication flows.
+     *
+     * @param flows the flows
+     */
     public void setPostAuthenticationFlows(@Nonnull @NonnullElements Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         this.postAuthenticationFlows = new ArrayList(StringSupport.normalizeStringCollection(flows));
     }
 
+    @Override
     @Nonnull
     @NonnullElements
     @NotLive
@@ -105,6 +135,11 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
         return ImmutableList.copyOf(this.nameIDFormatPrecedence);
     }
 
+    /**
+     * Sets name iD format precedence.
+     *
+     * @param formats the formats
+     */
     public void setNameIDFormatPrecedence(@Nonnull @NonnullElements List<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
         this.nameIDFormatPrecedence = new ArrayList(Collections2.filter(formats, Predicates.notNull()));

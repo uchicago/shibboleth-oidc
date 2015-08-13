@@ -69,7 +69,9 @@
         <module name="StaticVariableName">
             <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
         </module>
-        <module name="AbbreviationAsWordInName" />
+        <module name="AbbreviationAsWordInName">
+            <property name="allowedAbbreviations" value="SAML,IDP,OIDC,CAS" />
+        </module>
         <module name="FileContentsHolder"/>
         <property name="tabWidth" value="4"/>
         <module name="JavadocMethod">
@@ -79,7 +81,10 @@
         <module name="JavadocType">
             <property name="allowUnknownTags" value="true"/>
         </module>
-        <module name="JavadocVariable"/>
+        <module name="JavadocVariable">
+            <property name="scope" value="protected" />
+            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
+        </module>
         <module name="JavadocStyle">
             <property name="checkEmptyJavadoc" value="true"/>
         </module>

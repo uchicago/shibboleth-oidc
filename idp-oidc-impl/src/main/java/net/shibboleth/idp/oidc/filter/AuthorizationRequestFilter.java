@@ -21,6 +21,7 @@ import com.google.common.base.Strings;
 import org.apache.http.client.utils.URIBuilder;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
+import org.mitre.openid.connect.request.ConnectRequestParameters;
 import org.mitre.openid.connect.web.AuthenticationTimeStamper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,18 +49,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mitre.openid.connect.request.ConnectRequestParameters.*;
-
 @Component("authzRequestFilter")
 public class AuthorizationRequestFilter extends GenericFilterBean {
-    public final static String ATTRIBUTE_OIDC_AUTHZ_REQUEST = "OIDC_AUTHZ_REQUEST";
-    public final static String ATTRIBUTE_OIDC_CLIENT = "OIDC_CLIENT";
 
-    private final static String PROMPTED = "PROMPT_FILTER_PROMPTED";
-    private final static String PROMPT_REQUESTED = "PROMPT_FILTER_REQUESTED";
+    public static final String ATTRIBUTE_OIDC_AUTHZ_REQUEST = "OIDC_AUTHZ_REQUEST";
+    public static final  String ATTRIBUTE_OIDC_CLIENT = "OIDC_CLIENT";
+
+    private static final String PROMPTED = "PROMPT_FILTER_PROMPTED";
+    private static final String PROMPT_REQUESTED = "PROMPT_FILTER_REQUESTED";
+
 
     private final Logger log = LoggerFactory.getLogger(AuthorizationRequestFilter.class);
-
 
     @Autowired
     private OAuth2RequestFactory authRequestFactory;
@@ -71,28 +71,17 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
     private RedirectResolver redirectResolver;
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse res,
+                         FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession();
 
-        String servletPath = request.getServletPath();
-        String pathInfo = request.getPathInfo();
-        if (Strings.isNullOrEmpty(servletPath) || Strings.isNullOrEmpty(pathInfo)) {
-            log.debug("No servlet path available. Not an authorization request. Invoking filter chain normally");
-            chain.doFilter(req, res);
-            return;
-        }
-
-        String path = servletPath.concat(pathInfo);
-        if (!path.startsWith("/profile/oidc/authorize")) {
-            log.debug("Not an authorization request. Invoking filter chain normally");
-            chain.doFilter(req, res);
+        if (determineProfilePathForExceution(req, res, chain, request)) {
             return;
         }
 
         log.debug("Evaluating authorization request");
-
         try {
             log.debug("Constructing authorization request");
             AuthorizationRequest authRequest = authRequestFactory.createAuthorizationRequest(
@@ -111,26 +100,27 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
             log.debug("Found client {}.", client.toString());
             session.setAttribute(ATTRIBUTE_OIDC_CLIENT, client);
 
-            Object loginHint = authRequest.getExtensions().get(LOGIN_HINT);
+            Object loginHint = authRequest.getExtensions().get(ConnectRequestParameters.LOGIN_HINT);
             if (loginHint != null) {
-                session.setAttribute(LOGIN_HINT, loginHint);
+                session.setAttribute(ConnectRequestParameters.LOGIN_HINT, loginHint);
                 log.debug("Saved login hint {} into session", loginHint);
             } else {
-                session.removeAttribute(LOGIN_HINT);
+                session.removeAttribute(ConnectRequestParameters.LOGIN_HINT);
                 log.debug("Removed login hint attribute from session");
             }
 
-            String prompt = (String) authRequest.getExtensions().get(PROMPT);
+            String prompt = (String) authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
             if (prompt != null) {
                 log.debug("Authorization request contains prompt {}");
                 if (checkForPrompts(prompt, req, res, chain,
                         response, session, client, authRequest)) {
                     return;
                 }
-            } else if (authRequest.getExtensions().get(MAX_AGE) != null ||
+            } else if (authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE) != null ||
                     client.getDefaultMaxAge() != null) {
                 log.debug("Authorization request or client configuration contains max age");
-                checkForMaxAge(req, res, chain, session, client, authRequest);
+                checkForMaxAge(session, client, authRequest);
+                chain.doFilter(req, res);
             } else {
                 log.debug("Evaluated authorization request. Invoking filter chain normally");
                 chain.doFilter(req, res);
@@ -142,14 +132,35 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         }
     }
 
-    private void checkForMaxAge(final ServletRequest req, final ServletResponse res,
-                                final FilterChain chain, final HttpSession session,
+    private boolean determineProfilePathForExceution(final ServletRequest req,
+                                                     final ServletResponse res,
+                                                     final FilterChain chain,
+                                                     final HttpServletRequest request)
+            throws IOException, ServletException {
+        String servletPath = request.getServletPath();
+        String pathInfo = request.getPathInfo();
+        if (Strings.isNullOrEmpty(servletPath) || Strings.isNullOrEmpty(pathInfo)) {
+            log.debug("No servlet path available. Not an authorization request. Invoking filter chain normally");
+            chain.doFilter(req, res);
+            return true;
+        }
+
+        String path = servletPath.concat(pathInfo);
+        if (!path.startsWith("/profile/oidc/authorize")) {
+            log.debug("Not an authorization request. Invoking filter chain normally");
+            chain.doFilter(req, res);
+            return true;
+        }
+        return false;
+    }
+
+    private void checkForMaxAge(final HttpSession session,
                                 final ClientDetailsEntity client,
                                 final AuthorizationRequest authRequest)
             throws IOException, ServletException {
-        Integer max = (client != null ? client.getDefaultMaxAge() : null);
+        Integer max = client != null ? client.getDefaultMaxAge() : null;
         log.debug("Client configuration set to max age {}", max);
-        String maxAge = (String) authRequest.getExtensions().get(MAX_AGE);
+        String maxAge = (String) authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE);
         log.debug("Authorization request contains max age {}", maxAge);
         if (maxAge != null) {
             max = Integer.parseInt(maxAge);
@@ -169,23 +180,21 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
             }
         }
         log.debug("Resuming with filter chain");
-        chain.doFilter(req, res);
     }
 
-    private boolean checkForPrompts(final String prompt, final ServletRequest req, final ServletResponse res,
-                                    final FilterChain chain, final HttpServletResponse response,
+    private boolean checkForPrompts(final String prompt, final HttpServletResponse response,
                                     final HttpSession session, final ClientDetailsEntity client,
                                     final AuthorizationRequest authRequest)
             throws IOException, ServletException {
 
-        List<String> prompts = Splitter.on(PROMPT_SEPARATOR).splitToList(Strings.nullToEmpty(prompt));
-        if (prompts.contains(PROMPT_NONE)) {
-            log.debug("Prompt contains {}", PROMPT_NONE);
+        List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
+                    .splitToList(Strings.nullToEmpty(prompt));
+        if (prompts.contains(ConnectRequestParameters.PROMPT_NONE)) {
+            log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_NONE);
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
             if (auth != null) {
                 log.debug("Authentication context is empty");
-                chain.doFilter(req, res);
             } else {
                 log.info("Client requested no prompt");
                 if (client != null && authRequest.getRedirectUri() != null) {
@@ -194,9 +203,10 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                     try {
                         URIBuilder uriBuilder = new URIBuilder(url);
 
-                        uriBuilder.addParameter(ERROR, LOGIN_REQUIRED);
+                        uriBuilder.addParameter(ConnectRequestParameters.ERROR,
+                                ConnectRequestParameters.LOGIN_REQUIRED);
                         if (!Strings.isNullOrEmpty(authRequest.getState())) {
-                            uriBuilder.addParameter(STATE, authRequest.getState());
+                            uriBuilder.addParameter(ConnectRequestParameters.STATE, authRequest.getState());
                         }
                         log.debug("Resolved redirect url {}", uriBuilder.toString());
                         response.sendRedirect(uriBuilder.toString());
@@ -213,8 +223,8 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
                 return true;
             }
-        } else if (prompts.contains(PROMPT_LOGIN)) {
-            log.debug("Prompt contains {}", PROMPT_LOGIN);
+        } else if (prompts.contains(ConnectRequestParameters.PROMPT_LOGIN)) {
+            log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
 
             if (session.getAttribute(PROMPTED) == null) {
                 session.setAttribute(PROMPT_REQUESTED, Boolean.TRUE);
@@ -222,23 +232,29 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                 if (auth != null) {
                     SecurityContextHolder.getContext().setAuthentication(null);
                     log.debug("Cleared authentication from context. Proceeding with filter chain");
-                    chain.doFilter(req, res);
+
                 } else {
                     log.debug("Authentication is not found in the context. Proceeding with filter chain");
-                    chain.doFilter(req, res);
+
                 }
             } else {
                 session.removeAttribute(PROMPTED);
                 log.debug("Removed {} from session", PROMPTED);
-                chain.doFilter(req, res);
+
             }
         } else {
             log.debug("Prompt is not supported. Proceeding with filter chain");
-            chain.doFilter(req, res);
+
         }
         return false;
     }
 
+    /**
+     * Creates a map of request parameters. Uses the first parameter value
+     * in case multi-valued parameters are found
+     * @param parameterMap the original request parameters map
+     * @return newly built parameters map
+     */
     private Map<String, String> createRequestMap(Map<String, String[]> parameterMap) {
         Map<String, String> requestMap = new HashMap<>();
         for (String key : parameterMap.keySet()) {

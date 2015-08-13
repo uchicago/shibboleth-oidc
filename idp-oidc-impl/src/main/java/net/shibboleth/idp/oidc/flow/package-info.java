@@ -14,25 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Webflow actions and components related to openid connect
+ * to enable construction of clients, SAML metadata, etc.
+ */
 package net.shibboleth.idp.oidc.flow;
-
-import org.springframework.webflow.execution.Event;
-
-public enum Events {
-    SessionNotFound,
-    SessionFound,
-    Success,
-    Failure,
-    Proceed;
-
-    private Events() {
-    }
-
-    public String id() {
-        return this.name().substring(0, 1).toLowerCase() + this.name().substring(1);
-    }
-
-    public Event event(Object source) {
-        return new Event(source, id());
-    }
-}

@@ -27,14 +27,22 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Initializes the OIDC protocol interaction at the <code>/login</code> URI.
+ */
 public class InitializeLoginAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(InitializeLoginAction.class);
 
+    /**
+     * Instantiates a new login action.
+     */
     public InitializeLoginAction() {
     }
 
     @Nonnull
-    protected Event doExecute(@Nonnull RequestContext springRequestContext, @Nonnull ProfileRequestContext profileRequestContext) {
+    @Override
+    protected Event doExecute(@Nonnull RequestContext springRequestContext,
+                              @Nonnull ProfileRequestContext profileRequestContext) {
         log.debug("{} Initializing login action", getLogPrefix());
 
         ParameterMap params = springRequestContext.getRequestParameters();

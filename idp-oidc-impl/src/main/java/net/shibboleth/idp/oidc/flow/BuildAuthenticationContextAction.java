@@ -54,7 +54,7 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
 
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        authnRequest = this.requestLookupStrategy.apply(profileRequestContext);
+        authnRequest = requestLookupStrategy.apply(profileRequestContext);
         if (authnRequest == null) {
             log.debug("{} No inbound AuthnRequest, passive and forced flags will be off", getLogPrefix());
         }
@@ -63,7 +63,9 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
     }
 
     @Nonnull
-    protected Event doExecute(@Nonnull RequestContext springRequestContext, @Nonnull ProfileRequestContext profileRequestContext) {
+    @Override
+    protected Event doExecute(@Nonnull RequestContext springRequestContext,
+                              @Nonnull ProfileRequestContext profileRequestContext) {
         log.debug("{} Building authentication context", getLogPrefix());
         AuthenticationContext ac = new AuthenticationContext();
         if (authnRequest != null) {
