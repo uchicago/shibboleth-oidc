@@ -145,6 +145,7 @@
                     </mapping>
                     <excludes>
                         <exclude>LICENSE</exclude>
+                        <exclude>**/*.jwks</exclude>
                         <exclude>**/NOTICE*</exclude>
                         <exclude>**/.donotdel</exclude>
                         <exclude>**/sample-keystore</exclude>
