@@ -103,50 +103,6 @@
                     </overlays>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.9.1</version>
-                <executions>
-                    <execution>
-                        <id>regex-property</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>regex-property</goal>
-                        </goals>
-                        <configuration>
-                            <name>idphome</name>
-                            <value>${project.build.directory}/${project.build.finalName}/idp</value>
-                            <regex>\\</regex>
-                            <replacement>/</replacement>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
-                <executions>
-                    <execution>
-                        <id>setProps</id>
-                        <goals>
-                            <goal>set-system-properties</goal>
-                        </goals>
-                        <phase>verify</phase>
-                        <configuration>
-                            <properties>
-                                <property>
-                                    <name>idp.home</name>
-                                    <value>${idphome}</value>
-                                </property>
-                            </properties>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -162,6 +118,50 @@
             <id>jetty</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>regex-property</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>regex-property</goal>
+                                </goals>
+                                <configuration>
+                                    <name>idphome</name>
+                                    <value>${project.build.directory}/${project.build.finalName}/idp</value>
+                                    <regex>\\</regex>
+                                    <replacement>/</replacement>
+                                    <failIfNoMatch>false</failIfNoMatch>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0-alpha-2</version>
+                        <executions>
+                            <execution>
+                                <id>setProps</id>
+                                <goals>
+                                    <goal>set-system-properties</goal>
+                                </goals>
+                                <phase>verify</phase>
+                                <configuration>
+                                    <properties>
+                                        <property>
+                                            <name>idp.home</name>
+                                            <value>${idphome}</value>
+                                        </property>
+                                    </properties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
