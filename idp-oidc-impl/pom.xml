@@ -34,6 +34,16 @@
             <artifactId>idp-oidc-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-ui</artifactId>
+            <version>${idp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-consent</artifactId>
+            <version>${idp.version}</version>
+        </dependency>
     </dependencies>
 
     <properties>

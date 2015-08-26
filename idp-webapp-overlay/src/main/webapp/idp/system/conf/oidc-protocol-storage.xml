@@ -72,6 +72,7 @@
         <jdbc:script location="classpath:/db/tables/loading_temp_tables.sql"/>
         <jdbc:script location="classpath:/db/tables/clients.sql"/>
         <jdbc:script location="classpath:/db/tables/scopes.sql"/>
+        <jdbc:script location="classpath:/db/tables/users.sql"/>
     </jdbc:initialize-database>
 
     <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">

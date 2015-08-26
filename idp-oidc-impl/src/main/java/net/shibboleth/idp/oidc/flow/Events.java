@@ -40,6 +40,22 @@ public enum Events {
      * The Failure event.
      */
     Failure,
+
+    /**
+     * The BadRequest event.
+     */
+    BadRequest,
+
+    /**
+     * The ClientNotFound event.
+     */
+    ClientNotFound,
+
+    /**
+     * The Redirect event.
+     */
+    Redirect,
+
     /**
      * The Proceed event.
      */

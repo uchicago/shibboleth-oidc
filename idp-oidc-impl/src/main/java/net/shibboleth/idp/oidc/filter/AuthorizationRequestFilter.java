@@ -18,11 +18,11 @@ package net.shibboleth.idp.oidc.filter;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import net.shibboleth.idp.oidc.OpenIdConnectUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.mitre.openid.connect.request.ConnectRequestParameters;
-import org.mitre.openid.connect.web.AuthenticationTimeStamper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -56,15 +55,6 @@ import java.util.Map;
  */
 @Component("authzRequestFilter")
 public class AuthorizationRequestFilter extends GenericFilterBean {
-
-    /** Attribute name to store the authorization request. */
-    public static final String ATTRIBUTE_OIDC_AUTHZ_REQUEST = "OIDC_AUTHZ_REQUEST";
-
-    /** Attribute name to store the openid connect client. */
-    public static final String ATTRIBUTE_OIDC_CLIENT = "OIDC_CLIENT";
-
-    private static final String PROMPTED = "PROMPT_FILTER_PROMPTED";
-    private static final String PROMPT_REQUESTED = "PROMPT_FILTER_REQUESTED";
     private static final String PROFILE_OIDC_AUTHORIZE = "/profile/oidc/authorize";
 
     private final Logger log = LoggerFactory.getLogger(AuthorizationRequestFilter.class);
@@ -83,17 +73,18 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                          FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        HttpSession session = request.getSession();
 
-        if (determineProfilePathForExceution(req, res, chain, request)) {
+
+        if (determineProfilePathForExceution(request)) {
+            chain.doFilter(request, response);
             return;
         }
 
         log.debug("Evaluating authorization request");
         try {
             log.debug("Constructing authorization request");
-            AuthorizationRequest authRequest = authRequestFactory.createAuthorizationRequest(
-                    createRequestMap(request.getParameterMap()));
+            Map<String, String> requestParameters = createRequestMap(request.getParameterMap());
+            AuthorizationRequest authRequest = authRequestFactory.createAuthorizationRequest(requestParameters);
 
             if (Strings.isNullOrEmpty(authRequest.getClientId())) {
                 throw new InvalidClientException("No client id is specified in the authorization request");
@@ -101,33 +92,33 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
             log.debug("Loading client by id {}", authRequest.getClientId());
             ClientDetailsEntity client = clientService.loadClientByClientId(authRequest.getClientId());
-
-            session.setAttribute(ATTRIBUTE_OIDC_AUTHZ_REQUEST, authRequest);
-            log.debug("Saved authorization request into session");
+            OpenIdConnectUtils.setAuthorizationRequest(request, authRequest, requestParameters);
+            log.debug("Saved authorization request");
 
             log.debug("Found client {}.", client.toString());
-            session.setAttribute(ATTRIBUTE_OIDC_CLIENT, client);
+            OpenIdConnectUtils.setClient(request, client);
+            log.debug("Saved client request");
 
             Object loginHint = authRequest.getExtensions().get(ConnectRequestParameters.LOGIN_HINT);
             if (loginHint != null) {
-                session.setAttribute(ConnectRequestParameters.LOGIN_HINT, loginHint);
+                OpenIdConnectUtils.setRequestParameter(request, ConnectRequestParameters.LOGIN_HINT, loginHint);
                 log.debug("Saved login hint {} into session", loginHint);
             } else {
-                session.removeAttribute(ConnectRequestParameters.LOGIN_HINT);
+                OpenIdConnectUtils.removeRequestParameter(request, ConnectRequestParameters.LOGIN_HINT);
                 log.debug("Removed login hint attribute from session");
             }
 
             String prompt = (String) authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
             if (prompt != null) {
                 log.debug("Authorization request contains prompt {}");
-                if (checkForPrompts(prompt, response, session, client, authRequest)) {
+                if (checkForPrompts(prompt, response, request)) {
                     chain.doFilter(req, res);
                     return;
                 }
             } else if (authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE) != null ||
                     client.getDefaultMaxAge() != null) {
                 log.debug("Authorization request or client configuration contains max age");
-                checkForMaxAge(session, client, authRequest);
+                checkForMaxAge(request);
                 chain.doFilter(req, res);
             } else {
                 log.debug("Evaluated authorization request. Invoking filter chain normally");
@@ -153,23 +144,18 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      * @throws IOException the iO exception
      * @throws ServletException the servlet exception
      */
-    private boolean determineProfilePathForExceution(final ServletRequest req,
-                                                     final ServletResponse res,
-                                                     final FilterChain chain,
-                                                     final HttpServletRequest request)
+    private boolean determineProfilePathForExceution(final HttpServletRequest request)
             throws IOException, ServletException {
         String servletPath = request.getServletPath();
         String pathInfo = request.getPathInfo();
         if (Strings.isNullOrEmpty(servletPath) || Strings.isNullOrEmpty(pathInfo)) {
-            log.debug("No servlet path available. Not an authorization request. Invoking filter chain normally");
-            chain.doFilter(req, res);
+            log.debug("No servlet path available. Not an authorization request. Invoking filter chain");
             return true;
         }
 
         String path = servletPath.concat(pathInfo);
         if (!path.startsWith(PROFILE_OIDC_AUTHORIZE)) {
             log.debug("Not an authorization request. Invoking filter chain normally");
-            chain.doFilter(req, res);
             return true;
         }
         return false;
@@ -181,18 +167,15 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      * authentication session bound to spring security is too old, and if so,
      * it will clear it out.
      *
-     * @param session the session
-     * @param client the client
-     * @param authRequest the auth request
-     * @throws IOException the iO exception
-     * @throws ServletException the servlet exception
+     * @param request the request
      */
-    private void checkForMaxAge(final HttpSession session,
-                                final ClientDetailsEntity client,
-                                final AuthorizationRequest authRequest)
-            throws IOException, ServletException {
+    private void checkForMaxAge(final HttpServletRequest request) {
+
+        ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
         Integer max = client != null ? client.getDefaultMaxAge() : null;
         log.debug("Client configuration set to max age {}", max);
+
+        AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
         String maxAge = (String) authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE);
         log.debug("Authorization request contains max age {}", maxAge);
         if (maxAge != null) {
@@ -201,7 +184,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
         if (max != null) {
             log.debug("Evaluated max age to use as {}", max);
-            Date authTime = (Date) session.getAttribute(AuthenticationTimeStamper.AUTH_TIMESTAMP);
+            Date authTime = OpenIdConnectUtils.getAuthenticationTimestamp(request);
             log.debug("Authentication time set to {}", authTime);
             Date now = new Date();
             if (authTime != null) {
@@ -223,17 +206,17 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      *
      * @param prompt the prompt
      * @param response the response
-     * @param session the session
-     * @param client the client
-     * @param authRequest the auth request
+     * @param request the request
      * @return the boolean
-     * @throws IOException the iO exception
-     * @throws ServletException the servlet exception
+     * @throws IOException the IO exception
      */
-    private boolean checkForPrompts(final String prompt, final HttpServletResponse response,
-                                    final HttpSession session, final ClientDetailsEntity client,
-                                    final AuthorizationRequest authRequest)
-            throws IOException, ServletException {
+    private boolean checkForPrompts(final String prompt,
+                                    final HttpServletResponse response,
+                                    final HttpServletRequest request)
+            throws IOException {
+
+        final ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
+        final AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
 
         List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
                     .splitToList(Strings.nullToEmpty(prompt));
@@ -274,8 +257,9 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         } else if (prompts.contains(ConnectRequestParameters.PROMPT_LOGIN)) {
             log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
 
-            if (session.getAttribute(PROMPTED) == null) {
-                session.setAttribute(PROMPT_REQUESTED, Boolean.TRUE);
+            if (OpenIdConnectUtils.isRequestPrompted(request)) {
+                OpenIdConnectUtils.setPromptRequested(request);
+
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 if (auth != null) {
                     SecurityContextHolder.getContext().setAuthentication(null);
@@ -286,9 +270,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
                 }
             } else {
-                session.removeAttribute(PROMPTED);
-                log.debug("Removed {} from session", PROMPTED);
-
+                OpenIdConnectUtils.removeRequestPrompted(request);
             }
         } else {
             log.debug("Prompt is not supported. Proceeding with filter chain");

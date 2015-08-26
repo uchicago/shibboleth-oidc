@@ -54,11 +54,20 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
+    <bean id="PreAuthorizeUserApprovalAction"
+            class="net.shibboleth.idp.oidc.flow.PreAuthorizeUserApprovalAction" />
+
+    <bean id="PostAuthorizationUserApprovalAction"
+          class="net.shibboleth.idp.oidc.flow.PostAuthorizationUserApprovalAction" />
+
+    <bean id="ResolveAttributesPredicate"
+          class="net.shibboleth.idp.oidc.config.ResolveAttributesProfileConfigPredicate" />
+
     <bean id="buildRelyingPartyContextAction"
           class="net.shibboleth.idp.oidc.flow.BuildRelyingPartyContextAction"/>
 
     <bean id="buildSAMLMetadataContextAction"
-      class="net.shibboleth.idp.oidc.flow.BuildSAMLMetadataContextAction" />
+      class="net.shibboleth.idp.oidc.flow.BuildOpenIdConnectMetadataContextAction" />
 
     <bean id="selectProfileConfiguration"
           class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
@@ -69,4 +78,34 @@
           scope="prototype"
           p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
+    <bean id="resolveAttributes"
+          class="net.shibboleth.idp.profile.impl.ResolveAttributes"
+          scope="prototype"
+          c:resolverService-ref="shibboleth.AttributeResolverService"
+          p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
+
+    <bean id="filterAttributes"
+          class="net.shibboleth.idp.profile.impl.FilterAttributes"
+          scope="prototype"
+          c:filterService-ref="shibboleth.AttributeFilterService"
+          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}" />
+
+    <bean id="populatePostAuthnInterceptContext"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext"
+          scope="prototype"
+          p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="UpdateSessionWithSPSession"
+          class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
+          p:activationCondition="%{idp.session.trackSPSessions:false}"
+          p:sessionManager-ref="shibboleth.SessionManager">
+        <property name="SPSessionCreationStrategy">
+            <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionCreationStrategy"
+                  c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"/>
+        </property>
+    </bean>
 </beans>

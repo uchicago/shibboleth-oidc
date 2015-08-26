@@ -39,6 +39,8 @@
 
     <!-- User Context -->
     <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="authenticationProviderAdapter" />
+
         <security:authentication-provider>
             <security:jdbc-user-service data-source-ref="dataSource"/>
         </security:authentication-provider>

@@ -79,7 +79,7 @@
     </bean>
     
     <bean id="shibboleth.VelocityViewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-        <property name="cache" value="true"/>
+        <property name="cache" value="false"/>
         <property name="prefix" value=""/>
         <property name="suffix" value=".vm"/>
         <property name="contentType" value="text/html;charset=utf-8" />

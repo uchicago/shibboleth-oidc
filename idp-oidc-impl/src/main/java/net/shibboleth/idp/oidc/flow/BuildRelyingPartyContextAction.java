@@ -18,6 +18,7 @@ package net.shibboleth.idp.oidc.flow;
 
 
 import com.google.common.base.Strings;
+import net.shibboleth.idp.oidc.OpenIdConnectUtils;
 import net.shibboleth.idp.oidc.filter.AuthorizationRequestFilter;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -50,15 +51,13 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
 
         HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
         HttpSession session = request.getSession();
-        AuthorizationRequest authRequest = (AuthorizationRequest)
-                session.getAttribute(AuthorizationRequestFilter.ATTRIBUTE_OIDC_AUTHZ_REQUEST);
+        AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
         if (authRequest == null || Strings.isNullOrEmpty(authRequest.getClientId())) {
             log.warn("Authorization request could not be loaded from session");
             return Events.Failure.event(this);
         }
 
-        ClientDetailsEntity client = (ClientDetailsEntity)
-                session.getAttribute(AuthorizationRequestFilter.ATTRIBUTE_OIDC_CLIENT);
+        ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
 
         if (client == null) {
             log.warn("Client configuration could not be loaded from session");

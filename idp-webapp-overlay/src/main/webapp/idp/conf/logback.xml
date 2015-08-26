@@ -20,7 +20,7 @@
 <configuration>
 
     <!-- Logs IdP, but not OpenSAML, messages -->
-    <logger name="net.shibboleth.idp" level="DEBUG"/>
+    <logger name="net.shibboleth.idp" level="INFO"/>
 
     <!-- Logs OpenSAML, but not IdP, messages -->
     <logger name="org.opensaml.saml" level="INFO"/>
@@ -57,7 +57,7 @@
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
-    <logger name="org.springframework.webflow" level="WARN">
+    <logger name="org.springframework.webflow" level="DEBUG">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>

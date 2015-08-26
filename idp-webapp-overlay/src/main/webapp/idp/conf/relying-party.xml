@@ -63,7 +63,8 @@
                 <ref bean="SAML2.ArtifactResolution" />
                 <ref bean="CAS.ProxyConfiguration" />
                 <ref bean="CAS.ValidateConfiguration" />
-                <ref bean="OIDC.LoginConfiguration" />
+                <bean parent="OIDC.LoginConfiguration"
+                      p:postAuthenticationFlows="attribute-release" />
             </list>
         </property>
     </bean>

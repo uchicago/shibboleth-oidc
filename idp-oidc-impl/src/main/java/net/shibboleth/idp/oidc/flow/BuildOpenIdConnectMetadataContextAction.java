@@ -22,6 +22,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,11 +32,11 @@ import javax.annotation.Nonnull;
  * Builds a {@link SAMLMetadataContext} child of {@link RelyingPartyContext}
  * to facilitate relying party selection by group name.
  */
-public class BuildSAMLMetadataContextAction extends AbstractProfileAction {
+public class BuildOpenIdConnectMetadataContextAction extends AbstractProfileAction {
     /**
      * Instantiates a new SAML metadata context action.
      */
-    public BuildSAMLMetadataContextAction() {
+    public BuildOpenIdConnectMetadataContextAction() {
     }
 
     @Override
@@ -46,8 +47,11 @@ public class BuildSAMLMetadataContextAction extends AbstractProfileAction {
             throw new IllegalArgumentException("RelyingPartyContext not found");
         } else {
             SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-            mdCtx.setEntityDescriptor(new ClientEntityDescriptor(rpCtx.getRelyingPartyId()));
+            EntityDescriptor clientEntityDescriptor = new ClientEntityDescriptor(rpCtx.getRelyingPartyId());
+            mdCtx.setEntityDescriptor(clientEntityDescriptor);
             rpCtx.setRelyingPartyIdContextTree(mdCtx);
+
+
             return ActionSupport.buildProceedEvent(this);
         }
     }

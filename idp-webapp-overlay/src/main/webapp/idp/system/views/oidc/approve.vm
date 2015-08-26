@@ -1,0 +1,13 @@
+#parse("oidc/header.vm")
+
+<form action="/idp/profile/oidc/authorize" method="post">
+    #set ($map = $oidcResponse.getClaims())
+    #foreach ($mapEntry in $map.entrySet())
+        <input type="hidden" name="$mapEntry.key" value="$mapEntry.value" />
+    #end
+    <input type="hidden" name="user_oauth_approval" value="true" />
+    <input type="hidden" name="csrf" value="$oidcResponse.getCsrf()" />
+    <input type="submit" value="Submit" />
+</form>
+
+#parse("oidc/footer.vm")
