@@ -1,22 +1,20 @@
 #parse("oidc/header.vm")
 
-
-
 <body>
-<form style="display:none;" name="approveForm" id="approveForm" action="/idp/profile/oidc/authorize" method="post">
-    #set ($map = $oidcResponse.getClaims())
-    #foreach ($mapEntry in $map.entrySet())
-        <input type="hidden" name="$mapEntry.key" value="$mapEntry.value" />
-    #end
-    <input type="hidden" name="user_oauth_approval" value="true" />
-    <input type="hidden" name="csrf" value="$oidcResponse.getCsrf()" />
-    <input type="submit" value="Submit" />
-</form>
+    <form style="display:none;" name="approveForm" id="approveForm" action="authorize" method="post">
+        #set ($map = $oidcResponse.getClaims())
+        #foreach ($mapEntry in $map.entrySet())
+            <input type="hidden" name="$mapEntry.key" value="$mapEntry.value" />
+        #end
+        <input type="hidden" name="user_oauth_approval" value="true" />
+        <input type="hidden" name="csrf" value="$oidcResponse.getCsrf()" />
+        <input type="submit" value="Submit" />
+    </form>
 
-<script>
-    var form = document.getElementById('approveForm');
-    form.submit();
-</script>
+    <script>
+        var form = document.getElementById('approveForm');
+        form.submit();
+    </script>
 
 </body>
 

@@ -136,13 +136,10 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      * Ignores all request patterns that do not start
      * with {@value #PROFILE_OIDC_AUTHORIZE}.
      *
-     * @param req the req
-     * @param res the res
-     * @param chain the chain
      * @param request the request
      * @return the boolean
      * @throws IOException the iO exception
-     * @throws ServletException the servlet exception
+     * @throws IOException the iO exception
      */
     private boolean determineProfilePathForExceution(final HttpServletRequest request)
             throws IOException, ServletException {

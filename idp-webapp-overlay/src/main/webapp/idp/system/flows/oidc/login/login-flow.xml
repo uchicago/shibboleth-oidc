@@ -90,10 +90,9 @@
     </action-state>
 
     <view-state id="DoPostAuthorizeUserApprovalAction" view="oidc/approve" model="oidcResponse">
-        <on-render>
+        <on-entry>
             <evaluate expression="PostAuthorizationUserApprovalAction" />
-        </on-render>
-        <transition bind="true" validate="true" on="proceed" to="end" />
+        </on-entry>
     </view-state>
 
     <end-state id="Error" view="error">
