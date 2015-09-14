@@ -111,12 +111,6 @@ public final class OpenIdConnectUtils {
         session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS, parameterMap);
     }
 
-    public static void removeAuthorizationRequest(final HttpServletRequest request) {
-        final HttpSession session = request.getSession();
-        session.removeAttribute(ATTR_OIDC_AUTHZ_REQUEST);
-        session.removeAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS);
-    }
-
     /**
      * Sets client.
      *

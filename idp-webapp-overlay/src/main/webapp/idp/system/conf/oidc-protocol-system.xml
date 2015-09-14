@@ -22,6 +22,8 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
@@ -46,22 +48,34 @@
         <bean id="serverConfigInterceptor" class="org.mitre.openid.connect.web.ServerConfigInterceptor" />
     </mvc:interceptors>
 
-    <mvc:default-servlet-handler />
-
+    <!-- OAuth/Spring Security Beans -->
     <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
 
     <bean id="oauthRequestValidator" class="org.mitre.oauth2.token.StructuredScopeAwareOAuth2RequestValidator" />
 
-    <bean id="clientCredentialsEndpointFilter" class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
-        <property name="authenticationManager" ref="clientAuthenticationManager" />
-        <property name="requiresAuthenticationRequestMatcher" ref="clientAuthMatcher" />
-    </bean>
+    <bean id="clientCredentialsEndpointFilter"
+          class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter"
+            p:authenticationManager-ref="clientAssertionAuthenticationManager"
+            p:requiresAuthenticationRequestMatcher-ref="clientAuthMatcher" />
 
-    <bean id="clientAssertionEndpointFilter" class="org.mitre.openid.connect.assertion.JWTBearerClientAssertionTokenEndpointFilter">
-        <constructor-arg name="additionalMatcher" ref="clientAuthMatcher" />
-        <property name="authenticationManager" ref="clientAssertionAuthenticationManager" />
-    </bean>
+    <bean id="clientAssertionEndpointFilter"
+          class="org.mitre.openid.connect.assertion.JWTBearerClientAssertionTokenEndpointFilter"
+          c:additionalMatcher-ref="clientAuthMatcher"
+          p:authenticationManager-ref="clientAssertionAuthenticationManager"  />
 
+    <bean id="clientAssertionAuthenticationProvider"
+          class="org.mitre.openid.connect.assertion.JWTBearerAuthenticationProvider" />
+
+    <bean id="oauthAuthenticationEntryPoint"
+          class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint"
+          p:realmName="openidconnect" />
+
+    <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
+
+    <bean id="oauth2ExceptionTranslator"
+          class="org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator" />
+
+    <!-- Spring Security -->
     <security:authentication-manager id="clientAuthenticationManager">
         <security:authentication-provider user-service-ref="clientUserDetailsService" />
         <security:authentication-provider user-service-ref="uriEncodedClientUserDetailsService" />
@@ -71,28 +85,33 @@
         <security:authentication-provider ref="clientAssertionAuthenticationProvider" />
     </security:authentication-manager>
 
-    <bean id="clientAssertionAuthenticationProvider" class="org.mitre.openid.connect.assertion.JWTBearerAuthenticationProvider" />
-
-    <bean id="oauthAuthenticationEntryPoint"
-          class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-        <property name="realmName" value="openidconnect" />
-    </bean>
-
-    <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
-
-
-    <bean id="oauth2ExceptionTranslator" class="org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator" />
-
     <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true"
                                      authentication-manager-ref="authenticationManager">
         <security:expression-handler ref="oauthExpressionHandler" />
     </security:global-method-security>
 
+    <!-- OpenId Connect JWK Encryption -->
+    <bean id="defaultKeyStore" class="org.mitre.jose.keystore.JWKSetKeyStore"
+          p:location="classpath:keystore.jwks" />
+
+    <bean id="defaultSignerService" class="org.mitre.jwt.signer.service.impl.DefaultJWTSigningAndValidationService"
+          c:keyStore-ref="defaultKeyStore"
+          p:defaultSigningAlgorithmName="RS256"
+          p:defaultSignerKeyId="rsa1" />
+
+    <bean id="defaultEncryptionService"
+          class="org.mitre.jwt.encryption.service.impl.DefaultJWTEncryptionAndDecryptionService"
+          c:keyStore-ref="defaultKeyStore"
+          p:defaultAlgorithm="RSA1_5"
+          p:defaultDecryptionKeyId="rsa1"
+          p:defaultEncryptionKeyId="rsa1" />
+
+    <!-- Profile Configuration -->
     <bean id="OIDC.LoginConfiguration"
           class="net.shibboleth.idp.oidc.login.LoginConfiguration" />
 
+    <!-- Resources to pull -->
     <import resource="oidc-protocol-endpoints.xml" />
-    <import resource="oidc-protocol-encryption.xml" />
     <import resource="oidc-protocol-storage.xml" />
     <import resource="../../conf/oidc-protocol.xml" />
 
