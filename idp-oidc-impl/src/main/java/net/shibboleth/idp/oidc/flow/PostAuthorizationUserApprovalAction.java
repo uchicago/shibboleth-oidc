@@ -20,8 +20,11 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
@@ -32,15 +35,23 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * An action to handle the user approval/consent post autthorization.
+ * An action to handle the user approval/consent post authorization.
  */
 public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(PreAuthorizeUserApprovalAction.class);
+
+    @Nonnull
+    private StorageService storageService;
 
     /**
      * Instantiates a new authorization user approval action.
      */
     public PostAuthorizationUserApprovalAction() {
+    }
+
+    public void setStorageService(final StorageService service) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        this.storageService = Constraint.isNotNull(service, "StorageService cannot be null");
     }
 
     @Nonnull
@@ -52,7 +63,6 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
         final AuthorizationRequest request =
                 OpenIdConnectUtils.getAuthorizationRequest(HttpServletRequestResponseContext.getRequest());
         final OpenIdConnectResponse response = OpenIdConnectUtils.getResponse(springRequestContext);
-
         return super.doExecute(springRequestContext, profileRequestContext);
     }
 }

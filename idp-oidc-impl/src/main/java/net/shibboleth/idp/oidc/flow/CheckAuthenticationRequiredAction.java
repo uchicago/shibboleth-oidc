@@ -48,7 +48,7 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
      */
     @Nonnull
     protected IdPSession getIdPSession(final ProfileRequestContext prc) {
-        final SessionContext sessionContext = (SessionContext) prc.getSubcontext(SessionContext.class);
+        final SessionContext sessionContext = prc.getSubcontext(SessionContext.class);
         if(sessionContext != null && sessionContext.getIdPSession() != null) {
             return sessionContext.getIdPSession();
         } else {

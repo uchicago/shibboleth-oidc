@@ -35,6 +35,7 @@
             user-approval-handler-ref="tofuUserApprovalHandler"
             request-validator-ref="oauthRequestValidator"
             redirect-resolver-ref="blacklistAwareRedirectResolver"
+            user-approval-page="forward:/profile#{T(net.shibboleth.idp.oidc.login.LoginEndpoint).URL}"
             authorization-endpoint-url="#{T(net.shibboleth.idp.oidc.login.AuthorizeEndpoint).URL}"
             token-endpoint-url="#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
             error-page="/error">
