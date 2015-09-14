@@ -5,7 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.oidc.OpenIdConnectUtils;
+import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import net.shibboleth.idp.oidc.config.SpringSecurityAuthenticationToken;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;

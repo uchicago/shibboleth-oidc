@@ -18,8 +18,7 @@ package net.shibboleth.idp.oidc.flow;
 
 
 import com.google.common.base.Strings;
-import net.shibboleth.idp.oidc.OpenIdConnectUtils;
-import net.shibboleth.idp.oidc.filter.AuthorizationRequestFilter;
+import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -34,7 +33,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * Creates the {@link RelyingPartyContext} as a child of the {@link ProfileRequestContext}.

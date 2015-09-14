@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.shibboleth.idp.oidc;
+package net.shibboleth.idp.oidc.util;
 
 import net.shibboleth.idp.oidc.flow.OpenIdConnectResponse;
 import org.mitre.oauth2.model.ClientDetailsEntity;

@@ -96,7 +96,7 @@
             <set>
                 <value>/introspect</value>
                 <value>/revoke</value>
-                <value>/token</value>
+                <value>/profile/oidc/token</value>
             </set>
         </constructor-arg>
     </bean>

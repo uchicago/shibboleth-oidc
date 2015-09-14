@@ -53,7 +53,7 @@
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.web" level="WARN">
+    <logger name="org.springframework.web" level="DEBUG">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
@@ -62,7 +62,7 @@
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.security.oauth2" level="DEBUG">
+    <logger name="org.springframework.security.oauth2" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>

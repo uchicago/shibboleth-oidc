@@ -18,7 +18,7 @@ package net.shibboleth.idp.oidc.filter;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import net.shibboleth.idp.oidc.OpenIdConnectUtils;
+import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;

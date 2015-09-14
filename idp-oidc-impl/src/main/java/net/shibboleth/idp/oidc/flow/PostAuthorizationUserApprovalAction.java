@@ -2,7 +2,7 @@ package net.shibboleth.idp.oidc.flow;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
-import net.shibboleth.idp.oidc.OpenIdConnectUtils;
+import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import org.opensaml.profile.context.ProfileRequestContext;

@@ -42,9 +42,9 @@
                    authentication-manager-ref="clientAuthenticationManager"
                    entry-point-ref="oauthAuthenticationEntryPoint"
                    use-expressions="true">
-        <security:intercept-url pattern="/token" access="permitAll" method="OPTIONS" />
+        <security:intercept-url pattern="/profile/oidc/token" access="permitAll" method="OPTIONS" />
         <!-- allow OPTIONS calls without auth for CORS stuff -->
-        <security:intercept-url pattern="/token" access="isAuthenticated()" />
+        <security:intercept-url pattern="/profile/oidc/token" access="isAuthenticated()" />
         <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
         <!-- include this only if you need to authenticate clients via request parameters -->
         <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
@@ -54,12 +54,13 @@
     </security:http>
 
     <!-- Allow open access to discovery endpoints -->
-    <security:http pattern="/#{T(org.mitre.openid.connect.web.JWKSetPublishingEndpoint).URL}**"
+    <security:http pattern="/profile/oidc/jwk"
                    use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
-        <security:intercept-url pattern="/#{T(org.mitre.openid.connect.web.JWKSetPublishingEndpoint).URL}**"
+        <security:intercept-url pattern="/profile/oidc/jwk"
                                 access="permitAll"/>
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
     </security:http>
+
     <security:http pattern="/#{T(org.mitre.discovery.web.DiscoveryEndpoint).WELL_KNOWN_URL}/**"
                    use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
         <security:intercept-url pattern="/#{T(org.mitre.discovery.web.DiscoveryEndpoint).WELL_KNOWN_URL}/**" access="permitAll"/>
