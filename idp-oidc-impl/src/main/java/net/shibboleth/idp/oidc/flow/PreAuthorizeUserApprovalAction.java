@@ -85,22 +85,22 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
     @Nonnull
     @Override
-    protected Event doExecute(@Nonnull RequestContext springRequestContext,
-                              @Nonnull ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+                              @Nonnull final ProfileRequestContext profileRequestContext) {
 
-        HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
-        HttpSession session = request.getSession();
-        AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
+        final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
+        final HttpSession session = request.getSession();
+        final AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
         if (authRequest == null || Strings.isNullOrEmpty(authRequest.getClientId())) {
             log.warn("Authorization request could not be loaded from session");
             return Events.Failure.event(this);
         }
 
-        String prompt = (String)authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
-        List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
+        final String prompt = (String)authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
+        final List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
                 .splitToList(Strings.nullToEmpty(prompt));
 
-        ClientDetailsEntity client;
+        final ClientDetailsEntity client;
 
         try {
             client = clientService.loadClientByClientId(authRequest.getClientId());
@@ -108,7 +108,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                 log.error("Could not find client {}", authRequest.getClientId());
                 return Events.ClientNotFound.event(this);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error(e.getMessage(), e);
             return Events.BadRequest.event(this);
         }
@@ -117,29 +117,29 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             return handleWhenNoPromptIsPresent(springRequestContext, request, authRequest, client);
         }
 
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        SpringSecurityAuthenticationToken token = new SpringSecurityAuthenticationToken(profileRequestContext);
-        Authentication authentication = authenticationManager.authenticate(token);
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        final SpringSecurityAuthenticationToken token = new SpringSecurityAuthenticationToken(profileRequestContext);
+        final Authentication authentication = authenticationManager.authenticate(token);
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
-        OpenIdConnectResponse response = new OpenIdConnectResponse();
+        final OpenIdConnectResponse response = new OpenIdConnectResponse();
         response.setAuthorizationRequest(authRequest);
         response.setClient(client);
         response.setRedirectUri(authRequest.getRedirectUri());
 
         // pre-process the scopes
-        Set<SystemScope> scopes = scopeService.fromStrings(authRequest.getScope());
+        final Set<SystemScope> scopes = scopeService.fromStrings(authRequest.getScope());
 
-        Set<SystemScope> sortedScopes = getSystemScopes(scopes);
+        final Set<SystemScope> sortedScopes = getSystemScopes(scopes);
         response.setScopes(sortedScopes);
 
-        Map<String, Map<String, String>> claimsForScopes = getUserInfoClaimsForScopes(sortedScopes);
+        final Map<String, Map<String, String>> claimsForScopes = getUserInfoClaimsForScopes(sortedScopes);
         response.setClaims(claimsForScopes);
 
         // client stats
-        Integer count = statsService.getCountForClientId(client.getId());
+        final Integer count = statsService.getCountForClientId(client.getId());
         response.setCount(count);
 
         if (client.getContacts() != null) {
@@ -148,7 +148,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
         // if the client is over a week old and has more than one registration, don't give such a big warning
         // instead, tag as "Generally Recognized As Safe" (gras)
-        Date lastWeek = new Date(System.currentTimeMillis() - (60 * 60 * 24 * 7 * 1000));
+        final Date lastWeek = new Date(System.currentTimeMillis() - (60 * 60 * 24 * 7 * 1000));
         response.setGras(count > 1 && client.getCreatedAt() != null && client.getCreatedAt().before(lastWeek));
 
         OpenIdConnectUtils.setResponse(springRequestContext, response);
@@ -162,22 +162,22 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
     private Map<String, Map<String, String>> getUserInfoClaimsForScopes(final Set<SystemScope> sortedScopes) {
 
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        Subject principal = (Subject) authentication.getPrincipal();
-        Collection<Principal> collection =
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        final Authentication authentication = securityContext.getAuthentication();
+        final Subject principal = (Subject) authentication.getPrincipal();
+        final Collection<Principal> collection =
                 principal.getPrincipals().stream().filter(p -> p instanceof UsernamePrincipal).collect(Collectors.toList());
-        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) collection.iterator().next();
+        final UsernamePrincipal usernamePrincipal = (UsernamePrincipal) collection.iterator().next();
 
-        UserInfo user = userInfoService.getByUsername(usernamePrincipal.getName());
-        Map<String, Map<String, String>> claimsForScopes = new HashMap<>();
+        final UserInfo user = userInfoService.getByUsername(usernamePrincipal.getName());
+        final Map<String, Map<String, String>> claimsForScopes = new HashMap<>();
         if (user != null) {
-            JsonObject userJson = user.toJson();
+            final JsonObject userJson = user.toJson();
 
-            for (SystemScope systemScope : sortedScopes) {
-                Map<String, String> claimValues = new HashMap<>();
+            for (final SystemScope systemScope : sortedScopes) {
+                final Map<String, String> claimValues = new HashMap<>();
 
-                Set<String> claims = scopeClaimTranslationService.getClaimsForScope(systemScope.getValue());
+                final Set<String> claims = scopeClaimTranslationService.getClaimsForScope(systemScope.getValue());
                 claims.stream().filter(claim -> userJson.has(claim) &&
                         userJson.get(claim).isJsonPrimitive()).forEach(claim -> {
                     claimValues.put(claim, userJson.get(claim).getAsString());
@@ -190,8 +190,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
     }
 
     private Set<SystemScope> getSystemScopes(final Set<SystemScope> scopes) {
-        Set<SystemScope> sortedScopes = new LinkedHashSet<>(scopes.size());
-        Set<SystemScope> systemScopes = scopeService.getAll();
+        final Set<SystemScope> sortedScopes = new LinkedHashSet<>(scopes.size());
+        final Set<SystemScope> systemScopes = scopeService.getAll();
 
         // sort scopes for display based on the inherent order of system scopes
         sortedScopes.addAll(systemScopes.stream().filter(s -> scopes.contains(s)).collect(Collectors.toList()));
@@ -206,15 +206,15 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                                               @Nonnull final AuthorizationRequest authRequest,
                                               @Nonnull final ClientDetailsEntity client) {
         try {
-            String url = redirectResolver.resolveRedirect(authRequest.getRedirectUri(), client);
-            URIBuilder uriBuilder = new URIBuilder(url);
+            final String url = redirectResolver.resolveRedirect(authRequest.getRedirectUri(), client);
+            final URIBuilder uriBuilder = new URIBuilder(url);
 
             uriBuilder.addParameter("error", "interaction_required");
             if (!Strings.isNullOrEmpty(authRequest.getState())) {
                 uriBuilder.addParameter("state", authRequest.getState());
             }
 
-            OpenIdConnectResponse response = new OpenIdConnectResponse();
+            final OpenIdConnectResponse response = new OpenIdConnectResponse();
             response.setRedirectUri(uriBuilder.toString());
             response.setAuthorizationRequest(authRequest);
             response.setClient(client);
@@ -224,7 +224,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                     OpenIdConnectUtils.getAuthorizationRequestParameters(request));
             return Events.Redirect.event(this);
 
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             log.error("Can't build redirect URI for prompt=none, sending error instead", e);
             return Events.BadRequest.event(this);
         }

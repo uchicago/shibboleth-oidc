@@ -45,7 +45,6 @@
             request-validator-ref="oauthRequestValidator"
             redirect-resolver-ref="blacklistAwareRedirectResolver"
             authorization-endpoint-url="/oidc/authorize"
-
             token-endpoint-url="/oidc/token"
             error-page="/error">
         <oauth:authorization-code authorization-code-services-ref="defaultOAuth2AuthorizationCodeService"/>

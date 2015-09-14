@@ -40,14 +40,14 @@ public class BuildOpenIdConnectMetadataContextAction extends AbstractProfileActi
     }
 
     @Override
-    protected Event doExecute(@Nonnull RequestContext springRequestContext,
-                              @Nonnull ProfileRequestContext profileRequestContext) {
-        RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+                              @Nonnull final ProfileRequestContext profileRequestContext) {
+        final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
         if(rpCtx == null) {
             throw new IllegalArgumentException("RelyingPartyContext not found");
         } else {
-            SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-            EntityDescriptor clientEntityDescriptor = new ClientEntityDescriptor(rpCtx.getRelyingPartyId());
+            final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
+            final EntityDescriptor clientEntityDescriptor = new ClientEntityDescriptor(rpCtx.getRelyingPartyId());
             mdCtx.setEntityDescriptor(clientEntityDescriptor);
             rpCtx.setRelyingPartyIdContextTree(mdCtx);
 

@@ -83,7 +83,7 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
      * @param contexts the contexts
      */
     public void setDefaultAuthenticationMethods(
-            @Nonnull @NonnullElements List<AuthnContextClassRefPrincipal> contexts) {
+            @Nonnull @NonnullElements final List<AuthnContextClassRefPrincipal> contexts) {
         Constraint.isNotNull(contexts, "List of contexts cannot be null");
         this.defaultAuthenticationContexts = new ArrayList(Collections2.filter(contexts, Predicates.notNull()));
     }
@@ -102,7 +102,7 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
      *
      * @param flows the flows
      */
-    public void setAuthenticationFlows(@Nonnull @NonnullElements Collection<String> flows) {
+    public void setAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         this.authenticationFlows = new HashSet(Collections2.filter(flows, Predicates.notNull()));
     }
@@ -121,7 +121,7 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
      *
      * @param flows the flows
      */
-    public void setPostAuthenticationFlows(@Nonnull @NonnullElements Collection<String> flows) {
+    public void setPostAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         this.postAuthenticationFlows = new ArrayList(StringSupport.normalizeStringCollection(flows));
     }
@@ -140,7 +140,7 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
      *
      * @param formats the formats
      */
-    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements List<String> formats) {
+    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
         this.nameIDFormatPrecedence = new ArrayList(Collections2.filter(formats, Predicates.notNull()));
     }

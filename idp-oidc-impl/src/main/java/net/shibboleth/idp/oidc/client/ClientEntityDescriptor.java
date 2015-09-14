@@ -61,7 +61,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
      *
      * @param clientIdentifier the client identifier
      */
-    public ClientEntityDescriptor(@Nonnull String clientIdentifier) {
+    public ClientEntityDescriptor(@Nonnull final String clientIdentifier) {
         this.clientId = Constraint.isNotNull(clientIdentifier, "Client cannot be null");
         this.objectMetadata = new LockableClassToInstanceMultiMap(true);
     }
@@ -72,7 +72,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setEntityID(String id) {
+    public void setEntityID(final String id) {
         throw new UnsupportedOperationException();
     }
 
@@ -82,7 +82,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setID(String newID) {
+    public void setID(final String newID) {
         throw new UnsupportedOperationException();
     }
 
@@ -92,7 +92,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setExtensions(Extensions extensions) {
+    public void setExtensions(final Extensions extensions) {
         throw new UnsupportedOperationException();
     }
 
@@ -102,37 +102,37 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public List<RoleDescriptor> getRoleDescriptors(QName typeOrName) {
+    public List<RoleDescriptor> getRoleDescriptors(final QName typeOrName) {
         return Collections.emptyList();
     }
 
     @Override
-    public List<RoleDescriptor> getRoleDescriptors(QName typeOrName, String supportedProtocol) {
+    public List<RoleDescriptor> getRoleDescriptors(final QName typeOrName, final String supportedProtocol) {
         return Collections.emptyList();
     }
 
     @Override
-    public IDPSSODescriptor getIDPSSODescriptor(String supportedProtocol) {
+    public IDPSSODescriptor getIDPSSODescriptor(final String supportedProtocol) {
         return null;
     }
 
     @Override
-    public SPSSODescriptor getSPSSODescriptor(String supportedProtocol) {
+    public SPSSODescriptor getSPSSODescriptor(final String supportedProtocol) {
         return null;
     }
 
     @Override
-    public AuthnAuthorityDescriptor getAuthnAuthorityDescriptor(String supportedProtocol) {
+    public AuthnAuthorityDescriptor getAuthnAuthorityDescriptor(final String supportedProtocol) {
         return null;
     }
 
     @Override
-    public AttributeAuthorityDescriptor getAttributeAuthorityDescriptor(String supportedProtocol) {
+    public AttributeAuthorityDescriptor getAttributeAuthorityDescriptor(final String supportedProtocol) {
         return null;
     }
 
     @Override
-    public PDPDescriptor getPDPDescriptor(String supportedProtocol) {
+    public PDPDescriptor getPDPDescriptor(final String supportedProtocol) {
         return null;
     }
 
@@ -142,7 +142,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setAffiliationDescriptor(AffiliationDescriptor descriptor) {
+    public void setAffiliationDescriptor(final AffiliationDescriptor descriptor) {
         throw new UnsupportedOperationException();
     }
 
@@ -152,7 +152,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setOrganization(Organization organization) {
+    public void setOrganization(final Organization organization) {
         throw new UnsupportedOperationException();
     }
 
@@ -178,7 +178,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setCacheDuration(Long duration) {
+    public void setCacheDuration(final Long duration) {
         throw new UnsupportedOperationException();
     }
 
@@ -200,7 +200,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setSignature(@Nullable Signature newSignature) {
+    public void setSignature(@Nullable final Signature newSignature) {
         throw new UnsupportedOperationException();
     }
 
@@ -215,7 +215,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setValidUntil(DateTime validUntil) {
+    public void setValidUntil(final DateTime validUntil) {
         throw new UnsupportedOperationException();
     }
 
@@ -294,7 +294,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void releaseChildrenDOM(boolean propagateRelease) {
+    public void releaseChildrenDOM(final boolean propagateRelease) {
     }
 
     @Override
@@ -302,38 +302,38 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void releaseParentDOM(boolean propagateRelease) {
+    public void releaseParentDOM(final boolean propagateRelease) {
     }
 
     @Override
     @Nullable
-    public XMLObject resolveID(@Nonnull String id) {
+    public XMLObject resolveID(@Nonnull final String id) {
         return null;
     }
 
     @Override
     @Nullable
-    public XMLObject resolveIDFromRoot(@Nonnull String id) {
+    public XMLObject resolveIDFromRoot(@Nonnull final String id) {
         return null;
     }
 
     @Override
-    public void setDOM(@Nullable Element dom) {
+    public void setDOM(@Nullable final Element dom) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setNoNamespaceSchemaLocation(@Nullable String location) {
+    public void setNoNamespaceSchemaLocation(@Nullable final String location) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setParent(@Nullable XMLObject parent) {
+    public void setParent(@Nullable final XMLObject parent) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setSchemaLocation(@Nullable String location) {
+    public void setSchemaLocation(@Nullable final String location) {
         throw new UnsupportedOperationException();
     }
 
@@ -350,12 +350,12 @@ public class ClientEntityDescriptor implements EntityDescriptor {
     }
 
     @Override
-    public void setNil(@Nullable Boolean newNil) {
+    public void setNil(@Nullable final Boolean newNil) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setNil(@Nullable XSBooleanValue newNil) {
+    public void setNil(@Nullable final XSBooleanValue newNil) {
         throw new UnsupportedOperationException();
     }
 

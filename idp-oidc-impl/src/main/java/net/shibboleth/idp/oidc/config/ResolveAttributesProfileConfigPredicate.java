@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 public class ResolveAttributesProfileConfigPredicate extends AbstractRelyingPartyPredicate {
     @Override
     public boolean apply(@Nullable final ProfileRequestContext input) {
-        RelyingPartyContext rpc = this.getRelyingPartyContextLookupStrategy().apply(input);
+        final RelyingPartyContext rpc = this.getRelyingPartyContextLookupStrategy().apply(input);
         return rpc != null;
     }
 }

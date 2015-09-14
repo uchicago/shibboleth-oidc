@@ -75,10 +75,10 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
 
     @Nonnull
     @Override
-    protected Event doExecute(@Nonnull RequestContext springRequestContext,
-                              @Nonnull ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+                              @Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Building authentication context", getLogPrefix());
-        AuthenticationContext ac = new AuthenticationContext();
+        final AuthenticationContext ac = new AuthenticationContext();
         if (authnRequest != null) {
             ac.setForceAuthn(authnRequest.isForceAuthn());
             ac.setIsPassive(authnRequest.isPassive());

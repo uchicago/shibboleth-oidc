@@ -45,25 +45,24 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
 
     @Nonnull
     @Override
-    protected Event doExecute(@Nonnull RequestContext springRequestContext,
-                              @Nonnull ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+                              @Nonnull final ProfileRequestContext profileRequestContext) {
 
 
-        HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
-        HttpSession session = request.getSession();
-        AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
+        final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
+        final AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
         if (authRequest == null || Strings.isNullOrEmpty(authRequest.getClientId())) {
             log.warn("Authorization request could not be loaded from session");
             return Events.Failure.event(this);
         }
 
-        ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
+        final ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
 
         if (client == null) {
             log.warn("Client configuration could not be loaded from session");
             return Events.Failure.event(this);
         }
-        RelyingPartyContext rpc = new RelyingPartyContext();
+        final RelyingPartyContext rpc = new RelyingPartyContext();
 
         rpc.setVerified(true);
         rpc.setRelyingPartyId(client.getClientId());

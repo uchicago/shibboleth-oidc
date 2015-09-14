@@ -47,8 +47,8 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
      * @return the idp session
      */
     @Nonnull
-    protected IdPSession getIdPSession(ProfileRequestContext prc) {
-        SessionContext sessionContext = (SessionContext) prc.getSubcontext(SessionContext.class);
+    protected IdPSession getIdPSession(final ProfileRequestContext prc) {
+        final SessionContext sessionContext = (SessionContext) prc.getSubcontext(SessionContext.class);
         if(sessionContext != null && sessionContext.getIdPSession() != null) {
             return sessionContext.getIdPSession();
         } else {
@@ -58,21 +58,21 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
 
     @Override
     @Nonnull
-    protected Event doExecute(@Nonnull RequestContext springRequestContext,
-                              @Nonnull ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+                              @Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Checking whether authentication is required", getLogPrefix());
         try {
-            IdPSession e = getIdPSession(profileRequestContext);
+            final IdPSession e = getIdPSession(profileRequestContext);
             this.log.debug("Found session ID {}", e.getId());
 
             try {
                 if(e.checkTimeout()) {
                     return Events.SessionFound.event(this);
                 }
-            } catch (SessionException ex) {
+            } catch (final SessionException ex) {
                 log.debug("Error performing session timeout check. Assuming session has expired.", ex);
             }
-        } catch (IllegalStateException ex) {
+        } catch (final IllegalStateException ex) {
             log.debug("IdP session not found");
         }
 

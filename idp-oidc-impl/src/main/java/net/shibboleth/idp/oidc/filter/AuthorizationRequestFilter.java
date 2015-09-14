@@ -69,13 +69,17 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
     private RedirectResolver redirectResolver;
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res,
-                         FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
+    public void doFilter(final ServletRequest req, final ServletResponse res,
+                         final FilterChain chain) throws IOException, ServletException {
+        final HttpServletRequest request = (HttpServletRequest) req;
+        final HttpServletResponse response = (HttpServletResponse) res;
 
+        if (shouldIgnoreProfileRequestBasedOnPath(request)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-        if (determineProfilePathForExceution(request)) {
+        if (isProcessingExistingInboundAuthorizationRequest(request)) {
             chain.doFilter(request, response);
             return;
         }
@@ -83,15 +87,15 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         log.debug("Evaluating authorization request");
         try {
             log.debug("Constructing authorization request");
-            Map<String, String> requestParameters = createRequestMap(request.getParameterMap());
-            AuthorizationRequest authRequest = authRequestFactory.createAuthorizationRequest(requestParameters);
+            final Map<String, String> requestParameters = createRequestMap(request.getParameterMap());
+            final AuthorizationRequest authRequest = authRequestFactory.createAuthorizationRequest(requestParameters);
 
             if (Strings.isNullOrEmpty(authRequest.getClientId())) {
                 throw new InvalidClientException("No client id is specified in the authorization request");
             }
 
             log.debug("Loading client by id {}", authRequest.getClientId());
-            ClientDetailsEntity client = clientService.loadClientByClientId(authRequest.getClientId());
+            final ClientDetailsEntity client = clientService.loadClientByClientId(authRequest.getClientId());
             OpenIdConnectUtils.setAuthorizationRequest(request, authRequest, requestParameters);
             log.debug("Saved authorization request");
 
@@ -99,7 +103,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
             OpenIdConnectUtils.setClient(request, client);
             log.debug("Saved client request");
 
-            Object loginHint = authRequest.getExtensions().get(ConnectRequestParameters.LOGIN_HINT);
+            final Object loginHint = authRequest.getExtensions().get(ConnectRequestParameters.LOGIN_HINT);
             if (loginHint != null) {
                 OpenIdConnectUtils.setRequestParameter(request, ConnectRequestParameters.LOGIN_HINT, loginHint);
                 log.debug("Saved login hint {} into session", loginHint);
@@ -108,9 +112,9 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                 log.debug("Removed login hint attribute from session");
             }
 
-            String prompt = (String) authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
+            final String prompt = (String) authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
             if (prompt != null) {
-                log.debug("Authorization request contains prompt {}");
+                log.debug("Authorization request contains prompt {}", prompt);
                 if (checkForPrompts(prompt, response, request)) {
                     chain.doFilter(req, res);
                     return;
@@ -125,7 +129,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                 chain.doFilter(req, res);
             }
 
-        } catch (InvalidClientException e) {
+        } catch (final InvalidClientException e) {
             log.debug("Invalid client specified in the request", e);
             chain.doFilter(req, res);
         }
@@ -137,22 +141,30 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      * with {@value #PROFILE_OIDC_AUTHORIZE}.
      *
      * @param request the request
-     * @return the boolean
-     * @throws IOException the iO exception
-     * @throws IOException the iO exception
+     * @return true if this request should be ignored. Otherwise, true to process..
+     * @throws IOException thrown if an error occurs when determining the profile path.
      */
-    private boolean determineProfilePathForExceution(final HttpServletRequest request)
-            throws IOException, ServletException {
-        String servletPath = request.getServletPath();
-        String pathInfo = request.getPathInfo();
+    private boolean shouldIgnoreProfileRequestBasedOnPath(final HttpServletRequest request)
+            throws IOException {
+        final String servletPath = request.getServletPath();
+        final String pathInfo = request.getPathInfo();
         if (Strings.isNullOrEmpty(servletPath) || Strings.isNullOrEmpty(pathInfo)) {
             log.debug("No servlet path available. Not an authorization request. Invoking filter chain");
             return true;
         }
 
-        String path = servletPath.concat(pathInfo);
+        final String path = servletPath.concat(pathInfo);
         if (!path.startsWith(PROFILE_OIDC_AUTHORIZE)) {
-            log.debug("Not an authorization request. Invoking filter chain normally");
+            log.debug("{} not an authorization request. Invoking filter chain normally", path);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isProcessingExistingInboundAuthorizationRequest(final HttpServletRequest request) {
+        final AuthorizationRequest authorizationRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
+        if (authorizationRequest != null) {
+            log.debug("Found existing authorization request for client id {}", authorizationRequest.getClientId());
             return true;
         }
         return false;
@@ -168,12 +180,12 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      */
     private void checkForMaxAge(final HttpServletRequest request) {
 
-        ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
+        final ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
         Integer max = client != null ? client.getDefaultMaxAge() : null;
         log.debug("Client configuration set to max age {}", max);
 
-        AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
-        String maxAge = (String) authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE);
+        final AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
+        final String maxAge = (String) authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE);
         log.debug("Authorization request contains max age {}", maxAge);
         if (maxAge != null) {
             max = Integer.parseInt(maxAge);
@@ -181,13 +193,13 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
         if (max != null) {
             log.debug("Evaluated max age to use as {}", max);
-            Date authTime = OpenIdConnectUtils.getAuthenticationTimestamp(request);
+            final Date authTime = OpenIdConnectUtils.getAuthenticationTimestamp(request);
             log.debug("Authentication time set to {}", authTime);
-            Date now = new Date();
+            final Date now = new Date();
             if (authTime != null) {
-                long seconds = (now.getTime() - authTime.getTime()) / 1000;
+                final long seconds = (now.getTime() - authTime.getTime()) / 1000;
                 if (seconds > max) {
-                    log.debug("Authentication is too old. Clearing authentication context", authTime);
+                    log.debug("Authentication is too old: {}. Clearing authentication context", authTime);
                     SecurityContextHolder.getContext().setAuthentication(null);
                 }
             }
@@ -215,21 +227,21 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         final ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
         final AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
 
-        List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
+        final List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
                     .splitToList(Strings.nullToEmpty(prompt));
         if (prompts.contains(ConnectRequestParameters.PROMPT_NONE)) {
             log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_NONE);
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
             if (auth != null) {
                 log.debug("Authentication context is empty");
             } else {
                 log.info("Client requested no prompt");
                 if (client != null && authRequest.getRedirectUri() != null) {
-                    String url = redirectResolver.resolveRedirect(authRequest.getRedirectUri(), client);
+                    final String url = redirectResolver.resolveRedirect(authRequest.getRedirectUri(), client);
 
                     try {
-                        URIBuilder uriBuilder = new URIBuilder(url);
+                        final URIBuilder uriBuilder = new URIBuilder(url);
 
                         uriBuilder.addParameter(ConnectRequestParameters.ERROR,
                                 ConnectRequestParameters.LOGIN_REQUIRED);
@@ -240,7 +252,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                         response.sendRedirect(uriBuilder.toString());
                         return true;
 
-                    } catch (URISyntaxException e) {
+                    } catch (final URISyntaxException e) {
                         log.error("Can't build redirect URI for prompt=none, sending error instead", e);
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
                         return true;
@@ -257,7 +269,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
             if (OpenIdConnectUtils.isRequestPrompted(request)) {
                 OpenIdConnectUtils.setPromptRequested(request);
 
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 if (auth != null) {
                     SecurityContextHolder.getContext().setAuthentication(null);
                     log.debug("Cleared authentication from context. Proceeding with filter chain");
@@ -282,10 +294,10 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      * @param parameterMap the original request parameters map
      * @return newly built parameters map
      */
-    private Map<String, String> createRequestMap(Map<String, String[]> parameterMap) {
-        Map<String, String> requestMap = new HashMap<>();
-        for (String key : parameterMap.keySet()) {
-            String[] val = parameterMap.get(key);
+    private Map<String, String> createRequestMap(final Map<String, String[]> parameterMap) {
+        final Map<String, String> requestMap = new HashMap<>();
+        for (final String key : parameterMap.keySet()) {
+            final String[] val = parameterMap.get(key);
             if (val != null && val.length > 0) {
                 log.debug("Added request parameter {} with value {}", key, val[0]);
                 requestMap.put(key, val[0]);

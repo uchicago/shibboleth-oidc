@@ -26,13 +26,14 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
 
     @Nonnull
     @Override
-    protected Event doExecute(@Nonnull RequestContext springRequestContext,
-                              @Nonnull ProfileRequestContext profileRequestContext) {
-        AttributeReleaseContext context = profileRequestContext.getSubcontext(AttributeReleaseContext.class);
-        Map<String, IdPAttribute> attributes = context.getConsentableAttributes();
-        AuthorizationRequest request =
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+                              @Nonnull final ProfileRequestContext profileRequestContext) {
+        final AttributeReleaseContext context = profileRequestContext.getSubcontext(AttributeReleaseContext.class);
+        final Map<String, IdPAttribute> attributes = context.getConsentableAttributes();
+
+        final AuthorizationRequest request =
                 OpenIdConnectUtils.getAuthorizationRequest(HttpServletRequestResponseContext.getRequest());
-        OpenIdConnectResponse response = OpenIdConnectUtils.getResponse(springRequestContext);
+        final OpenIdConnectResponse response = OpenIdConnectUtils.getResponse(springRequestContext);
         
         return super.doExecute(springRequestContext, profileRequestContext);
     }

@@ -18,14 +18,14 @@ public class SpringSecurityAuthenticationProviderAdapter implements Authenticati
 
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
-        SpringSecurityAuthenticationToken token = (SpringSecurityAuthenticationToken) authentication;
+        final SpringSecurityAuthenticationToken token = (SpringSecurityAuthenticationToken) authentication;
         if (token.getPrincipal() != null) {
 
-            Subject subject = (Subject) token.getPrincipal();
+            final Subject subject = (Subject) token.getPrincipal();
             System.out.println(subject);
-            UsernamePasswordContext context = (UsernamePasswordContext) token.getCredentials();
+            final UsernamePasswordContext context = (UsernamePasswordContext) token.getCredentials();
 
-            SpringSecurityAuthenticationToken authenticationToken =
+            final SpringSecurityAuthenticationToken authenticationToken =
                     new SpringSecurityAuthenticationToken(token.getProfileRequestContext());
 
             authenticationToken.setAuthenticated(true);

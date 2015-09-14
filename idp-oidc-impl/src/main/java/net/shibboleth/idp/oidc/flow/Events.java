@@ -76,7 +76,7 @@ public enum Events {
      * @param source the source
      * @return the event
      */
-    public Event event(Object source) {
+    public Event event(final Object source) {
         return new Event(source, id());
     }
 }
