@@ -61,13 +61,26 @@
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
     </security:http>
 
+    <security:http pattern="/profile/oidc/userinfo"
+                   use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
+        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+        <security:expression-handler ref="oauthWebExpressionHandler" />
+    </security:http>
+
+    <!--
+    <security:http pattern="/#{T(org.mitre.openid.connect.web.RootController).API_URL}/**"
+                   use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="never">
+        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <security:expression-handler ref="oauthWebExpressionHandler" />
+    </security:http>
+
     <security:http pattern="/#{T(org.mitre.discovery.web.DiscoveryEndpoint).WELL_KNOWN_URL}/**"
                    use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
         <security:intercept-url pattern="/#{T(org.mitre.discovery.web.DiscoveryEndpoint).WELL_KNOWN_URL}/**" access="permitAll"/>
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
     </security:http>
 
-    <!-- OAuth-protect API and other endpoints -->
     <security:http pattern="/#{T(org.mitre.openid.connect.web.DynamicClientRegistrationEndpoint).URL}/**"
                    use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
         <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
@@ -84,27 +97,13 @@
         <security:intercept-url pattern="/resource/**" access="permitAll"/>
     </security:http>
 
-    <security:http pattern="/#{T(org.mitre.openid.connect.web.UserInfoEndpoint).URL}**"
-                   use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
-        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
-        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
-        <security:expression-handler ref="oauthWebExpressionHandler" />
-    </security:http>
-
-    <security:http pattern="/#{T(org.mitre.openid.connect.web.RootController).API_URL}/**"
-                   use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="never">
-        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
-        <security:expression-handler ref="oauthWebExpressionHandler" />
-    </security:http>
-
     <security:http pattern="/#{T(org.mitre.oauth2.web.IntrospectionEndpoint).URL}**"
                    use-expressions="true"
                    entry-point-ref="oauthAuthenticationEntryPoint"
                    create-session="stateless"
                    authentication-manager-ref="clientAuthenticationManager">
         <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
-        <!-- 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" /> -->
-        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
+        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" />
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
         <security:custom-filter ref="clientCredentialsEndpointFilter" after="BASIC_AUTH_FILTER" />
     </security:http>
@@ -115,9 +114,10 @@
                    create-session="stateless"
                    authentication-manager-ref="clientAuthenticationManager">
         <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
-        <!-- 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" /> -->
-        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
+        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
         <security:custom-filter ref="clientCredentialsEndpointFilter" after="BASIC_AUTH_FILTER" />
     </security:http>
+
+    -->
 </beans>
