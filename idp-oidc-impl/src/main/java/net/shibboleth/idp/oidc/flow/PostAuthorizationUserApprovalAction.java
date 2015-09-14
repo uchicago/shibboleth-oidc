@@ -16,11 +16,14 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- *
+ * An action to handle the user approval/consent post autthorization.
  */
 public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(PreAuthorizeUserApprovalAction.class);
 
+    /**
+     * Instantiates a new authorization user approval action.
+     */
     public PostAuthorizationUserApprovalAction() {
     }
 

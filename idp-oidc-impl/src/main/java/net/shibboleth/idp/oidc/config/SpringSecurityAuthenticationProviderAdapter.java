@@ -8,10 +8,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import javax.security.auth.Subject;
-
 /**
- *
+ * A wrapper component for Spring security's authentication provider
+ * that is able to produce authentication objects based on the authentication
+ * context provided by the identity provider.
  */
 @Component("authenticationProviderAdapter")
 public class SpringSecurityAuthenticationProviderAdapter implements AuthenticationProvider {
@@ -21,8 +21,6 @@ public class SpringSecurityAuthenticationProviderAdapter implements Authenticati
         final SpringSecurityAuthenticationToken token = (SpringSecurityAuthenticationToken) authentication;
         if (token.getPrincipal() != null) {
 
-            final Subject subject = (Subject) token.getPrincipal();
-            System.out.println(subject);
             final UsernamePasswordContext context = (UsernamePasswordContext) token.getCredentials();
 
             final SpringSecurityAuthenticationToken authenticationToken =

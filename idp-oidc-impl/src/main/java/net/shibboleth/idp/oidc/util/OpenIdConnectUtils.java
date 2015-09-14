@@ -34,7 +34,7 @@ import java.util.Map;
  * session data.
  */
 public final class OpenIdConnectUtils {
-    /** Flowscope attribute for the OIDC response. */
+    /** Attribute name for the OIDC response. */
     private static final String FLOW_SCOPE_ATTRIBUTE_RESPONSE = "oidcResponse";
 
     /** Attribute name to store the authorization request. */
@@ -46,97 +46,193 @@ public final class OpenIdConnectUtils {
     /** Attribute name to store the openid connect client. */
     private static final String ATTR_OIDC_CLIENT = "OIDC_CLIENT";
 
+    /**
+     * The constant PROMPTED.
+     */
     private static final String PROMPTED = "PROMPT_FILTER_PROMPTED";
 
+    /**
+     * The constant PROMPT_REQUESTED.
+     */
     private static final String PROMPT_REQUESTED = "PROMPT_FILTER_REQUESTED";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConnectUtils.class);
+    /**
+     * The constant LOG.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(OpenIdConnectUtils.class);
 
+    /**
+     * Instantiates a new Open id connect utils.
+     */
     private OpenIdConnectUtils() {}
 
+    /**
+     * Gets authorization request.
+     *
+     * @param request the request
+     * @return the authorization request
+     */
     public static AuthorizationRequest getAuthorizationRequest(final HttpServletRequest request) {
         final HttpSession session = request.getSession();
         final AuthorizationRequest authorizationRequest = (AuthorizationRequest)
                 session.getAttribute(ATTR_OIDC_AUTHZ_REQUEST);
         if (authorizationRequest != null) {
-            LOGGER.debug("Authorization request found in session.");
+            LOG.debug("Authorization request found in session.");
         } else {
-            LOGGER.debug("Authorization request not found in session.");
+            LOG.debug("Authorization request not found in session.");
         }
 
         return authorizationRequest;
     }
 
+    /**
+     * Gets authorization request parameters.
+     *
+     * @param request the request
+     * @return the authorization request parameters
+     */
     public static Map<String, String> getAuthorizationRequestParameters(final HttpServletRequest request) {
         HttpSession session = request.getSession();
         return (Map<String, String>) session.getAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS);
     }
 
+    /**
+     * Sets authorization request.
+     *
+     * @param request the request
+     * @param authorizationRequest the authorization request
+     * @param parameterMap the parameter map
+     */
     public static void setAuthorizationRequest(final HttpServletRequest request,
                                                final AuthorizationRequest authorizationRequest,
                                                final Map<String, String> parameterMap) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST, authorizationRequest);
         session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS, parameterMap);
     }
 
+    /**
+     * Sets client.
+     *
+     * @param request the request
+     * @param client the client
+     */
     public static void setClient(final HttpServletRequest request,
                                final ClientDetailsEntity client) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         session.setAttribute(ATTR_OIDC_CLIENT, client);
     }
 
+    /**
+     * Gets client.
+     *
+     * @param request the request
+     * @return the client
+     */
     public static ClientDetailsEntity getClient(final HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         return (ClientDetailsEntity) session.getAttribute(ATTR_OIDC_CLIENT);
     }
 
+    /**
+     * Sets request parameter.
+     *
+     * @param request the request
+     * @param parameter the parameter
+     * @param value the value
+     */
     public static void setRequestParameter(final HttpServletRequest request,
                                  final String parameter,
                                  final Object value) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         session.setAttribute(parameter, value);
     }
 
+    /**
+     * Remove request parameter.
+     *
+     * @param request the request
+     * @param parameter the parameter
+     */
     public static void removeRequestParameter(final HttpServletRequest request,
                                            final String parameter) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         session.removeAttribute(parameter);
     }
 
+    /**
+     * Sets request prompted.
+     *
+     * @param request the request
+     * @param parameter the parameter
+     */
     public static void setRequestPrompted(final HttpServletRequest request,
                                               final String parameter) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         session.removeAttribute(parameter);
     }
 
+    /**
+     * Remove request prompted.
+     *
+     * @param request the request
+     */
     public static void removeRequestPrompted(final HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         session.removeAttribute(PROMPTED);
     }
 
+    /**
+     * Sets prompt requested.
+     *
+     * @param request the request
+     */
     public static void setPromptRequested(final HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         session.setAttribute(PROMPT_REQUESTED, Boolean.TRUE);
     }
 
+    /**
+     * Is request prompted.
+     *
+     * @param request the request
+     * @return the boolean
+     */
     public static Boolean isRequestPrompted(final HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         return session.getAttribute(PROMPTED) == null;
     }
 
+    /**
+     * Gets authentication timestamp.
+     *
+     * @param request the request
+     * @return the authentication timestamp
+     */
     public static Date getAuthenticationTimestamp(final HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         return (Date) session.getAttribute(AuthenticationTimeStamper.AUTH_TIMESTAMP);
     }
 
+    /**
+     * Gets response.
+     *
+     * @param context the context
+     * @return the response
+     */
     public static OpenIdConnectResponse getResponse(RequestContext context) {
-        OpenIdConnectResponse response =
+        final OpenIdConnectResponse response =
                 context.getFlowScope().get(FLOW_SCOPE_ATTRIBUTE_RESPONSE, OpenIdConnectResponse.class);
         return response;
     }
 
-    public static void setResponse(RequestContext context, OpenIdConnectResponse response) {
+    /**
+     * Sets response.
+     *
+     * @param context the context
+     * @param response the response
+     */
+    public static void setResponse(final RequestContext context, final OpenIdConnectResponse response) {
         context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_RESPONSE, response);
     }
 }

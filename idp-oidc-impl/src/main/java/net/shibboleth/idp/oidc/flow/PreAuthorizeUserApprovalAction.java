@@ -124,6 +124,26 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         SecurityContextHolder.setContext(securityContext);
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
+        final OpenIdConnectResponse response = buildOpenIdConnectResponse(authRequest, client);
+
+        OpenIdConnectUtils.setResponse(springRequestContext, response);
+        OpenIdConnectUtils.setAuthorizationRequest(request, authRequest,
+                OpenIdConnectUtils.getAuthorizationRequestParameters(request));
+
+
+
+        return Events.Proceed.event(this);
+    }
+
+    /**
+     * Build open id connect response.
+     *
+     * @param authRequest the auth request
+     * @param client the client
+     * @return the open id connect response
+     */
+    private OpenIdConnectResponse buildOpenIdConnectResponse(final AuthorizationRequest authRequest,
+                                                             final ClientDetailsEntity client) {
         final OpenIdConnectResponse response = new OpenIdConnectResponse();
         response.setAuthorizationRequest(authRequest);
         response.setClient(client);
@@ -150,23 +170,23 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         // instead, tag as "Generally Recognized As Safe" (gras)
         final Date lastWeek = new Date(System.currentTimeMillis() - (60 * 60 * 24 * 7 * 1000));
         response.setGras(count > 1 && client.getCreatedAt() != null && client.getCreatedAt().before(lastWeek));
-
-        OpenIdConnectUtils.setResponse(springRequestContext, response);
-        OpenIdConnectUtils.setAuthorizationRequest(request, authRequest,
-                OpenIdConnectUtils.getAuthorizationRequestParameters(request));
-
-
-
-        return Events.Proceed.event(this);
+        return response;
     }
 
+    /**
+     * Gets user info claims for scopes.
+     *
+     * @param sortedScopes the sorted scopes
+     * @return the user info claims for scopes
+     */
     private Map<String, Map<String, String>> getUserInfoClaimsForScopes(final Set<SystemScope> sortedScopes) {
 
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         final Authentication authentication = securityContext.getAuthentication();
         final Subject principal = (Subject) authentication.getPrincipal();
         final Collection<Principal> collection =
-                principal.getPrincipals().stream().filter(p -> p instanceof UsernamePrincipal).collect(Collectors.toList());
+                principal.getPrincipals().stream().filter(p -> p instanceof UsernamePrincipal)
+                        .collect(Collectors.toList());
         final UsernamePrincipal usernamePrincipal = (UsernamePrincipal) collection.iterator().next();
 
         final UserInfo user = userInfoService.getByUsername(usernamePrincipal.getName());
@@ -189,6 +209,12 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         return claimsForScopes;
     }
 
+    /**
+     * Gets system scopes.
+     *
+     * @param scopes the scopes
+     * @return the system scopes
+     */
     private Set<SystemScope> getSystemScopes(final Set<SystemScope> scopes) {
         final Set<SystemScope> sortedScopes = new LinkedHashSet<>(scopes.size());
         final Set<SystemScope> systemScopes = scopeService.getAll();
@@ -201,6 +227,15 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         return sortedScopes;
     }
 
+    /**
+     * Handle the case when no prompt is present.
+     *
+     * @param springRequestContext the spring request context
+     * @param request the request
+     * @param authRequest the auth request
+     * @param client the client
+     * @return the event
+     */
     private Event handleWhenNoPromptIsPresent(@Nonnull final  RequestContext springRequestContext,
                                               @Nonnull final HttpServletRequest request,
                                               @Nonnull final AuthorizationRequest authRequest,
