@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
@@ -26,40 +8,38 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-init-method="initialize">
 
-    <import resource="../abstractValidate/abstractValidate-beans.xml" />
-
-    <bean id="decodeMessage"
+    <bean id="DecodeMessage"
           class="org.opensaml.profile.action.impl.DecodeMessage"
           scope="prototype"
-          c:messageDecoder-ref="soapDecoder" />
+          c:messageDecoder-ref="SoapDecoder" />
 
-    <bean id="soapDecoder"
+    <bean id="SoapDecoder"
           class="org.opensaml.saml.saml1.binding.decoding.impl.HTTPSOAP11Decoder"
           scope="prototype"
           p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="processSamlMessageAction"
+    <bean id="ProcessSamlMessage"
           class="net.shibboleth.idp.cas.flow.ProcessSamlMessageAction" />
 
-    <bean id="buildSamlValidationSuccessMessageAction"
+    <bean id="BuildSamlValidationSuccessMessage"
           class="net.shibboleth.idp.cas.flow.BuildSamlValidationSuccessMessageAction"
           c:strategy-ref="shibboleth.DefaultIdentifierGenerationStrategy"
-          c:entityID="%{idp.entityID}" />
+          c:id="%{idp.entityID}" />
 
-    <bean id="buildSamlValidationFailureMessageAction"
+    <bean id="BuildSamlValidationFailureMessage"
           class="net.shibboleth.idp.cas.flow.BuildSamlValidationFailureMessageAction" />
 
-    <bean id="messageEncoderFactory"
+    <bean id="MessageEncoderFactory"
           class="net.shibboleth.idp.saml.profile.impl.SpringAwareMessageEncoderFactory"
           p:bindings-ref="shibboleth.OutgoingSOAPBindings" />
 
-    <bean id="encodeMessage"
+    <bean id="EncodeMessage"
           class="org.opensaml.profile.action.impl.EncodeMessage"
           scope="prototype"
-          p:messageEncoderFactory-ref="messageEncoderFactory"
+          p:messageEncoderFactory-ref="MessageEncoderFactory"
           p:messageHandler="#{getObject('shibboleth.BindingSpecificMessageHandler')}" />
 
-   <bean id="recordResponseComplete"
+   <bean id="RecordResponseComplete"
           class="net.shibboleth.idp.profile.impl.RecordResponseComplete"
           scope="prototype" />
 </beans>

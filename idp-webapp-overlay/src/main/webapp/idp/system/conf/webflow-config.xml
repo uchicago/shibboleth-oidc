@@ -34,8 +34,7 @@
     Define custom flows by using the filesystem directly. Flows will be named based
     on the directories between the base-path and the flow file ending in -flow.xml
     -->
-    <webflow:flow-registry id="flowRegistry" base-path="%{idp.home}/flows"
-                           flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="flowRegistry" base-path="%{idp.webflows:%{idp.home}/flows}" flow-builder-services="flowBuilderServices">
         <webflow:flow-location-pattern  value="/**/*-flow.xml" />
 
         <!-- Abstract base flow for admin flows. -->
@@ -76,6 +75,9 @@
         <webflow:flow-location id="SAML2/SOAP/SLO" path="../system/flows/saml/saml2/slo-back-flow.xml" />
         <webflow:flow-location id="SAML2/SOAP/AttributeQuery" path="../system/flows/saml/saml2/attribute-query-flow.xml" />
         <webflow:flow-location id="SAML2/SOAP/ArtifactResolution" path="../system/flows/saml/saml2/artifact-resolution-flow.xml" />
+
+        <!-- Liberty IDWSF SSOS flow (for SAML 2 delegation) -->
+        <webflow:flow-location id="IDWSF/SSOS" path="../system/flows/saml/saml2/idwsf-ssos-flow.xml" />
 
         <!-- Master flow for authentication. -->
         <webflow:flow-location id="authn.events" path="../conf/authn/authn-events-flow.xml" />
@@ -133,15 +135,21 @@
         <webflow:flow-location id="intercept/security-policy/saml2-sso" path="../system/flows/saml/saml2/sso-security-flow.xml" />
         <webflow:flow-location id="intercept/security-policy/saml2-ecp" path="../system/flows/saml/saml2/ecp-security-flow.xml" />
         <webflow:flow-location id="intercept/security-policy/saml2-slo" path="../system/flows/saml/saml2/slo-security-flow.xml" />
+        <webflow:flow-location id="intercept/security-policy/saml2-idwsf-ssos" path="../system/flows/saml/saml2/idwsf-ssos-security-flow.xml" />
         <webflow:flow-location id="intercept/security-policy/saml-soap" path="../system/flows/saml/soap-security-flow.xml" />
 
         <!-- CAS protocol flows. -->
+        <webflow:flow-location id="cas.abstract" path="../system/flows/cas/cas-abstract-flow.xml" />
+        <webflow:flow-location id="cas.abstractValidate" path="../system/flows/cas/validate-abstract-flow.xml" />
         <webflow:flow-location id="cas/login" path="../system/flows/cas/login/login-flow.xml" />
         <webflow:flow-location id="cas/proxy" path="../system/flows/cas/proxy/proxy-flow.xml" />
-        <webflow:flow-location id="cas.abstractValidate" path="../system/flows/cas/abstractValidate/abstractValidate-flow.xml" />
-        <webflow:flow-location id="ccd as/serviceValidate" path="../system/flows/cas/serviceValidate/serviceValidate-flow.xml" />
+        <webflow:flow-location id="cas/serviceValidate" path="../system/flows/cas/serviceValidate/serviceValidate-flow.xml" />
         <webflow:flow-location id="cas/proxyValidate" path="../system/flows/cas/proxyValidate/proxyValidate-flow.xml" />
         <webflow:flow-location id="cas/samlValidate" path="../system/flows/cas/samlValidate/samlValidate-flow.xml" />
+
+        <!-- Local storage flows. -->
+        <webflow:flow-location id="local-storage/read" path="../system/flows/local-storage/local-storage-read-flow.xml" />
+        <webflow:flow-location id="local-storage/write" path="../system/flows/local-storage/local-storage-write-flow.xml" />
 
         <!-- OIDC protocol flows. -->
         <webflow:flow-location id="oidc/login" path="../system/flows/oidc/login/login-flow.xml" />

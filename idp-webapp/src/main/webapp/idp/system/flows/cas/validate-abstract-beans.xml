@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-init-method="initialize">
+
+    <!-- Action beans -->
+    <bean id="InitializeProfileRequestContext"
+          class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+          p:profileId="#{T(net.shibboleth.idp.cas.config.ValidateConfiguration).PROFILE_ID}"
+          p:loggingId="%{idp.service.logging.cas:SSO}"
+          p:browserProfile="false" />
+
+    <bean id="InitializeValidate"
+          class="net.shibboleth.idp.cas.flow.InitializeValidateAction" />
+
+    <bean id="ValidateTicket"
+          class="net.shibboleth.idp.cas.flow.ValidateTicketAction"
+          c:ticketService-ref="cas.TicketService" />
+
+    <bean id="ValidateRenew"
+          class="net.shibboleth.idp.cas.flow.ValidateRenewAction" />
+
+    <bean id="CheckProxyAuthorization"
+          class="net.shibboleth.idp.cas.flow.CheckProxyAuthorizationAction" />
+
+    <bean id="ValidateProxyCallback"
+          class="net.shibboleth.idp.cas.flow.ValidateProxyCallbackAction"
+          c:proxyAuthenticator-ref="cas.ProxyAuthenticator"
+          c:ticketService-ref="cas.TicketService" />
+
+    <bean id="ExtractAttributes"
+          class="net.shibboleth.idp.cas.flow.ExtractAttributesAction" />
+
+    <bean id="UpdateIdPSessionWithSPSession"
+          class="net.shibboleth.idp.cas.flow.UpdateIdPSessionWithSPSessionAction"
+          c:lifetime="%{idp.session.defaultSPlifetime:PT2H}" />
+
+    <bean id="PopulateAuditContext"
+          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+          p:fieldExtractors-ref="#{
+            getObject('shibboleth.CASValidationAuditExtractors') != null
+                ? 'shibboleth.CASValidationAuditExtractors'
+                : 'shibboleth.DefaultCASValidationAuditExtractors'}"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+</beans>

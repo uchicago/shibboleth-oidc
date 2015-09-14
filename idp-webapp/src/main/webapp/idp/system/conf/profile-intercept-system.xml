@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
@@ -45,6 +27,7 @@
                 <bean id="intercept/security-policy/saml2-sso" parent="shibboleth.InterceptFlow" />
                 <bean id="intercept/security-policy/saml2-ecp" parent="shibboleth.InterceptFlow" />
                 <bean id="intercept/security-policy/saml2-slo" parent="shibboleth.InterceptFlow" />
+                <bean id="intercept/security-policy/saml2-idwsf-ssos" parent="shibboleth.InterceptFlow" />
                 <bean id="intercept/security-policy/saml-soap" parent="shibboleth.InterceptFlow" />
             </list>
         </property>
@@ -52,14 +35,16 @@
 
     <!-- Parent bean for attribute release consent flows. -->
     <bean id="shibboleth.consent.AttributeReleaseFlow" abstract="true"
-            class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"
-            p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
+            class="net.shibboleth.idp.consent.flow.ar.impl.AttributeReleaseFlowDescriptor"
+            p:storageService-ref="#{'%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}'.trim()}"
             p:doNotRememberConsentAllowed="%{idp.consent.allowDoNotRemember:true}"
             p:globalConsentAllowed="%{idp.consent.allowGlobal:true}"
             p:perAttributeConsentEnabled="%{idp.consent.allowPerAttribute:false}"
             p:compareValues="%{idp.consent.compareValues:false}"
             p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
             p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
+            p:expandedNumberOfStoredRecords="%{idp.consent.expandedMaxStoredRecords:0}"
+            p:expandedStorageThreshold="%{idp.consent.expandedStorageThreshold:1048576}"
             p:nonBrowserSupported="false">
         <property name="activationCondition">
             <bean parent="shibboleth.Conditions.OR">
@@ -77,11 +62,13 @@
 
     <!-- Parent bean for terms of use consent flows. -->
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
-        class="net.shibboleth.idp.consent.flow.ConsentFlowDescriptor"
-        p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
+        class="net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor"
+        p:storageService-ref="#{'%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}'.trim()}"
         p:compareValues="%{idp.consent.compareValues:false}"
         p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
         p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
+        p:expandedNumberOfStoredRecords="%{idp.consent.expandedMaxStoredRecords:0}"
+        p:expandedStorageThreshold="%{idp.consent.expandedStorageThreshold:1048576}"
         p:nonBrowserSupported="false" />
 
     <!-- Function to lookup consent-specific audit context as a child of the consent context. -->
@@ -96,7 +83,7 @@
         <constructor-arg name="f">
             <bean id="shibboleth.ChildLookup.ConsentContext"
                 class="org.opensaml.messaging.context.navigate.ChildContextLookup"
-                c:type="#{ T(net.shibboleth.idp.consent.context.ConsentContext) }" />
+                c:type="#{ T(net.shibboleth.idp.consent.context.impl.ConsentContext) }" />
         </constructor-arg>
     </bean>
 
@@ -136,21 +123,21 @@
             <map>
                 <entry>
                     <key>
-                        <util:constant static-field="net.shibboleth.idp.consent.audit.ConsentAuditFields.CURRENT_CONSENT_IDS" />
+                        <util:constant static-field="net.shibboleth.idp.consent.audit.impl.ConsentAuditFields.CURRENT_CONSENT_IDS" />
                     </key>
-                    <bean class="net.shibboleth.idp.consent.audit.CurrentConsentIdsAuditExtractor" />
+                    <bean class="net.shibboleth.idp.consent.audit.impl.CurrentConsentIdsAuditExtractor" />
                 </entry>
                 <entry>
                     <key>
-                        <util:constant static-field="net.shibboleth.idp.consent.audit.ConsentAuditFields.CURRENT_CONSENT_VALUES" />
+                        <util:constant static-field="net.shibboleth.idp.consent.audit.impl.ConsentAuditFields.CURRENT_CONSENT_VALUES" />
                     </key>
-                    <bean class="net.shibboleth.idp.consent.audit.CurrentConsentValuesAuditExtractor" />
+                    <bean class="net.shibboleth.idp.consent.audit.impl.CurrentConsentValuesAuditExtractor" />
                 </entry>
                 <entry>
                     <key>
-                        <util:constant static-field="net.shibboleth.idp.consent.audit.ConsentAuditFields.CURRENT_CONSENT_IS_APPROVED" />
+                        <util:constant static-field="net.shibboleth.idp.consent.audit.impl.ConsentAuditFields.CURRENT_CONSENT_IS_APPROVED" />
                     </key>
-                    <bean class="net.shibboleth.idp.consent.audit.CurrentConsentIsApprovedAuditExtractor" />
+                    <bean class="net.shibboleth.idp.consent.audit.impl.CurrentConsentIsApprovedAuditExtractor" />
                 </entry>
             </map>
         </property>

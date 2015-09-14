@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans
     xmlns="http://www.springframework.org/schema/beans"
     xmlns:c="http://www.springframework.org/schema/c"
@@ -141,37 +123,6 @@
         p:bindings-ref="shibboleth.OutgoingBindings"
         p:artifactImpliesSecureChannel="%{idp.artifact.secureChannel:true}" />
 
-    <bean id="PopulateDecryptionParameters"
-        class="org.opensaml.profile.action.impl.PopulateDecryptionParameters" scope="prototype"
-        p:configurationLookupStrategy-ref="shibboleth.DecryptionConfigurationLookup"
-        p:decryptionParametersResolver-ref="shibboleth.DecryptionParametersResolver" />
-        
-    <bean id="DecryptNameIDs" class="org.opensaml.saml.saml2.profile.impl.DecryptNameIDs" scope="prototype" />
-
-    <bean id="ExtractSubjectFromRequest"
-            class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest" scope="prototype">
-        <property name="nameIDPolicyPredicate">
-            <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
-                    p:metadataResolver-ref="shibboleth.MetadataResolver"
-                    p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
-                    p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
-                <property name="objectLookupStrategy">
-                    <bean class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest.SubjectNameLookupFunction" />
-                </property>
-                <property name="formats">
-                    <util:list>
-                        <value>urn:mace:shibboleth:1.0:nameIdentifier</value>
-                        <value>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</value>
-                        <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
-                    </util:list>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="FinalizeSAMLSubjectCanonicalization"
-        class="net.shibboleth.idp.saml.profile.impl.FinalizeSAMLSubjectCanonicalization" scope="prototype" />
-
     <bean id="PopulateResponseSignatureSigningParameters"
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
@@ -208,11 +159,47 @@
             p:protocol-ref="shibboleth.MetadataLookup.Protocol"
             p:role-ref="shibboleth.MetadataLookup.Role" />
 
+    <bean id="PopulateDecryptionParameters"
+        class="org.opensaml.profile.action.impl.PopulateDecryptionParameters" scope="prototype"
+        p:configurationLookupStrategy-ref="shibboleth.DecryptionConfigurationLookup"
+        p:decryptionParametersResolver-ref="shibboleth.DecryptionParametersResolver" />
+        
+    <bean id="DecryptNameIDs" class="org.opensaml.saml.saml2.profile.impl.DecryptNameIDs" scope="prototype" />
+
+    <bean id="ExtractSubjectFromRequest"
+            class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest" scope="prototype">
+        <property name="nameIDPolicyPredicate">
+            <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
+                    p:metadataResolver-ref="shibboleth.MetadataResolver"
+                    p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+                    p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
+                <property name="objectLookupStrategy">
+                    <bean class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest.SubjectNameLookupFunction" />
+                </property>
+                <property name="formats">
+                    <util:list>
+                        <value>urn:mace:shibboleth:1.0:nameIdentifier</value>
+                        <value>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</value>
+                        <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
+                    </util:list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="FinalizeSAMLSubjectCanonicalization"
+        class="net.shibboleth.idp.saml.profile.impl.FinalizeSAMLSubjectCanonicalization" scope="prototype" />
+
+    <bean id="PopulateClientStorageLoadContext"
+        class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
+        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
+            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />
 
     <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
-        <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.length() gt 0 }" type="boolean" />
+        <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
     </bean>
 
     <bean id="InitializeRequestedPrincipalContext"
@@ -290,6 +277,11 @@
         p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
+    <bean id="PopulateClientStorageSaveContext"
+        class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
+        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
+            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+
     <bean id="PopulateOutboundInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
             p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
@@ -322,6 +314,12 @@
     <bean id="LocalErrorPredicate"
             class="org.opensaml.saml.common.profile.logic.DefaultLocalErrorPredicate"
             p:localEvents="#{getObject('shibboleth.LocalEventMap').keySet()}">
+        <property name="eventContextLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype">
         <property name="eventContextLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
         </property>

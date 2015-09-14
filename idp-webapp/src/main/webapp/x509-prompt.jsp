@@ -1,21 +1,4 @@
-<%--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
---%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="org.opensaml.profile.context.ProfileRequestContext" %>
@@ -48,7 +31,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Example Login Page</title>
+    <title><spring:message code="idp.title" text="Web Login Service" /></title>
     <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%>/css/main.css">
   </head>
 
@@ -56,7 +39,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
     <div class="wrapper">
       <div class="container">
         <header>
-          <a class="logo" href="../images/dummylogo.png"><img src="<%= request.getContextPath() %>/images/dummylogo.png" alt="Replace or remove this logo"></a>
+          <img src="<%= request.getContextPath() %><spring:message code="idp.logo" />" alt="<spring:message code="idp.logo.alt-text" text="logo" />">
         </header>
     
         <div class="content">
@@ -68,7 +51,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
 
               <% if (identifiedRP) { %>
                 <legend>
-                  Log in to <idpui:serviceName uiContext="<%= rpUIContext %>"/>
+                  <spring:message code="idp.login.loginTo" text="Login to" /> <idpui:serviceName uiContext="<%= rpUIContext %>"/>
                 </legend>
               <% } %>
               
@@ -76,13 +59,21 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
               Please make sure that your user certificate is properly configured in your web browser
               and click on the <strong>Certificate Login </strong> button.
               </section>
-
+              <br/>
               <section>
+                <div class="form-element-wrapper">
+                <input type="checkbox" name="<%= ExternalAuthentication.REVOKECONSENT_KEY %>" value="true">
+                <spring:message code="idp.attribute-release.revoke"
+                    text="Clear prior granting of permission for release of your information to this service." />
+                </div>
+                <div class="form-element-wrapper">
                 <input type="checkbox" name="x509passthrough" value="true" tabindex="2">
                 Do not show this page in the future.
-
+                </div>
+                <div class="form-element-wrapper">
                 <button class="form-element form-button" type="submit" name="login" value="1"
                     tabindex="1" accesskey="l">Certificate Login</button>
+                </div>
               </section>
             </form>
 
@@ -120,7 +111,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
 
       <footer>
         <div class="container container-footer">
-          <p class="footer-text">Insert your footer text here.</p>
+          <p class="footer-text"><spring:message code="root.footer" text="Insert your footer text here." /></p>
         </div>
       </footer>
     </div>

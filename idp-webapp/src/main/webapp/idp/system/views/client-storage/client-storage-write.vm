@@ -1,0 +1,65 @@
+##
+## Velocity template to write to local storage.
+##
+## Velocity context will contain the following properties
+## flowExecutionUrl - the form action location
+## flowRequestContext - the Spring Web Flow RequestContext
+## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
+## profileRequestContext - root of context tree
+## saveContext - context with details about the storage data to save
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
+#set ($title = $springMacroRequestContext.getMessage("idp.title", "Web Login Service"))
+#set ($titleSuffix = $springMacroRequestContext.getMessage("idp.client-storage-write.suffix", "Loading Session State..."))
+##
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>$title - $titleSuffix</title>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <script>
+        <!--
+        #include( "client-storage/local-storage-write.js" )
+            
+        function doSave() {
+            #foreach ($op in $saveContext.getStorageOperations())
+                writeLocalStorage("$op.getKey()", "$op.getValue()");
+            #end
+            document.form1.submit();
+        }
+        // -->
+        </script>
+    </head>
+    <body onload="doSave()">
+        <div class="wrapper">
+            <div class="container">
+                <header>
+                    <h3>$title - $titleSuffix</h3>
+                </header>
+                <noscript>
+                    <div class="content">
+                    $springMacroRequestContext.getMessage("idp.client-storage.no-js", "Since your browser does not support JavaScript, you must press the Continue button once to proceed.")
+                    </div>
+                </noscript>
+                <form name="form1" action="${flowExecutionUrl}" method="post">
+                    #foreach ($op in $saveContext.getStorageOperations())
+                        <input name="shib_idp_ls_exception.$op.getKey()" type="hidden" />
+                        <input name="shib_idp_ls_success.$op.getKey()" type="hidden" value="false" />
+                    #end
+                    <input name="_eventId_proceed" type="hidden" />
+                    <noscript>
+                        <input type="submit" value="Continue" />
+                    </noscript>
+                </form>
+            </div>
+            <footer>
+                <div class="container container-footer">
+                    <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

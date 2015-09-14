@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context" xmlns:c="http://www.springframework.org/schema/c"
     xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
@@ -35,11 +17,11 @@
     <import resource="../../../conf/intercept/consent-intercept-config.xml" />
 
     <bean id="TermsOfUseConsentFunction"
-        class="net.shibboleth.idp.consent.logic.MessageSourceConsentFunction"
+        class="net.shibboleth.idp.consent.logic.impl.MessageSourceConsentFunction"
         p:consentKeyLookupStrategy-ref="shibboleth.consent.terms-of-use.Key" />
 
     <bean id="IsConsentRequiredPredicate"
-        class="net.shibboleth.idp.consent.logic.IsConsentRequiredPredicate" />
+        class="net.shibboleth.idp.consent.logic.impl.IsConsentRequiredPredicate" />
 
     <!-- Functions to return part of the storage key consisting of the user identifier. -->
     
@@ -49,7 +31,7 @@
         c:f-ref="shibboleth.ChildLookup.SubjectContext" />
         
     <bean id="shibboleth.consent.AttributeConsentStorageKey"
-        class="net.shibboleth.idp.consent.logic.AttributeValueLookupFunction"
+        class="net.shibboleth.idp.consent.logic.impl.AttributeValueLookupFunction"
         c:userAttributeId="%{idp.consent.userStorageKeyAttribute:uid}" />
         
     <alias name="%{idp.consent.userStorageKey:shibboleth.consent.PrincipalConsentStorageKey}"
@@ -60,7 +42,7 @@
     joined by a delimiter.
     -->
     <bean id="shibboleth.consent.UserAndTermsStorageKey"
-        class="net.shibboleth.idp.consent.logic.JoinFunction"
+        class="net.shibboleth.idp.consent.logic.impl.JoinFunction"
         c:functionA-ref="shibboleth.consent.UserStorageKey"
         c:functionB-ref="shibboleth.consent.terms-of-use.Key" />
 
@@ -69,13 +51,13 @@
     of the storage context.
     -->
     <bean id="shibboleth.consent.UserStorageIndexKey"
-        class="net.shibboleth.idp.consent.logic.JoinFunction"
+        class="net.shibboleth.idp.consent.logic.impl.JoinFunction"
         c:functionA-ref="shibboleth.consent.UserStorageKey">
         <constructor-arg name="functionB">
             <bean class="com.google.common.base.Functions" factory-method="constant">
                 <constructor-arg>
                     <util:constant
-                        static-field="net.shibboleth.idp.consent.flow.storage.AbstractConsentIndexedStorageAction.DEFAULT_STORAGE_INDEX_KEY" />
+                        static-field="net.shibboleth.idp.consent.flow.storage.impl.AbstractConsentIndexedStorageAction.DEFAULT_STORAGE_INDEX_KEY" />
                 </constructor-arg>
             </bean>
         </constructor-arg>
@@ -84,10 +66,10 @@
     <!-- Action beans -->
     
     <bean id="InitializeConsentContext"
-        class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
+        class="net.shibboleth.idp.consent.flow.impl.InitializeConsentContext" scope="prototype" />
 
     <bean id="PopulateConsentContext"
-        class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.impl.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="TermsOfUseConsentFunction"  />
         
     <bean id="PopulatePreConsentAuditContext"
@@ -97,23 +79,23 @@
         p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
 
     <bean id="ReadConsentFromStorage"
-        class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.storage.impl.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey" />
 
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest">
         <property name="fallbackLanguages">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>
     </bean>
 
     <bean id="ExtractConsent"
-        class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.impl.ExtractConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="CreateResult"
-        class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.storage.impl.CreateResult" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey"
         p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 

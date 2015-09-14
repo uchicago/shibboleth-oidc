@@ -52,6 +52,14 @@
 
     <!-- Required by Spring Security OIDC -->
     <bean class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver">
+        <!-- We can map specific exceptions to views here if needed. -->
+        <!--
+        <property name="exceptionMappings">
+            <props>
+                <prop key="FlowExecutionRestorationFailureException">error</prop>
+            </props>
+        </property>
+        -->
         <property name="excludedExceptions">
             <array>
                 <value>org.springframework.security.authentication.InsufficientAuthenticationException</value>
@@ -64,9 +72,9 @@
         class="net.shibboleth.idp.profile.impl.RethrowingFlowExecutionExceptionHandler" />
     
     <!-- ViewResolvers -->
-    
+
     <bean id="shibboleth.VelocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-        <property name="resourceLoaderPath" value="%{idp.views:%{idp.home}/views},%{idp.home}/system/views" />
+        <property name="resourceLoaderPath" value="#{'%{idp.views:%{idp.home}/views}'.trim()},%{idp.home}/system/views" />
         <property name="velocityProperties">
             <props>
                 <prop key="runtime.log.logsystem.class">net.shibboleth.utilities.java.support.velocity.SLF4JLogChute</prop>

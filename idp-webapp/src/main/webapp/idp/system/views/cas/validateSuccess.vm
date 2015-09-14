@@ -1,37 +1,21 @@
-#*
- * Licensed to the University Corporation for Advanced Internet Development,
- * Inc. (UCAID) under one or more contributor license agreements.  See the
- * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache
- * License, Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *#
 #include("cas/header.vm")
   <cas:authenticationSuccess>
-    <cas:user>$escapeUtils.escapeXml($userName)</cas:user>
-    #if($pgtIou)
-      <cas:proxyGrantingTicket>$escapeUtils.escapeXml($pgtIou)</cas:proxyGrantingTicket>
+    <cas:user>$escapeUtils.escapeXml($ticketValidationResponse.userName)</cas:user>
+    #if($ticketValidationResponse.pgtIou)
+      <cas:proxyGrantingTicket>$escapeUtils.escapeXml($ticketValidationResponse.pgtIou)</cas:proxyGrantingTicket>
     #end
-    #if($attributes.size() > 0)
+    #if($ticketValidationResponse.attributes.size() > 0)
       <cas:attributes>
-        #foreach($attr in $attributes.keySet())
-          #foreach($value in $attributes.get($attr))
+        #foreach($attr in $ticketValidationResponse.attributes.keySet())
+          #foreach($value in $ticketValidationResponse.attributes.get($attr))
             <cas:$escapeUtils.escapeXml($attr)>$escapeUtils.escapeXml($value)</cas:$escapeUtils.escapeXml($attr)>
           #end
         #end
       </cas:attributes>
     #end
-    #if($proxies.size() > 0)
+    #if($ticketValidationResponse.proxies.size() > 0)
       <cas:proxies>
-        #foreach($proxy in $proxies)
+        #foreach($proxy in $ticketValidationResponse.proxies)
           <cas:proxy>$escapeUtils.escapeXml($proxy)</cas:proxy>
         #end
       </cas:proxies>

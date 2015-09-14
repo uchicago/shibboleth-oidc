@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context" xmlns:c="http://www.springframework.org/schema/c"
     xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
@@ -35,21 +17,21 @@
     <import resource="../../../conf/intercept/consent-intercept-config.xml" />
 
     <bean id="AttributeReleaseConsentFunction"
-        class="net.shibboleth.idp.consent.logic.AttributeReleaseConsentFunction" scope="prototype" />
+        class="net.shibboleth.idp.consent.logic.impl.AttributeReleaseConsentFunction" scope="prototype" />
 
     <bean id="AttributeConsentFlowDescriptorLookupStrategy"
-        class="net.shibboleth.idp.consent.logic.FlowDescriptorLookupFunction"
-        c:type="#{ T(net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor) }" />
+        class="net.shibboleth.idp.consent.logic.impl.FlowDescriptorLookupFunction"
+        c:type="#{ T(net.shibboleth.idp.consent.flow.ar.impl.AttributeReleaseFlowDescriptor) }" />
 
     <bean id="GlobalAttributeConsentPredicate"
-        class="net.shibboleth.idp.consent.logic.GlobalAttributeConsentPredicate" />
+        class="net.shibboleth.idp.consent.logic.impl.GlobalAttributeConsentPredicate" />
 
     <bean id="IsConsentRequiredPredicate"
-        class="net.shibboleth.idp.consent.logic.IsConsentRequiredPredicate" />
+        class="net.shibboleth.idp.consent.logic.impl.IsConsentRequiredPredicate" />
 
     <!-- Predicate used to determine if consent should be obtained for an attribute. -->
     <bean id="AttributePredicate"
-        class="net.shibboleth.idp.consent.logic.AttributePredicate"
+        class="net.shibboleth.idp.consent.logic.impl.AttributePredicate"
         p:whitelistedAttributeIds-ref="shibboleth.consent.attribute-release.WhitelistedAttributeIDs"
         p:blacklistedAttributeIds-ref="shibboleth.consent.attribute-release.BlacklistedAttributeIDs"
         p:attributeIdMatchExpression="#{getObject('shibboleth.consent.attribute-release.MatchExpression')}" />
@@ -62,7 +44,7 @@
         c:f-ref="shibboleth.ChildLookup.SubjectContext" />
         
     <bean id="shibboleth.consent.AttributeConsentStorageKey"
-        class="net.shibboleth.idp.consent.logic.AttributeValueLookupFunction"
+        class="net.shibboleth.idp.consent.logic.impl.AttributeValueLookupFunction"
         c:userAttributeId="%{idp.consent.userStorageKeyAttribute:uid}" />
         
     <alias name="%{idp.consent.userStorageKey:shibboleth.consent.PrincipalConsentStorageKey}"
@@ -73,7 +55,7 @@
     joined by a delimiter.
     -->
     <bean id="shibboleth.consent.UserAndRelyingPartyStorageKey"
-        class="net.shibboleth.idp.consent.logic.JoinFunction"
+        class="net.shibboleth.idp.consent.logic.impl.JoinFunction"
         c:functionA-ref="shibboleth.consent.UserStorageKey"
         c:functionB-ref="shibboleth.RelyingPartyIdLookup.Simple" />
 
@@ -82,13 +64,13 @@
     of the storage context.
     -->
     <bean id="shibboleth.consent.UserStorageIndexKey"
-        class="net.shibboleth.idp.consent.logic.JoinFunction"
+        class="net.shibboleth.idp.consent.logic.impl.JoinFunction"
         c:functionA-ref="shibboleth.consent.UserStorageKey">
         <constructor-arg name="functionB">
             <bean class="com.google.common.base.Functions" factory-method="constant">
                 <constructor-arg>
                     <util:constant
-                        static-field="net.shibboleth.idp.consent.flow.storage.AbstractConsentIndexedStorageAction.DEFAULT_STORAGE_INDEX_KEY" />
+                        static-field="net.shibboleth.idp.consent.flow.storage.impl.AbstractConsentIndexedStorageAction.DEFAULT_STORAGE_INDEX_KEY" />
                 </constructor-arg>
             </bean>
         </constructor-arg>
@@ -96,20 +78,21 @@
 
     <!-- Serializer for consent records with symbolics support. -->
     <bean id="shibboleth.consent.ConsentSerializer"
-        class="net.shibboleth.idp.consent.storage.ConsentSerializer"
+        class="net.shibboleth.idp.consent.storage.impl.ConsentSerializer"
         p:symbolics-ref="shibboleth.consent.AttributeSymbolics" />
 
     <!-- Action beans -->
 
     <bean id="InitializeConsentContext"
-        class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
+        class="net.shibboleth.idp.consent.flow.impl.InitializeConsentContext" scope="prototype" />
 
     <bean id="InitializeAttributeConsentContext"
-        class="net.shibboleth.idp.consent.flow.ar.InitializeAttributeReleaseContext" scope="prototype" />
+        class="net.shibboleth.idp.consent.flow.ar.impl.InitializeAttributeReleaseContext" scope="prototype" />
 
     <bean id="PopulateAttributeConsentContext"
-        class="net.shibboleth.idp.consent.flow.ar.PopulateAttributeReleaseContext" scope="prototype"
-        p:attributePredicate-ref="AttributePredicate" />
+        class="net.shibboleth.idp.consent.flow.ar.impl.PopulateAttributeReleaseContext" scope="prototype"
+        p:attributePredicate-ref="AttributePredicate"
+        p:attributeIdComparator-ref="shibboleth.consent.attribute-release.AttributeIDComparator" />
 
     <bean id="PopulatePreConsentAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
@@ -118,10 +101,10 @@
         p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
 
     <bean id="PopulateConsentContext"
-        class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.impl.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="AttributeReleaseConsentFunction"  />
 
-    <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+    <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
 
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
@@ -129,22 +112,22 @@
             p:fallbackLanguages-ref="FallbackLanguages"/>
 
     <bean id="RevokeConsent"
-        class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.storage.impl.RevokeConsent" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey"
         p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 
     <bean id="RevokeGlobalAttributeConsent"
-        class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.storage.impl.RevokeConsent" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey"
         p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 
     <bean id="ReadConsentFromStorage"
-        class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.storage.impl.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey"
         p:storageSerializer-ref="shibboleth.consent.ConsentSerializer" />
 
     <bean id="ReadGlobalAttributeConsentFromStorage"
-        class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.storage.impl.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
     <bean id="PopulateConsentAuditContext"
@@ -154,22 +137,22 @@
         p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
 
     <bean id="ExtractConsent"
-        class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.impl.ExtractConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="CreateResult"
-        class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
+        class="net.shibboleth.idp.consent.flow.storage.impl.CreateResult" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey" 
         p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey"
         p:storageSerializer-ref="shibboleth.consent.ConsentSerializer" />
 
     <bean id="CreateGlobalConsentResult"
-        class="net.shibboleth.idp.consent.flow.storage.CreateGlobalConsentResult" scope="prototype" 
+        class="net.shibboleth.idp.consent.flow.storage.impl.CreateGlobalConsentResult" scope="prototype" 
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey"
         p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 
     <bean id="ReleaseAttributes"
-        class="net.shibboleth.idp.consent.flow.ar.ReleaseAttributes" scope="prototype" />
+        class="net.shibboleth.idp.consent.flow.ar.impl.ReleaseAttributes" scope="prototype" />
 
     <bean id="WriteAttributeReleaseConsentAuditLog"
         class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"

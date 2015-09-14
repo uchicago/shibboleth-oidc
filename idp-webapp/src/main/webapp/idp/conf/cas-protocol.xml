@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
@@ -30,8 +12,10 @@
     <!--
        | The CAS service registry defines verified relying parties by endpoint URI.
        | Each entry is a regular expression defining a logical group of services whose URIs match the expression.
+       |
+       | This bean is reloaded periodically according to %{idp.home}/conf/services.properties.
        -->
-    <bean id="cas.serviceRegistry"
+    <bean id="reloadableServiceRegistry"
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">
         <property name="definitions">
             <list>
@@ -39,7 +23,8 @@
                 <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
                       c:regex="https://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
                       p:group="proxying-services"
-                      p:authorizedToProxy="true" />
+                      p:authorizedToProxy="true"
+                      p:singleLogoutParticipant="true" />
                 <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
                       c:regex="http://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
                       p:group="non-proxying-services"
@@ -48,4 +33,20 @@
             </list>
         </property>
     </bean>
+
+    <!--
+       | Advanced CAS configuration.
+       |
+       | Override default CAS components by creating aliases to custom components where the alias
+       | is the same as the default component bean ID.
+       -->
+    <!--
+    <bean id="cas.CustomTicketService"
+          class="org.example.idp.cas.CustomTicketService" />
+    <alias name="cas.CustomTicketService" alias="cas.TicketService" />
+
+    <bean id="cas.CustomProxyAuthenticator"
+          class="org.example.idp.cas.CustomProxyAuthenticator" />
+    <alias name="cas.CustomProxyAuthenticator" alias="cas.ProxyAuthenticator" />
+    -->
 </beans>

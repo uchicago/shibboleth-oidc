@@ -1,21 +1,3 @@
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
@@ -93,12 +75,12 @@
         <bean id="fileResource" class="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
               c:client-ref="shibboleth.FileCachingHttpClient" 
               c:url="http://example.org/path/to/file.xml"
-              c:resource="/var/shibboleth/caches/resourcecache/file.xml"/>
+              c:backingFile="/var/shibboleth/caches/resourcecache/file.xml"/>
        
         <bean id="otherFileResource" class="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
               c:client-ref="shibboleth.FileCachingHttpClient" 
               c:url="http://another.server.example.org/path/to/different/file.xml"
-              c:resource="/var/shibboleth/caches/resourcecache/differentFile.xml"/>
+              c:backingFile="/var/shibboleth/caches/resourcecache/differentFile.xml"/>
               
         In all cases you should review the "idp.httpclient.*" properties defined in services.properties
     -->
@@ -143,6 +125,10 @@
     <util:list id="shibboleth.AccessControlResources">
         <value>%{idp.home}/conf/access-control.xml</value>
         <value>%{idp.home}/system/conf/access-control-system.xml</value>
+    </util:list>
+
+    <util:list id="shibboleth.CASServiceRegistryResources">
+        <value>%{idp.home}/conf/cas-protocol.xml</value>
     </util:list>
 
     <!--

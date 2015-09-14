@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <!-- This file is an EXAMPLE metadata configuration file. -->
 <MetadataProvider id="ShibbolethMetadata" xsi:type="ChainingMetadataProvider"
     xmlns="urn:mace:shibboleth:2.0:metadata"
@@ -43,54 +25,48 @@
     <!--                                                                                            -->
     <!-- ========================================================================================== -->
 
-    <!-- Example HTTP metadata provider.  Use this if you want to download
-         the metadata from a remote service.
-         
-         You *MUST*  provider the SignatureValidationFilter in order to function securely.
-         Get the PubLic key, and validate it via some out of band mechanism, from the
-         party publishing the metadata
-         
-         The EntityRoleWhiteList saves memory by only loading metadata from entity types
-         that you will interoperate with. 
+    <!--
+    Example HTTP metadata provider.  Use this if you want to download the metadata
+    from a remote source.
+
+    You *MUST* provide the SignatureValidationFilter in order to function securely.
+    Get the public key from the party publishing the metadata, and validate it
+    with them via some out of band mechanism.
+
+    The EntityRoleWhiteList saves memory by only loading metadata from SAML roles
+    that the IdP needs to interoperate with. 
+    -->
     
+    <!--
     <MetadataProvider id="HTTPMetadata"
                       xsi:type="FileBackedHTTPMetadataProvider"
                       backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
                       metadataURL="http://WHATEVER"> 
         
-        <MetadataFilter xsi:type="SignatureValidation"
-            requireSignedMetadata="false">
+        <MetadataFilter xsi:type="SignatureValidation" requireSignedMetadata="true">
             <PublicKey>
-                THIS IS AN EXAMPLE
-            
-                MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
-                uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
-                LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88
-                NenXKxY+HMxMs0sT0UKYh1cAEqadrHRBO65aDBcm5a0sBVYt9K6pgaOHrp/zSIbh
-                nR5tFFLjBbtFktDpHL3AdGBH3OYidNGKBO3tJ3Ms7LeKXsM0+0Y4P+9fHZINL2X3
-                E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
-                4wIDAQAB
+                MIIBI.....
             </PublicKey>
         </MetadataFilter>
+        <MetadataFilter xsi:type="metadata:RequiredValidUntil" maxValidityInterval="P30D"/>
         <MetadataFilter xsi:type="EntityRoleWhiteList">
             <RetainedRole>md:SPSSODescriptor</RetainedRole>
         </MetadataFilter>
-        
     </MetadataProvider>
-    
     -->   
 
-    <!-- Example file metadata provider.  Use this if you want to load metadata
-         from a local file.  You might use this if you have some local SPs
-         which are not "federated" but you wish to offer a service to.
-         
-         If you do not provide a SignatureValidation filter then you *have*
-         to know that the file is valid.
-         
-
+    <!--
+    Example file metadata provider.  Use this if you want to load metadata
+    from a local file.  You might use this if you have some local SPs
+    which are not "federated" but you wish to offer a service to.
+    
+    If you do not provide a SignatureValidation filter, then you have the responsibility to
+    ensure that the contents are trustworthy.
+    -->
+    
+    <!--
     <MetadataProvider id="LocalMetadata"  xsi:type="FilesystemMetadataProvider" metadataFile="PATH_TO_YOUR_METADATA"/>
-
-     -->
+    -->
           
     
 </MetadataProvider>

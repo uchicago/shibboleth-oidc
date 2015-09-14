@@ -1,0 +1,53 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+      parent="saml2.sso.abstract">
+      
+    <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
+    
+    <action-state id="InitializeProfileRequestContext">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="DecodeMessage" />
+    </action-state>
+      
+    <action-state id="DecodeMessage">
+        <!-- Here we override and "splice in" PostDecodeMessage to run after the this action defined in the parent flow -->
+        <transition on="proceed" to="PostDecodeMessage" />
+    </action-state>
+
+    <action-state id="PostDecodeMessage">
+        <evaluate expression="PopulateInboundMessageContextWithSAMLSelf" />
+        <evaluate expression="ExtractMessageIDHandler" />
+        <evaluate expression="ValidateActionHandler" />
+        <evaluate expression="ProcessFrameworkHandler" />
+        <evaluate expression="ProcessSenderHandler" />
+        
+        <!-- Note: SAMLPresenterContext entityID is populated by ProcessSenderHandler, so the ordering here is important. -->
+        <evaluate expression="SAMLProtocolAndRoleForPresenter" />
+        <evaluate expression="SAMLMetadataLookupForPresenter" />
+        
+        <evaluate expression="'proceed'" />
+        
+        <!-- If parent DecodeMessage's transition changes on 'proceed', this needs to also change. -->
+        <transition on="proceed" to="CheckInboundInterceptContext" />
+    </action-state>
+    
+    <action-state id="OutboundContextsAndSecurityParameters">
+        <!-- Here we override and "splice in" LibertyOutboundContexts to run after the this action defined in the parent flow -->
+        <transition on="proceed" to="LibertyOutboundContexts" />
+    </action-state>
+    
+    <action-state id="LibertyOutboundContexts">
+        <evaluate expression="LibertyOutboundContexts" />
+        
+        <evaluate expression="'proceed'" />
+        
+        <!-- If parent OutboundContextsAndSecurityParameters' transition changes on 'proceed', this needs to also change. -->
+        <transition on="proceed" to="ExtractSubject" />
+    </action-state>
+
+    <bean-import resource="idwsf-ssos-beans.xml" />
+
+</flow>

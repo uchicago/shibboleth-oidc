@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
@@ -38,7 +20,8 @@
         p:unverifiedConfiguration-ref="shibboleth.UnverifiedRelyingParty"
         p:defaultConfiguration-ref="shibboleth.DefaultRelyingParty"
         p:relyingPartyConfigurations-ref="shibboleth.RelyingPartyOverrides"
-        p:defaultSecurityConfiguration-ref="%{idp.security.config:shibboleth.DefaultSecurityConfiguration}" />
+        p:defaultSecurityConfiguration-ref="%{idp.security.config:shibboleth.DefaultSecurityConfiguration}" 
+        p:signingCredentials="#{getObject('shibboleth.SigningCredentials')}" />
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
@@ -57,12 +40,27 @@
     <!-- Parent bean for RelyingParty overrides based on activation by tag. -->
     <bean id="RelyingPartyByTag" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
-        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" c:trim="false" />
-        
+        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" c:trim="false" c:matchAll="false" />    
+
     <bean id="TagCandidate" abstract="true"
         class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate"
         c:format="#{null}" />
 
+    <!-- Parent bean for building custom predicates that act on the RP's EntityDescriptor. -->
+    <bean id="EntityDescriptorPredicate" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg>
+                    <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
+                </constructor-arg>
+                <constructor-arg>
+                    <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+        
     <!-- Default Profile Configurations, also usable as parent beans in overrides. -->
     
     <bean id="Shibboleth.SSO"
@@ -105,11 +103,10 @@
         p:inboundInterceptorFlows="security-policy/saml-soap"
         p:encryptionOptional="%{idp.encryption.optional:false}" />
 
-    <!--
-    TBD: not yet implemented    
     <bean id="Liberty.SSOS"
-        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />
-    -->
+        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" 
+            p:inboundInterceptorFlows="security-policy/saml2-idwsf-ssos" 
+            p:encryptionOptional="%{idp.encryption.optional:false}" />
 
     <bean id="CAS.LoginConfiguration"
           class="net.shibboleth.idp.cas.config.LoginConfiguration" />
@@ -138,17 +135,17 @@
     <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
     
         <property name="signatureSigningConfiguration">
-            <ref bean="%{idp.signing.config:shibboleth.SigningConfiguration.SHA256}" />
+            <ref bean="#{'%{idp.signing.config:shibboleth.SigningConfiguration.SHA256}'.trim()}" />
         </property>
         
         <property name="signatureValidationConfiguration">
             <bean parent="shibboleth.BasicSignatureValidationConfiguration" 
-                p:signatureTrustEngine-ref="%{idp.trust.signatures:shibboleth.ChainingSignatureTrustEngine}" />
+                p:signatureTrustEngine-ref="#{'%{idp.trust.signatures:shibboleth.ChainingSignatureTrustEngine}'.trim()}" />
         </property>
 
         <property name="clientTLSValidationConfiguration">
             <bean parent="shibboleth.BasicClientTLSValidationConfiguration"
-                p:x509TrustEngine-ref="%{idp.trust.certificates:shibboleth.ChainingX509TrustEngine}" />
+                p:x509TrustEngine-ref="#{'%{idp.trust.certificates:shibboleth.ChainingX509TrustEngine}'.trim()}" />
         </property>
         
         <property name="encryptionConfiguration">

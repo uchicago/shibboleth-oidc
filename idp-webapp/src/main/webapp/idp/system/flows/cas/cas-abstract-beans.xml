@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+          p:placeholderPrefix="%{"
+          p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
+    <import resource="../../conf/audit-system.xml" />
+
+    <!-- These are beans that are common to all CAS protocol flows. -->
+
+    <bean id="BuildRelyingPartyContext"
+          class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
+          c:registry-ref="shibboleth.CASServiceRegistry"/>
+
+    <bean id="BuildSAMLMetadataContext"
+          class="net.shibboleth.idp.cas.flow.BuildSAMLMetadataContextAction" />
+
+    <bean id="PublishProtocolRequest"
+          class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
+          c:isRequest="true" />
+
+    <bean id="PublishProtocolResponse"
+          class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
+          c:isRequest="false" />
+
+    <bean id="SelectProfileConfiguration"
+          class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
+          scope="prototype" />
+
+    <bean id="SelectRelyingPartyConfiguration"
+          class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
+          scope="prototype"
+          p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+
+    <bean id="ValidateIdPSession"
+          class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
+          c:resolver-ref="shibboleth.SessionManager" />
+
+    <bean id="SessionPrincipalLookupFunction"
+          class="com.google.common.base.Functions"
+          factory-method="compose">
+        <constructor-arg index="0">
+            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction" />
+        </constructor-arg>
+        <constructor-arg index="1">
+            <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                  c:type="net.shibboleth.idp.session.context.SessionContext" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="PopulateSubjectContext"
+          class="net.shibboleth.idp.profile.impl.PopulateSubjectContext"
+          scope="prototype"
+          p:principalNameLookupStrategy-ref="SessionPrincipalLookupFunction" />
+
+    <bean id="ResolveAttributes"
+          class="net.shibboleth.idp.profile.impl.ResolveAttributes"
+          scope="prototype"
+          c:resolverService-ref="shibboleth.AttributeResolverService" />
+
+    <bean id="FilterAttributes"
+          class="net.shibboleth.idp.profile.impl.FilterAttributes"
+          scope="prototype"
+          c:filterService-ref="shibboleth.AttributeFilterService"
+          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}">
+        <property name="metadataContextLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype">
+        <property name="eventContextLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="MapEventToView"
+          class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
+          p:defaultView-ref="shibboleth.DefaultErrorView"
+          p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
+
+    <bean id="WriteAuditLog"
+          class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog"
+          scope="prototype"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
+    <bean id="ErrorViewPopulateAuditContext"
+          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext"
+          scope="prototype"
+          p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
+    <bean id="PopulateProtocolError"
+          class="net.shibboleth.idp.cas.flow.PopulateProtocolErrorAction" />
+</beans>

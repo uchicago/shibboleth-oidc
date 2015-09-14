@@ -1,21 +1,3 @@
-<%--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
---%>
 <%@ page language="java" contentType="text/plain; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ page import="java.util.ArrayList" %>
@@ -30,6 +12,8 @@
 <%@ page import="org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver" %>
 <%@ page import="net.shibboleth.idp.Version" %>
 <%@ page import="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider" %>
+<%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
+<%@ page import="net.shibboleth.idp.attribute.resolver.DataConnector" %>
 <%@ page import="net.shibboleth.utilities.java.support.component.IdentifiedComponent" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ReloadableService" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ServiceableComponent" %>
@@ -110,8 +94,30 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
         } finally {
             if (null != component) {
                 component.unpinComponent();
-            }
+            } 
         }
-    }
+    } else if (((IdentifiedComponent) service).getId().contains("AttributeResolver")) {
+        final ServiceableComponent<AttributeResolver> component = service.getServiceableComponent();
+        try {
+            AttributeResolver resolver = component.getComponent();
+            final Collection<DataConnector> connectors = resolver.getDataConnectors().values();
+            
+            for (final DataConnector connector: connectors) {
+                final long lastFail = connector.getLastFail();
+                if (0 != lastFail) {
+                    DateTime failDateTime = new DateTime(lastFail);
+                    out.println("\tDataConnector " +  connector.getId() + ": last failed at " + failDateTime.toString(dateTimeFormatter));
+                } else {
+                    out.println("\tDataConnector " +  connector.getId() + ": has never failed");
+                }
+                out.println();
+            }
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            } 
+        }
+    
+    }    
 }
 %>

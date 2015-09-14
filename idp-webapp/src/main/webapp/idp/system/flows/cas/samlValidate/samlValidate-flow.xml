@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="
@@ -24,30 +6,29 @@
       parent="cas.abstractValidate" >
 
     <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
-    <action-state id="initializeValidate">
-        <evaluate expression="initializeProfileRequestContext"/>
-        <evaluate expression="decodeMessage" />
-        <evaluate expression="processSamlMessageAction" />
+    <action-state id="InitializeValidate">
+        <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="DecodeMessage" />
+        <evaluate expression="ProcessSamlMessage" />
         <evaluate expression="'proceed'" />
-        <transition on="serviceNotSpecified" to="validateFailure" />
-        <transition on="ticketNotSpecified" to="validateFailure" />
-        <transition on="proceed" to="initializeRelyingParty" />
+        <transition on="proceed" to="InitializeRelyingParty" />
     </action-state>
 
     <!-- End states that render the SAML message in the outgoing message context -->
-    <end-state id="validateSuccess">
+    <end-state id="ValidateSuccess">
         <on-entry>
-            <evaluate expression="buildSamlValidationSuccessMessageAction" />
-            <evaluate expression="encodeMessage" />
-            <evaluate expression="recordResponseComplete" />
+            <evaluate expression="BuildSamlValidationSuccessMessage" />
+            <evaluate expression="EncodeMessage" />
+            <evaluate expression="RecordResponseComplete" />
         </on-entry>
     </end-state>
 
-    <end-state id="validateFailure">
+    <!-- Override protocol error view in parent flow -->
+    <end-state id="ProtocolErrorView">
         <on-entry>
-            <evaluate expression="buildSamlValidationFailureMessageAction" />
-            <evaluate expression="encodeMessage" />
-            <evaluate expression="recordResponseComplete" />
+            <evaluate expression="BuildSamlValidationFailureMessage" />
+            <evaluate expression="EncodeMessage" />
+            <evaluate expression="RecordResponseComplete" />
         </on-entry>
         <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>

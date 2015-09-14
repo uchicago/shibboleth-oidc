@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
@@ -39,19 +21,20 @@
     <import resource="../../../conf/authn/remoteuser-internal-authn-config.xml" />
     
     <bean id="ExtractRemoteUser" class="net.shibboleth.idp.authn.impl.ExtractRemoteUser" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-            p:checkRemoteUser-ref="shibboleth.authn.RemoteUser.checkRemoteUser"
-            p:checkHeaders-ref="shibboleth.authn.RemoteUser.checkHeaders"
-            p:checkAttributes-ref="shibboleth.authn.RemoteUser.checkAttributes"
-            p:lowercase-ref="shibboleth.authn.RemoteUser.Lowercase"
-            p:uppercase-ref="shibboleth.authn.RemoteUser.Uppercase"
-            p:trim-ref="shibboleth.authn.RemoteUser.Trim"
-            p:transforms-ref="shibboleth.authn.RemoteUser.Transforms" />
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:checkRemoteUser-ref="shibboleth.authn.RemoteUser.checkRemoteUser"
+        p:checkHeaders-ref="shibboleth.authn.RemoteUser.checkHeaders"
+        p:checkAttributes-ref="shibboleth.authn.RemoteUser.checkAttributes"
+        p:lowercase-ref="shibboleth.authn.RemoteUser.Lowercase"
+        p:uppercase-ref="shibboleth.authn.RemoteUser.Uppercase"
+        p:trim-ref="shibboleth.authn.RemoteUser.Trim"
+        p:transforms-ref="shibboleth.authn.RemoteUser.Transforms" />
         
     <bean id="ValidateRemoteUser" class="net.shibboleth.idp.authn.impl.ValidateRemoteUser" scope="prototype"
         p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"
         p:whitelistedUsernames-ref="shibboleth.authn.RemoteUser.whitelistedUsernames"
         p:blacklistedUsernames-ref="shibboleth.authn.RemoteUser.blacklistedUsernames"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') != null ? getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') : true}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}" />
 
 </beans>
