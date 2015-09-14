@@ -49,6 +49,12 @@
             <artifactId>idp-installer</artifactId>
             <version>${idp.version}</version>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -185,11 +191,17 @@
         </plugins>
     </build>
     <properties>
+
+        <!-- Most likely candidates for updates -->
         <mitreid.version>1.2.0</mitreid.version>
-        <spring.version>4.2.0.RELEASE</spring.version>
+        <java.support.version>7.2.0-SNAPSHOT</java.support.version>
+        <spring.version>4.2.1.RELEASE</spring.version>
         <opensaml.version>${project.version}</opensaml.version>
         <idp.version>${project.version}</idp.version>
-        <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
+        <spring.webflow.version>2.4.2.RELEASE</spring.webflow.version>
+        <spring.extensions.version>5.2.0-SNAPSHOT</spring.extensions.version>
+        <!-- Most likely candidates for updates  -->
+
         <servlet.version>3.1.0</servlet.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
         <guava.version>18.0</guava.version>
@@ -199,7 +211,7 @@
         <joda.version>2.7</joda.version>
         <mail.version>1.4.7</mail.version>
         <jcommander.version>1.47</jcommander.version>
-        <spring.extensions.version>5.1.1</spring.extensions.version>
+
         <aopalliance.version>1.0</aopalliance.version>
         <logback.version>1.1.2</logback.version>
         <velocity.version>1.7</velocity.version>
@@ -223,7 +235,7 @@
         <mchange.commons.java.version>0.2.3.4</mchange.commons.java.version>
         <woodstox.core.asl.version>4.4.1</woodstox.core.asl.version>
         <spymemcached.version>2.11.4</spymemcached.version>
-        <java.support.version>7.2.0-SNAPSHOT</java.support.version>
+
         <stax2.api.version>3.1.4</stax2.api.version>
         <stax.api.version>1.0-2</stax.api.version>
         <javax.json.api.version>1.0</javax.json.api.version>

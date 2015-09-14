@@ -25,7 +25,7 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-    
+
     <!-- Filters and filter mappings -->
     <!-- Try and force I18N, probably won't help much. -->
     <filter>

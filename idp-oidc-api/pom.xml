@@ -48,6 +48,10 @@
                     <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
+                    <artifactId>spring-tx</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
                     <artifactId>spring-core</artifactId>
                     <groupId>org.springframework</groupId>
                 </exclusion>
@@ -75,6 +79,22 @@
                     <artifactId>commons-codec</artifactId>
                     <groupId>commons-codec</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>spring-security-config</artifactId>
+                    <groupId>org.springframework.security</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-security-core</artifactId>
+                    <groupId>org.springframework.security</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-security-web</artifactId>
+                    <groupId>org.springframework.security</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-security-oauth2</artifactId>
+                    <groupId>org.springframework.security.oauth</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -82,11 +102,151 @@
             <artifactId>openid-connect-server</artifactId>
             <version>${mitreid.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-tx</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <artifactId>spring-security-config</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-expression</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-aop</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+            <groupId>org.springframework.security</groupId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>spring-security-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-expression</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-aop</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+            <groupId>org.springframework.security</groupId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>spring-security-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-expression</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+            <groupId>org.springframework.security</groupId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>spring-security-oauth2</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-expression</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-security-core</artifactId>
+                    <groupId>org.springframework.security</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-security-web</artifactId>
+                    <groupId>org.springframework.security</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-security-config</artifactId>
+                    <groupId>org.springframework.security</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-webmvc</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+            <groupId>org.springframework.security.oauth</groupId>
+            <version>${spring.security.oauth.version}</version>
         </dependency>
     </dependencies>
 
 
     <properties>
+        <spring.security.version>4.0.2.RELEASE</spring.security.version>
+        <spring.security.oauth.version>2.0.7.RELEASE</spring.security.oauth.version>
         <install.dir>${project.parent.basedir}</install.dir>
     </properties>
 

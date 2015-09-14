@@ -53,7 +53,14 @@ Class-Path: opensaml-core-3.2.0-20150914.060834-170.jar joda-time-2.7.
  50914.064618-170.jar idp-session-impl-3.2.0-20150914.063629-170.jar i
  dp-ui-3.2.0-20150914.064757-169.jar idp-consent-impl-3.2.0-20150914.0
  64713-46.jar jcl-over-slf4j-1.7.10.jar ant-1.9.4.jar ant-launcher-1.9
- .4.jar
+ .4.jar spring-extensions-5.2.0-20150914.060249-171.jar spring-orm-4.2
+ .1.RELEASE.jar spring-beans-4.2.1.RELEASE.jar spring-core-4.2.1.RELEA
+ SE.jar spring-jdbc-4.2.1.RELEASE.jar spring-tx-4.2.1.RELEASE.jar spri
+ ng-context-support-4.2.1.RELEASE.jar spring-context-4.2.1.RELEASE.jar
+  spring-aop-4.2.1.RELEASE.jar spring-expression-4.2.1.RELEASE.jar spr
+ ing-web-4.2.1.RELEASE.jar spring-webflow-2.4.2.RELEASE.jar spring-bin
+ ding-2.4.2.RELEASE.jar spring-js-2.4.2.RELEASE.jar spring-js-resource
+ s-2.4.2.RELEASE.jar spring-webmvc-4.2.1.RELEASE.jar
 Build-Jdk: 1.7.0_80
 Created-By: Apache Maven 3.3.1
 
