@@ -49,11 +49,10 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
                               @Nonnull final ProfileRequestContext profileRequestContext) {
         final AttributeReleaseContext context = profileRequestContext.getSubcontext(AttributeReleaseContext.class);
         final Map<String, IdPAttribute> attributes = context.getConsentableAttributes();
-
         final AuthorizationRequest request =
                 OpenIdConnectUtils.getAuthorizationRequest(HttpServletRequestResponseContext.getRequest());
         final OpenIdConnectResponse response = OpenIdConnectUtils.getResponse(springRequestContext);
-        
+
         return super.doExecute(springRequestContext, profileRequestContext);
     }
 }

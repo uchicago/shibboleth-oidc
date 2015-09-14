@@ -32,7 +32,7 @@
 
     <bean id="initializeProfileRequestContext"
           class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
-          p:profileId="#{T(net.shibboleth.idp.oidc.config.LoginConfiguration).PROFILE_ID}"
+          p:profileId="#{T(net.shibboleth.idp.oidc.login.LoginConfiguration).PROFILE_ID}"
           p:loggingId="%{idp.service.logging.oidc:OIDC}"
           p:browserProfile="true" />
 

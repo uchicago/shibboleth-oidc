@@ -34,7 +34,7 @@ import java.util.Map;
 @Controller("jwkPublishingEndpoint")
 public class JWKPublishingEndpoint extends JWKSetPublishingEndpoint {
 
-    /** URL endpoing for JWK used to map requests. */
+    /** URL endpoint for JWK used to map requests. */
     public static final String URL = "/oidc/jwk";
 
     @Autowired

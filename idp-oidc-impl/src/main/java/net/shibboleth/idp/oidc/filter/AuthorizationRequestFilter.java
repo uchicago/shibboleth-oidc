@@ -108,7 +108,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                 OpenIdConnectUtils.setRequestParameter(request, ConnectRequestParameters.LOGIN_HINT, loginHint);
                 log.debug("Saved login hint {} into session", loginHint);
             } else {
-                OpenIdConnectUtils.removeRequestParameter(request, ConnectRequestParameters.LOGIN_HINT);
+                OpenIdConnectUtils.removeSessionAttribute(request, ConnectRequestParameters.LOGIN_HINT);
                 log.debug("Removed login hint attribute from session");
             }
 

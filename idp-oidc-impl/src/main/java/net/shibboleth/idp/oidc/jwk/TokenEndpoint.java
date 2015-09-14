@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.shibboleth.idp.oidc.userinfo;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+package net.shibboleth.idp.oidc.jwk;
 
 /**
- * A userinfo endpoint for openid connect
- * that remaps the {@link org.mitre.openid.connect.web.UserInfoEndpoint}.
+ * Represents the initial login endpoint for openid connect.
+ * This point, this class is very much silent as the endpoint
+ * handling is done by Spring Security.
  */
-@Controller("oidcUserInfoEndpoint")
-@RequestMapping("/oidc/" + org.mitre.openid.connect.web.UserInfoEndpoint.URL)
-public class UserInfoEndpoint extends org.mitre.openid.connect.web.UserInfoEndpoint {
-    /** URL endpoint for userinfo used to map requests. */
-    public static final String URL = "/oidc/" + org.mitre.openid.connect.web.UserInfoEndpoint.URL;
+public final class TokenEndpoint {
+    /** URL endpoint for issuing tokens used to map requests. */
+    public static final String URL = "/oidc/token";
+
+    /**
+     * Instantiates a new token endpoint.
+     */
+    private TokenEndpoint() {}
 }
+
 

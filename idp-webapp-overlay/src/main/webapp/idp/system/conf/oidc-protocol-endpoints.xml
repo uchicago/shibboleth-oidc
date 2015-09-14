@@ -19,54 +19,98 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
-       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/security/oauth2
+       http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
 
-    <security:http pattern="/profile/oidc/token"
+    <oauth:authorization-server
+            client-details-service-ref="defaultOAuth2ClientDetailsEntityService"
+            authorization-request-manager-ref="connectOAuth2RequestFactory"
+            token-services-ref="defaultOAuth2ProviderTokenService"
+            user-approval-handler-ref="tofuUserApprovalHandler"
+            request-validator-ref="oauthRequestValidator"
+            redirect-resolver-ref="blacklistAwareRedirectResolver"
+            authorization-endpoint-url="#{T(net.shibboleth.idp.oidc.login.AuthorizeEndpoint).URL}"
+            token-endpoint-url="#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
+            error-page="/error">
+        <oauth:authorization-code authorization-code-services-ref="defaultOAuth2AuthorizationCodeService"/>
+        <!--
+        <oauth:implicit />
+        <oauth:refresh-token/>
+        <oauth:client-credentials/>
+        -->
+        <oauth:custom-grant token-granter-ref="chainedTokenGranter" />
+        <oauth:custom-grant token-granter-ref="jwtAssertionTokenGranter" />
+
+    </oauth:authorization-server>
+
+    <oauth:expression-handler id="oauthExpressionHandler" />
+
+    <oauth:web-expression-handler id="oauthWebExpressionHandler" />
+
+    <oauth:resource-server id="resourceServerFilter"
+                           token-services-ref="defaultOAuth2ProviderTokenService" />
+
+    <bean id="clientAuthMatcher" class="org.mitre.openid.connect.filter.MultiUrlRequestMatcher">
+        <constructor-arg name="filterProcessesUrls">
+            <set>
+                <!--
+                <value>/introspect</value>
+                <value>/revoke</value>
+                -->
+                <value>/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}</value>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
                    create-session="stateless"
                    authentication-manager-ref="clientAuthenticationManager"
                    entry-point-ref="oauthAuthenticationEntryPoint"
                    use-expressions="true">
-        <security:intercept-url pattern="/profile/oidc/token" access="permitAll" method="OPTIONS" />
-        <!-- allow OPTIONS calls without auth for CORS stuff -->
-        <security:intercept-url pattern="/profile/oidc/token" access="isAuthenticated()" />
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
+                                access="permitAll" method="OPTIONS" />
+        <!-- allow OPTIONS calls without auth for CORS -->
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
+                                access="isAuthenticated()" />
         <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
-        <!-- include this only if you need to authenticate clients via request parameters -->
-        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
+        <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" />
         <security:custom-filter ref="clientCredentialsEndpointFilter" after="BASIC_AUTH_FILTER" />
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
         <security:access-denied-handler ref="oauthAccessDeniedHandler" />
     </security:http>
 
     <!-- Allow open access to discovery endpoints -->
-    <security:http pattern="/profile/oidc/jwk"
+
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.JWKPublishingEndpoint).URL}"
                    use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
-        <security:intercept-url pattern="/profile/oidc/jwk"
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.JWKPublishingEndpoint).URL}"
                                 access="permitAll"/>
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
     </security:http>
 
-    <security:http pattern="/profile/oidc/userinfo"
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.userinfo.UserInfoEndpoint).URL}"
                    use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
         <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
         <security:expression-handler ref="oauthWebExpressionHandler" />
     </security:http>
+
+    <security:http disable-url-rewriting="true" use-expressions="true">
+        <security:form-login login-page="/profile#{T(net.shibboleth.idp.oidc.login.LoginEndpoint).URL}"
+                             authentication-success-handler-ref="authenticationTimeStamper" />
+        <security:custom-filter ref="authzRequestFilter" after="SECURITY_CONTEXT_FILTER" />
+        <security:expression-handler ref="oauthWebExpressionHandler" />
+    </security:http>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="authenticationProviderAdapter" />
+    </security:authentication-manager>
 
     <!--
     <security:http pattern="/#{T(org.mitre.openid.connect.web.RootController).API_URL}/**"

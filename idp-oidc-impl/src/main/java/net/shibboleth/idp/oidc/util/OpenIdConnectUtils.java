@@ -111,6 +111,12 @@ public final class OpenIdConnectUtils {
         session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS, parameterMap);
     }
 
+    public static void removeAuthorizationRequest(final HttpServletRequest request) {
+        final HttpSession session = request.getSession();
+        session.removeAttribute(ATTR_OIDC_AUTHZ_REQUEST);
+        session.removeAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS);
+    }
+
     /**
      * Sets client.
      *
@@ -149,24 +155,12 @@ public final class OpenIdConnectUtils {
     }
 
     /**
-     * Remove request parameter.
+     * Remove session parameter.
      *
      * @param request the request
      * @param parameter the parameter
      */
-    public static void removeRequestParameter(final HttpServletRequest request,
-                                           final String parameter) {
-        final HttpSession session = request.getSession();
-        session.removeAttribute(parameter);
-    }
-
-    /**
-     * Sets request prompted.
-     *
-     * @param request the request
-     * @param parameter the parameter
-     */
-    public static void setRequestPrompted(final HttpServletRequest request,
+    public static void removeSessionAttribute(final HttpServletRequest request,
                                               final String parameter) {
         final HttpSession session = request.getSession();
         session.removeAttribute(parameter);
@@ -220,7 +214,7 @@ public final class OpenIdConnectUtils {
      * @param context the context
      * @return the response
      */
-    public static OpenIdConnectResponse getResponse(RequestContext context) {
+    public static OpenIdConnectResponse getResponse(final RequestContext context) {
         final OpenIdConnectResponse response =
                 context.getFlowScope().get(FLOW_SCOPE_ATTRIBUTE_RESPONSE, OpenIdConnectResponse.class);
         return response;

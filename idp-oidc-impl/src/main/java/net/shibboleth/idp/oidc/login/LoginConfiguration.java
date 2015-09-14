@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.shibboleth.idp.oidc.config;
+package net.shibboleth.idp.oidc.login;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
