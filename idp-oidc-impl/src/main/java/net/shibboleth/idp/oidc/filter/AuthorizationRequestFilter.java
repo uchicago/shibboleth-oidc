@@ -161,6 +161,13 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
         return false;
     }
 
+    /**
+     * Determines if the identify provider is processing
+     * and already-fetched authZ request that is in-flight.
+     *
+     * @param request the request
+     * @return true if working on same authZ request, false otherwise.
+     */
     private boolean isProcessingExistingInboundAuthorizationRequest(final HttpServletRequest request) {
         final AuthorizationRequest authorizationRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
         if (authorizationRequest != null) {

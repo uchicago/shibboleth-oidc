@@ -3,13 +3,9 @@ package net.shibboleth.idp.oidc.attribute.encoding;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonObject;
-import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.AttributeEncoder;
-import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -17,26 +13,19 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import org.opensaml.core.xml.XMLObject;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
 /**
  * The type Open id connect attribute encoder.
- * @param <AttributeType>   the type parameter
- * @param <Attribute>  the type parameter
+ * @param <AttributeType>    the type parameter
+ * @param <EncodedType>  the type parameter
  */
-
-public abstract class OpenIdConnectAttributeEncoder<AttributeType extends JsonObject,
+public abstract class AbstractOpenIdConnectAttributeEncoder<AttributeType extends JsonObject,
         EncodedType extends IdPAttributeValue> extends AbstractInitializableComponent
         implements AttributeEncoder<AttributeType>, UnmodifiableComponent {
 
@@ -44,7 +33,7 @@ public abstract class OpenIdConnectAttributeEncoder<AttributeType extends JsonOb
      * The Log.
      */
     @Nonnull
-    private final Logger log = LoggerFactory.getLogger(OpenIdConnectAttributeEncoder.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractOpenIdConnectAttributeEncoder.class);
 
     /**
      * The Activation condition.
@@ -116,18 +105,18 @@ public abstract class OpenIdConnectAttributeEncoder<AttributeType extends JsonOb
             return false;
         } else if(obj == this) {
             return true;
-        } else if(!(obj instanceof OpenIdConnectAttributeEncoder)) {
+        } else if(!(obj instanceof AbstractOpenIdConnectAttributeEncoder)) {
             return false;
         } else {
-            final OpenIdConnectAttributeEncoder other = (OpenIdConnectAttributeEncoder)obj;
-            return Objects.equals(this.getName(), other.getName())
-                    && Objects.equals(this.getProtocol(), other.getProtocol());
+            final AbstractOpenIdConnectAttributeEncoder other = (AbstractOpenIdConnectAttributeEncoder)obj;
+            return Objects.equals(getName(), other.getName())
+                    && Objects.equals(getProtocol(), other.getProtocol());
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(new Object[]{this.getName(), this.getProtocol()});
+        return Objects.hashCode(new Object[]{getName(), getProtocol()});
     }
 
 }
