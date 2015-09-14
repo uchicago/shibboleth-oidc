@@ -128,7 +128,7 @@ public class OpenIdConnectResponse {
      * @param scopesSet the scopes
      */
     public void setScopes(final Set<SystemScope> scopesSet) {
-        this.scopes = scopeSet;
+        this.scopes = scopesSet;
     }
 
     /**
