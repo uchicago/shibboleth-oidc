@@ -146,8 +146,6 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         OpenIdConnectUtils.setAuthorizationRequest(request, authRequest,
                 OpenIdConnectUtils.getAuthorizationRequestParameters(request));
 
-
-
         return Events.Proceed.event(this);
     }
 

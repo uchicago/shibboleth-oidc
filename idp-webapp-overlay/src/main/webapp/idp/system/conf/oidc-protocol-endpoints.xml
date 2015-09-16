@@ -100,8 +100,7 @@
         <security:expression-handler ref="oauthWebExpressionHandler" />
     </security:http>
 
-    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.login.AuthorizeEndpoint).URL}/**"
-                   disable-url-rewriting="true" use-expressions="true">
+    <security:http disable-url-rewriting="true" use-expressions="true">
         <security:form-login login-page="/profile#{T(net.shibboleth.idp.oidc.login.LoginEndpoint).URL}"
                              authentication-success-handler-ref="authenticationTimeStamper" />
         <security:csrf />

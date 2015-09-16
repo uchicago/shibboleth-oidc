@@ -126,9 +126,6 @@
     </action-state>
 
     <subflow-state id="doPostAuthnInterceptSubflow" subflow="intercept">
-        <on-entry>
-            <evaluate expression="preAuthorizeUserApprovalAction" />
-        </on-entry>
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="buildResponse" />
     </subflow-state>
@@ -147,7 +144,7 @@
         <transition on="proceed" to="doPostAuthorizeUserApprovalAction" />
     </subflow-state>
 
-    <view-state id="doPostAuthorizeUserApprovalAction" view="approve" model="oidcResponse">
+    <view-state id="doPostAuthorizeUserApprovalAction" view="oidc/approve" model="oidcResponse">
         <on-entry>
             <evaluate expression="postAuthorizationUserApprovalAction" />
         </on-entry>

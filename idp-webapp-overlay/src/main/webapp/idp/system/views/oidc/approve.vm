@@ -17,7 +17,9 @@
 #parse("oidc/header.vm")
 
 <body>
-<form style="display:none;" name="approveForm" id="approveForm" action="authorize" method="post">
+<noscript>Your browser does not support JavaScript!</noscript>
+
+<form name="approveForm" id="approveForm" action="authorize" method="post">
     <fieldset>
         #set ($scopes = $oidcResponse.getScopes())
         #foreach ($scope in $scopes)
@@ -25,7 +27,11 @@
             <input type="hidden" name="$scopeName" value="$scope.value" />
         #end
         <input type="hidden" name="user_oauth_approval" value="true" />
-        <input type="hidden" name="csrf" value="$oidcResponse.getCsrf()" />
+
+        #foreach ($attribute in $postAuthorizationAttributes.entrySet())
+            <input type="hidden" name="$attribute.key" value="$attribute.value.token" />
+        #end
+        <input type="hidden" name="csrf" value="$oidcResponse.csrf" />
         <input type="submit" value="Submit" />
 
     </fieldset>

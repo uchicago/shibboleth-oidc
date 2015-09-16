@@ -109,6 +109,7 @@ public final class OpenIdConnectUtils {
         final HttpSession session = request.getSession();
         session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST, authorizationRequest);
         session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS, parameterMap);
+        request.setAttribute(ATTR_OIDC_AUTHZ_REQUEST, authorizationRequest);
     }
 
     /**

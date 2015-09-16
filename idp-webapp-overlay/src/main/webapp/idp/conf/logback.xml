@@ -53,11 +53,11 @@
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.web" level="DEBUG">
+    <logger name="org.springframework.web" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
-    <logger name="org.springframework.webflow" level="DEBUG">
+    <logger name="org.springframework.webflow" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>

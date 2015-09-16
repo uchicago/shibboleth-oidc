@@ -16,6 +16,7 @@
  */
 package net.shibboleth.idp.oidc.flow;
 
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Event;
 
 /**
@@ -78,5 +79,16 @@ public enum Events {
      */
     public Event event(final Object source) {
         return new Event(source, id());
+    }
+
+    /**
+     * Builds the event based on the enum id.
+     *
+     * @param source the source
+     * @param attributes the attributes
+     * @return the event
+     */
+    public Event event(final Object source, final AttributeMap<Object> attributes) {
+        return new Event(source, id(), attributes);
     }
 }

@@ -58,8 +58,7 @@
             class="net.shibboleth.idp.oidc.flow.PreAuthorizeUserApprovalAction" />
 
     <bean id="postAuthorizationUserApprovalAction"
-          class="net.shibboleth.idp.oidc.flow.PostAuthorizationUserApprovalAction"
-        p:storageService-ref="%{idp.cas.StorageService:shibboleth.StorageService}"/>
+          class="net.shibboleth.idp.oidc.flow.PostAuthorizationUserApprovalAction"/>
 
     <bean id="resolveAttributesPredicate"
           class="net.shibboleth.idp.oidc.config.ResolveAttributesProfileConfigPredicate" />
