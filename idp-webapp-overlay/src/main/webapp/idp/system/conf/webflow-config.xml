@@ -1,21 +1,21 @@
 <!--
+  ~ Licensed to the University Corporation for Advanced Internet Development,
+  ~ Inc. (UCAID) under one or more contributor license agreements.  See the
+  ~ NOTICE file distributed with this work for additional information regarding
+  ~ copyright ownership. The UCAID licenses this file to You under the Apache
+  ~ License, Version 2.0 (the "License"); you may not use this file except in
+  ~ compliance with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
 
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -26,16 +26,15 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
-
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-          p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <!--
     Define custom flows by using the filesystem directly. Flows will be named based
     on the directories between the base-path and the flow file ending in -flow.xml
     -->
     <webflow:flow-registry id="flowRegistry" base-path="%{idp.webflows:%{idp.home}/flows}" flow-builder-services="flowBuilderServices">
-        <webflow:flow-location-pattern  value="/**/*-flow.xml" />
+        <webflow:flow-location-pattern value="/**/*-flow.xml" />
 
         <!-- Abstract base flow for admin flows. -->
         <webflow:flow-location id="admin.abstract" path="../system/flows/admin/admin-abstract-flow.xml" />
@@ -75,7 +74,7 @@
         <webflow:flow-location id="SAML2/SOAP/SLO" path="../system/flows/saml/saml2/slo-back-flow.xml" />
         <webflow:flow-location id="SAML2/SOAP/AttributeQuery" path="../system/flows/saml/saml2/attribute-query-flow.xml" />
         <webflow:flow-location id="SAML2/SOAP/ArtifactResolution" path="../system/flows/saml/saml2/artifact-resolution-flow.xml" />
-
+        
         <!-- Liberty IDWSF SSOS flow (for SAML 2 delegation) -->
         <webflow:flow-location id="IDWSF/SSOS" path="../system/flows/saml/saml2/idwsf-ssos-flow.xml" />
 
@@ -151,12 +150,20 @@
         <webflow:flow-location id="local-storage/read" path="../system/flows/local-storage/local-storage-read-flow.xml" />
         <webflow:flow-location id="local-storage/write" path="../system/flows/local-storage/local-storage-write-flow.xml" />
 
-        <!-- OIDC protocol flows. -->
+        <!-- Client storage flows. -->
+        <webflow:flow-location id="client-storage/read" path="../system/flows/client-storage/client-storage-read-flow.xml" />
+        <webflow:flow-location id="client-storage/write" path="../system/flows/client-storage/client-storage-write-flow.xml" />
+
+        <!-- OIDC flows. -->
         <webflow:flow-location id="oidc/login" path="../system/flows/oidc/login/login-flow.xml" />
     </webflow:flow-registry>
 
     <webflow:flow-executor id="flowExecutor">
         <webflow:flow-execution-repository max-execution-snapshots="0" />
+        <webflow:flow-execution-listeners>
+            <webflow:listener ref="profileRequestContextFlowExecutionListener"
+                              criteria="%{idp.profile.exposeProfileRequestContextInServletRequest:none}" />
+        </webflow:flow-execution-listeners>
     </webflow:flow-executor>
 
     <webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator" />
@@ -164,10 +171,14 @@
     <bean id="mvcViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
         <property name="viewResolvers">
             <list>
+                <ref bean="shibboleth.BeanNameViewResolver"/>
                 <ref bean="shibboleth.VelocityViewResolver" />
                 <ref bean="shibboleth.InternalViewResolver" />
             </list>
         </property>
     </bean>
+
+    <bean id="profileRequestContextFlowExecutionListener"
+          class="net.shibboleth.idp.profile.support.ProfileRequestContextFlowExecutionListener" />
 
 </beans>

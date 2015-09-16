@@ -43,9 +43,11 @@ import java.util.Set;
  */
 public class LoginConfiguration extends AbstractProfileConfiguration implements AuthenticationProfileConfiguration {
     /**
-     * The profile identifier, mapped to <code>{@value #PROFILE_ID}</code>.
+     * The profile identifier.
      */
     public static final String PROFILE_ID = "http://openid.net/connect/login";
+
+    private boolean resolveAttributes = true;
 
     @Nonnull
     @NonnullElements
@@ -143,5 +145,22 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
     public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
         this.nameIDFormatPrecedence = new ArrayList(Collections2.filter(formats, Predicates.notNull()));
+    }
+
+    @Nonnull
+    @NonnullElements
+    @NotLive
+    @Unmodifiable
+    public boolean isResolveAttributes() {
+        return resolveAttributes;
+    }
+
+    /**
+     * Sets resolve attributes.
+     *
+     * @param resolve the resolve attributes
+     */
+    public void setResolveAttributes(final boolean resolve) {
+        resolveAttributes = resolve;
     }
 }

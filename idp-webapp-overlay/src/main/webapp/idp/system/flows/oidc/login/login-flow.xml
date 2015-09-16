@@ -30,72 +30,133 @@
         <evaluate expression="buildSAMLMetadataContextAction" />
         <evaluate expression="selectRelyingPartyConfiguration" />
         <evaluate expression="selectProfileConfiguration" />
+        <evaluate expression="populateClientStorageLoadContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="checkAuthenticationRequired" />
+        <transition on="proceed" to="clientStorageLoad" />
+        <transition on="NoLoadNeeded" to="checkAuthenticationRequired" />
     </action-state>
+
+    <subflow-state id="clientStorageLoad" subflow="client-storage/read">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="checkAuthenticationRequired"/>
+    </subflow-state>
 
     <action-state id="checkAuthenticationRequired">
         <evaluate expression="checkAuthenticationRequiredAction"/>
-        <transition on="sessionNotFound" to="buildAuthenticationContext" />
-        <transition on="sessionFound" to="redirectToService" />
+        <transition on="sessionNotFound" to="checkInitialAuthenticationRequired" />
+        <transition on="sessionFound" to="resolveAttributes" />
     </action-state>
+
+    <decision-state id="checkInitialAuthenticationRequired">
+        <if test="initialAuthenticationFlag" then="preInitialSetup" else="postInitialSetup" />
+    </decision-state>
+
+    <action-state id="preInitialSetup">
+        <evaluate expression="buildAuthenticationContextAction"/>
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="doInitialAuthenticationSubflow" />
+    </action-state>
+
+    <subflow-state id="doInitialAuthenticationSubflow" subflow="authn-initial">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="postInitialSetup" />
+    </subflow-state>
+
+    <action-state id="postInitialSetup">
+        <evaluate expression="buildAuthenticationContextAction"/>
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="doAuthenticationSubflow" />
+    </action-state>
+
 
     <action-state id="buildAuthenticationContext">
         <evaluate expression="buildAuthenticationContextAction"/>
         <transition on="proceed" to="authenticate" />
     </action-state>
 
-    <subflow-state id="authenticate" subflow="authn">
+    <subflow-state id="doAuthenticationSubflow" subflow="authn">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="ResolveAttributes" />
+        <transition on="proceed" to="checkResolveAttributes">
+            <evaluate result="flowScope.hasAuthenticationContext" expression="true" />
+        </transition>
     </subflow-state>
 
-    <decision-state id="ResolveAttributes">
-        <if test="ResolveAttributesPredicate.apply(opensamlProfileRequestContext)"
-            then="AttributeResolution"
-            else="BuildResponse" />
+    <decision-state id="checkResolveAttributes">
+        <if test="loginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
+            then="checkForSubjectContext"
+            else="buildResponse" />
     </decision-state>
 
-    <action-state id="AttributeResolution">
+    <decision-state id="checkForSubjectContext">
+        <if test="subjectContextLookup.apply(opensamlProfileRequestContext) == null"
+            then="populateSubjectContext"
+            else="resolveAttributes" />
+    </decision-state>
+
+    <action-state id="populateSubjectContext">
+        <evaluate expression="populateSubjectContext" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="resolveAttributes" />
+    </action-state>
+
+    <decision-state id="resolveAttributes">
+        <if test="resolveAttributesPredicate.apply(opensamlProfileRequestContext)"
+            then="attributeResolution"
+            else="doPreAuthorizeUserApprovalAction" />
+    </decision-state>
+
+    <action-state id="attributeResolution">
         <evaluate expression="resolveAttributes" />
         <evaluate expression="filterAttributes" />
         <evaluate expression="populatePostAuthnInterceptContext" />
         <evaluate expression="'proceed'" />
 
-        <transition on="proceed" to="DoPreAuthorizeUserApprovalAction" />
+        <transition on="proceed" to="doPreAuthorizeUserApprovalAction" />
     </action-state>
 
-    <action-state id="DoPreAuthorizeUserApprovalAction">
-        <evaluate expression="PreAuthorizeUserApprovalAction" />
-        <transition on="failure" to="Error" />
-        <transition on="badRequest" to="Error" />
-        <transition on="clientNotFound" to="Error" />
+    <action-state id="doPreAuthorizeUserApprovalAction">
+        <evaluate expression="preAuthorizeUserApprovalAction" />
+        <transition on="failure" to="error" />
+        <transition on="badRequest" to="error" />
+        <transition on="clientNotFound" to="error" />
         <transition on="redirect" to="externalRedirect:${flowScope.openIdConnectResponse.redirectUri}" />
-        <transition on="proceed" to="DoPostAuthnInterceptSubflow" />
+        <transition on="proceed" to="doPostAuthnInterceptSubflow" />
     </action-state>
 
-    <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
+    <subflow-state id="doPostAuthnInterceptSubflow" subflow="intercept">
         <on-entry>
-            <evaluate expression="PreAuthorizeUserApprovalAction" />
+            <evaluate expression="preAuthorizeUserApprovalAction" />
         </on-entry>
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="BuildResponse" />
+        <transition on="proceed" to="buildResponse" />
     </subflow-state>
 
-    <action-state id="BuildResponse">
-        <evaluate expression="UpdateSessionWithSPSession" />
+    <action-state id="buildResponse">
+        <evaluate expression="updateSessionWithSPSession" />
+        <evaluate expression="populateClientStorageSaveContext" />
         <evaluate expression="'proceed'" />
-        
-        <transition on="proceed" to="DoPostAuthorizeUserApprovalAction" />
+
+        <transition on="proceed" to="clientStorageSave" />
+        <transition on="NoSaveNeeded" to="doPostAuthorizeUserApprovalAction" />
     </action-state>
 
-    <view-state id="DoPostAuthorizeUserApprovalAction" view="oidc/approve" model="oidcResponse">
+    <subflow-state id="clientStorageSave" subflow="client-storage/write">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="doPostAuthorizeUserApprovalAction" />
+    </subflow-state>
+
+    <view-state id="doPostAuthorizeUserApprovalAction" view="approve" model="oidcResponse">
         <on-entry>
-            <evaluate expression="PostAuthorizationUserApprovalAction" />
+            <evaluate expression="postAuthorizationUserApprovalAction" />
         </on-entry>
+        <transition to="done"/>
     </view-state>
 
-    <end-state id="Error" view="error">
+    <end-state id="done"/>
+
+    <end-state id="error" view="error">
         <on-entry>
             <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />

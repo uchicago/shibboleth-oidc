@@ -85,7 +85,7 @@
     </bean>
 
     <!-- Required by Spring Security OIDC -->
-    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+    <bean id="shibboleth.BeanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <property name="order" value="1" />
     </bean>
 

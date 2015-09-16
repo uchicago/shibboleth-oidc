@@ -17,7 +17,7 @@
     <!-- Signature Validation Criteria  -->
     
     <bean id="shibboleth.MetadataSignatureValidationStaticCriteria" 
-            class="net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SignatureValidationCriteriaSetFactoryBean" 
+            class="net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationCriteriaSetFactoryBean"
             p:includeOpenSAMLGlobalConfig="true"
             p:otherCriteria="#{getObject('shibboleth.MetadataSignatureValidationOtherCriteria')}"
             p:signatureValidationParametersResolver="#{getObject('shibboleth.MetadataSignatureValidationParametersResolver')}">

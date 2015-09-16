@@ -38,10 +38,32 @@
             <groupId>net.shibboleth.idp</groupId>
             <artifactId>idp-ui</artifactId>
             <version>${idp.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-expression</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.shibboleth.idp</groupId>
-            <artifactId>idp-consent</artifactId>
+            <artifactId>idp-consent-impl</artifactId>
             <version>${idp.version}</version>
         </dependency>
     </dependencies>

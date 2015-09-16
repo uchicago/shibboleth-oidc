@@ -54,14 +54,14 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <bean id="PreAuthorizeUserApprovalAction"
+    <bean id="preAuthorizeUserApprovalAction"
             class="net.shibboleth.idp.oidc.flow.PreAuthorizeUserApprovalAction" />
 
-    <bean id="PostAuthorizationUserApprovalAction"
+    <bean id="postAuthorizationUserApprovalAction"
           class="net.shibboleth.idp.oidc.flow.PostAuthorizationUserApprovalAction"
         p:storageService-ref="%{idp.cas.StorageService:shibboleth.StorageService}"/>
 
-    <bean id="ResolveAttributesPredicate"
+    <bean id="resolveAttributesPredicate"
           class="net.shibboleth.idp.oidc.config.ResolveAttributesProfileConfigPredicate" />
 
     <bean id="buildRelyingPartyContextAction"
@@ -100,7 +100,7 @@
         </property>
     </bean>
 
-    <bean id="UpdateSessionWithSPSession"
+    <bean id="updateSessionWithSPSession"
           class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
           p:activationCondition="%{idp.session.trackSPSessions:false}"
           p:sessionManager-ref="shibboleth.SessionManager">
@@ -109,4 +109,28 @@
                   c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"/>
         </property>
     </bean>
+
+    <bean id="loginConfigLookup"
+          class="net.shibboleth.idp.oidc.config.ConfigLookupFunction"
+          c:clazz="net.shibboleth.idp.oidc.login.LoginConfiguration" />
+
+    <bean id="subjectContextLookup"
+          class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+          c:type="net.shibboleth.idp.authn.context.SubjectContext" />
+
+    <bean id="initialAuthenticationFlag" class="java.lang.Boolean">
+        <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
+    </bean>
+
+    <bean id="populateClientStorageLoadContext"
+          class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext"
+          scope="prototype"
+          p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
+            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+
+    <bean id="populateClientStorageSaveContext"
+          class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext"
+          scope="prototype"
+          p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
+            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
 </beans>

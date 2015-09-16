@@ -16,8 +16,8 @@
  */
 package net.shibboleth.idp.oidc.flow;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.consent.context.AttributeReleaseContext;
+import net.shibboleth.idp.consent.context.impl.ConsentContext;
+import net.shibboleth.idp.consent.impl.Consent;
 import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -49,6 +49,11 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
     public PostAuthorizationUserApprovalAction() {
     }
 
+    /**
+     * Sets storage service.
+     *
+     * @param service the service
+     */
     public void setStorageService(final StorageService service) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         this.storageService = Constraint.isNotNull(service, "StorageService cannot be null");
@@ -58,8 +63,8 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
-        final AttributeReleaseContext context = profileRequestContext.getSubcontext(AttributeReleaseContext.class);
-        final Map<String, IdPAttribute> attributes = context.getConsentableAttributes();
+        final ConsentContext context = profileRequestContext.getSubcontext(ConsentContext.class);
+        final Map<String, Consent> attributes = context.getCurrentConsents();
         final AuthorizationRequest request =
                 OpenIdConnectUtils.getAuthorizationRequest(HttpServletRequestResponseContext.getRequest());
         final OpenIdConnectResponse response = OpenIdConnectUtils.getResponse(springRequestContext);
