@@ -19,7 +19,6 @@ package net.shibboleth.idp.oidc.config;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -27,9 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import javax.security.auth.Subject;
 import java.util.Collections;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -82,6 +79,11 @@ public final class SpringSecurityAuthenticationToken extends AbstractAuthenticat
     }
 
 
+    /**
+     * Build authentication.
+     *
+     * @return the authentication
+     */
     public Authentication buildAuthentication() {
         final SubjectContext principal = (SubjectContext) getPrincipal();
 
@@ -89,7 +91,8 @@ public final class SpringSecurityAuthenticationToken extends AbstractAuthenticat
             throw new InsufficientAuthenticationException("No SubjectContext found in the profile request context");
         }
 
-        final SpringSecurityAuthenticationToken authenticationToken = new SpringSecurityAuthenticationToken(getProfileRequestContext());
+        final SpringSecurityAuthenticationToken authenticationToken =
+                new SpringSecurityAuthenticationToken(getProfileRequestContext());
         authenticationToken.setAuthenticated(true);
         final User user = new User(principal.getPrincipalName(), UUID.randomUUID().toString(), getAuthorities());
         authenticationToken.setDetails(user);

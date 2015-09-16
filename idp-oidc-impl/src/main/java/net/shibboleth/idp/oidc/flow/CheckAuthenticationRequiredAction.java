@@ -41,7 +41,8 @@ import javax.annotation.Nonnull;
  */
 public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(CheckAuthenticationRequiredAction.class);
-    private final Function<ProfileRequestContext, SessionContext> sessionContextFunction = new ChildContextLookup(SessionContext.class, false);
+    private final Function<ProfileRequestContext, SessionContext> sessionContextFunction =
+            new ChildContextLookup(SessionContext.class, false);
 
 
     /**

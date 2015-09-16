@@ -147,6 +147,11 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
         this.nameIDFormatPrecedence = new ArrayList(Collections2.filter(formats, Predicates.notNull()));
     }
 
+    /**
+     * Are we resolving attributes for this profile?
+     *
+     * @return true/false
+     */
     @Nonnull
     @NonnullElements
     @NotLive
