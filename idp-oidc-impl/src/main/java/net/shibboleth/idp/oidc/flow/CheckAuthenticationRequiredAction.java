@@ -16,10 +16,12 @@
  */
 package net.shibboleth.idp.oidc.flow;
 
+import com.google.common.base.Function;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,8 @@ import javax.annotation.Nonnull;
  */
 public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(CheckAuthenticationRequiredAction.class);
+    private final Function<ProfileRequestContext, SessionContext> sessionContextFunction = new ChildContextLookup(SessionContext.class, false);
+
 
     /**
      * Gets session bound to the idp.
@@ -48,7 +52,7 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
      */
     @Nonnull
     protected IdPSession getIdPSession(final ProfileRequestContext prc) {
-        final SessionContext sessionContext = prc.getSubcontext(SessionContext.class);
+        final SessionContext sessionContext = sessionContextFunction.apply(prc);
         if(sessionContext != null && sessionContext.getIdPSession() != null) {
             return sessionContext.getIdPSession();
         } else {

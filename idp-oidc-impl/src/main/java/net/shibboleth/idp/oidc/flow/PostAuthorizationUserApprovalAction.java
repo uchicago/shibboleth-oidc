@@ -20,15 +20,11 @@ import net.shibboleth.idp.consent.context.impl.ConsentContext;
 import net.shibboleth.idp.consent.impl.Consent;
 import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 

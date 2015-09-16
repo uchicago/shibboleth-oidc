@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import net.shibboleth.idp.oidc.config.SpringSecurityAuthenticationToken;
@@ -197,13 +198,9 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         final Authentication authentication = securityContext.getAuthentication();
-        final Subject principal = (Subject) authentication.getPrincipal();
-        final Collection<Principal> collection =
-                principal.getPrincipals().stream().filter(p -> p instanceof UsernamePrincipal)
-                        .collect(Collectors.toList());
-        final UsernamePrincipal usernamePrincipal = (UsernamePrincipal) collection.iterator().next();
+        final SubjectContext context = (SubjectContext) authentication.getPrincipal();
 
-        final UserInfo user = userInfoService.getByUsername(usernamePrincipal.getName());
+        final UserInfo user = userInfoService.getByUsername(context.getPrincipalName());
         final Map<String, Map<String, String>> claimsForScopes = new HashMap<>();
         if (user != null) {
             final JsonObject userJson = user.toJson();

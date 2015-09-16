@@ -44,7 +44,7 @@
     <action-state id="checkAuthenticationRequired">
         <evaluate expression="checkAuthenticationRequiredAction"/>
         <transition on="sessionNotFound" to="checkInitialAuthenticationRequired" />
-        <transition on="sessionFound" to="resolveAttributes" />
+        <transition on="sessionFound" to="checkResolveAttributes" />
     </action-state>
 
     <decision-state id="checkInitialAuthenticationRequired">
@@ -86,7 +86,7 @@
     <decision-state id="checkResolveAttributes">
         <if test="loginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
             then="checkForSubjectContext"
-            else="buildResponse" />
+            else="doPreAuthorizeUserApprovalAction" />
     </decision-state>
 
     <decision-state id="checkForSubjectContext">
