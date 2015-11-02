@@ -29,9 +29,9 @@
        default-destroy-method="destroy">
 
     <bean id="configBean" class="org.mitre.openid.connect.config.ConfigurationPropertiesBean">
-        <property name="issuer" value="https://mmoayyed.unicon.net/idp" />
-        <property name="regTokenLifeTime" value="172800" />
-        <property name="forceHttps" value="true" />
+        <property name="issuer" value="%{oidc.issuer}" />
+        <property name="regTokenLifeTime" value="%{oidc.token.lifetime:172800}" />
+        <property name="forceHttps" value="%{oidc.force.https:true}" />
     </bean>
 
 </beans>

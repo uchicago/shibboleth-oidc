@@ -19,7 +19,7 @@
 <body>
 <noscript>Your browser does not support JavaScript!</noscript>
 
-<form name="approveForm" id="approveForm" action="authorize" method="post">
+<form name="approveForm" id="approveForm" action="authorize" method="post" style="display:none">
     <fieldset>
         #set ($scopes = $oidcResponse.getScopes())
         #foreach ($scope in $scopes)

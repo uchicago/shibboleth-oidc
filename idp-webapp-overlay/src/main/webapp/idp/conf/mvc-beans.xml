@@ -32,4 +32,14 @@
         <property name="order" value="1" />
     </bean>
 
+    <bean id="shibboleth.ExceptionResolver" class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver"
+          p:defaultErrorView="%{idp.errors.defaultView:error}">
+        <property name="excludedExceptions">
+            <array>
+                <value>org.springframework.security.authentication.InsufficientAuthenticationException</value>
+            </array>
+        </property>
+    </bean>
+
+
 </beans>

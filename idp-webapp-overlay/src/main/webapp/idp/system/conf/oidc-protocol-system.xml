@@ -68,7 +68,7 @@
 
     <bean id="oauthAuthenticationEntryPoint"
           class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint"
-          p:realmName="openidconnect" />
+          p:realmName="%{oidc.oauth.authn.entrypoint.realm:OIDC}" />
 
     <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
 
@@ -92,19 +92,19 @@
 
     <!-- OpenId Connect JWK Encryption -->
     <bean id="defaultKeyStore" class="org.mitre.jose.keystore.JWKSetKeyStore"
-          p:location="classpath:keystore.jwks" />
+          p:location="%{oidc.jwtset.keystore}" />
 
     <bean id="defaultSignerService" class="org.mitre.jwt.signer.service.impl.DefaultJWTSigningAndValidationService"
           c:keyStore-ref="defaultKeyStore"
-          p:defaultSigningAlgorithmName="RS256"
-          p:defaultSignerKeyId="rsa1" />
+          p:defaultSigningAlgorithmName="%{oidc.signing.default.alg.name:RS256}"
+          p:defaultSignerKeyId="%{oidc.signing.default.key.id:rsa1}" />
 
     <bean id="defaultEncryptionService"
           class="org.mitre.jwt.encryption.service.impl.DefaultJWTEncryptionAndDecryptionService"
           c:keyStore-ref="defaultKeyStore"
-          p:defaultAlgorithm="RSA1_5"
-          p:defaultDecryptionKeyId="rsa1"
-          p:defaultEncryptionKeyId="rsa1" />
+          p:defaultAlgorithm="%{oidc.encryption.default.alg.name:RSA1_5}"
+          p:defaultDecryptionKeyId="%{oidc.decryption.default.key.id:rsa1}"
+          p:defaultEncryptionKeyId="%{oidc.encryption.default.key.id:rsa1}" />
 
     <!-- Profile Configuration -->
     <bean id="OIDC.LoginConfiguration"

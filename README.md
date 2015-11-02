@@ -32,9 +32,10 @@ The following may be considered in future versions:
 adaptors will be built to close the gap.
 
 ## Versions
-- [Shibboleth Identity Provider v3.1.3-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
+- [Shibboleth Identity Provider v3.2.0-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - Apache Maven v3.x
 - JDK 8
+- Jetty 9.3.x
 
 ## Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,
@@ -76,5 +77,14 @@ Or all in one attempt:
 mvn clean package verify -Dhost=jetty
 ```
 
-This will spin up an embedded Jetty server to load the IdP context. Remote debugging is available under port 5000 from your IDE. 
- 
+This will spin up an embedded Jetty server to load the IdP context. Remote debugging is available under port 5000 from your IDE.
+
+## Overlay Changes
+
+* `login.vm` and `attribute-release.vm` are overlaid to account for CSRF changes
+* `password-authn-config.xml` is overlaid to indicate JAAS is used for authN. 
+* `webflow-config.xml` is overlaid to add the OIDC flow configuration.
+* `mvc-beans.xml` is used in the overlay `conf` directory to override the default beans and config.
+- This is used to define a new view resolver based on Spring bean names and remaps the excluded exceptions from the view resolver. 
+* A custom JAR is dropped into the overlay's `WEB-INF/lib` that mocks authentication. This is configured via the `jaas.config` file.
+* `oidc.properties` controls the OIDC module configuration. This is appended to the list of property files loaded by the IdP via `idp.properties`. 
