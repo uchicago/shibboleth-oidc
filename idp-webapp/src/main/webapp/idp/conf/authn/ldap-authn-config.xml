@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p" xmlns:c="http://www.springframework.org/schema/c"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -30,7 +12,7 @@
 
     <alias name="%{idp.authn.LDAP.authenticator:anonSearchAuthenticator}" alias="shibboleth.authn.LDAP.authenticator" />
     <bean id="shibboleth.authn.LDAP.returnAttributes" parent="shibboleth.CommaDelimStringArray">
-        <constructor-arg type="java.lang.String" value="%{idp.authn.LDAP.returnAttributes}" />
+        <constructor-arg type="java.lang.String" value="%{idp.authn.LDAP.returnAttributes:1.1}" />
     </bean>
 
     <alias name="ValidateUsernamePasswordAgainstLDAP" alias="ValidateUsernamePassword" />
@@ -47,12 +29,12 @@
     <bean id="jvmTrust" class="org.ldaptive.ssl.SslConfig" />
     <bean id="certificateTrust" class="org.ldaptive.ssl.SslConfig">
         <property name="credentialConfig">
-            <bean parent="shibboleth.X509ResourceCredentialConfig" p:trustCertificates="%{idp.authn.LDAP.trustCertificates}" /> 
+            <bean parent="shibboleth.X509ResourceCredentialConfig" p:trustCertificates="%{idp.authn.LDAP.trustCertificates:undefined}" /> 
         </property>
     </bean>
     <bean id="keyStoreTrust" class="org.ldaptive.ssl.SslConfig">
         <property name="credentialConfig">
-            <bean parent="shibboleth.KeystoreResourceCredentialConfig" p:truststore="%{idp.authn.LDAP.trustStore}" /> 
+            <bean parent="shibboleth.KeystoreResourceCredentialConfig" p:truststore="%{idp.authn.LDAP.trustStore:undefined}" /> 
         </property>
     </bean>
 
@@ -65,7 +47,7 @@
     <bean id="bindConnectionConfig" parent="connectionConfig" />
 
     <!-- Format DN resolution -->
-    <bean id="formatDnResolver" class="org.ldaptive.auth.FormatDnResolver" p:format="%{idp.authn.LDAP.dnFormat}" />
+    <bean id="formatDnResolver" class="org.ldaptive.auth.FormatDnResolver" p:format="%{idp.authn.LDAP.dnFormat:undefined}" />
 
     <!-- Pool Configuration -->
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool" abstract="true"
@@ -91,9 +73,9 @@
         <constructor-arg index="1" ref="authHandler" />
     </bean>
     <bean id="anonSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-        p:baseDn="#{'%{idp.authn.LDAP.baseDN}'.trim()}"
+        p:baseDn="#{'%{idp.authn.LDAP.baseDN:undefined}'.trim()}"
         p:subtreeSearch="%{idp.authn.LDAP.subtreeSearch:false}"
-        p:userFilter="#{'%{idp.authn.LDAP.userFilter}'.trim()}"
+        p:userFilter="#{'%{idp.authn.LDAP.userFilter:undefined}'.trim()}"
         p:connectionFactory-ref="anonSearchPooledConnectionFactory" />
     <bean id="anonSearchPooledConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
         p:connectionPool-ref="anonSearchConnectionPool" />
@@ -108,9 +90,9 @@
         <constructor-arg index="1" ref="authHandler" />
     </bean>
     <bean id="bindSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-        p:baseDn="#{'%{idp.authn.LDAP.baseDN}'.trim()}"
+        p:baseDn="#{'%{idp.authn.LDAP.baseDN:undefined}'.trim()}"
         p:subtreeSearch="%{idp.authn.LDAP.subtreeSearch:false}"
-        p:userFilter="#{'%{idp.authn.LDAP.userFilter}'.trim()}"
+        p:userFilter="#{'%{idp.authn.LDAP.userFilter:undefined}'.trim()}"
         p:connectionFactory-ref="bindSearchPooledConnectionFactory" />
     <bean id="bindSearchPooledConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
         p:connectionPool-ref="bindSearchConnectionPool" />
@@ -119,10 +101,10 @@
     <bean id="bindSearchConnectionFactory" class="org.ldaptive.DefaultConnectionFactory" p:connectionConfig-ref="bindSearchConnectionConfig" />
     <bean id="bindSearchConnectionConfig" parent="connectionConfig" p:connectionInitializer-ref="bindConnectionInitializer" />
     <bean id="bindConnectionInitializer" class="org.ldaptive.BindConnectionInitializer"
-            p:bindDn="#{'%{idp.authn.LDAP.bindDN}'.trim()}">
+            p:bindDn="#{'%{idp.authn.LDAP.bindDN:undefined}'.trim()}">
         <property name="bindCredential">
             <bean class="org.ldaptive.Credential">
-                <constructor-arg value="%{idp.authn.LDAP.bindDNCredential}" />
+                <constructor-arg value="%{idp.authn.LDAP.bindDNCredential:undefined}" />
             </bean>
         </property>
     </bean>

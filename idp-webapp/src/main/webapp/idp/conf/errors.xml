@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
@@ -32,8 +14,7 @@
 
     <!-- Map local events to alternate view templates. -->
     <util:map id="shibboleth.EventViewMap">
-        <!-- Handles final result of SAML 2 LogoutResponse messages. -->
-        <entry key="LogoutResponse" value="logout-response" />
+        <!-- <entry key="EventToChange" value="viewname" /> -->
     </util:map>
 
     <!--
@@ -102,6 +83,7 @@
         
         <entry key="InvalidSubject" value-ref="shibboleth.SAML2Status.UnknownPrincipal" />
         <entry key="SubjectCanonicalizationError" value-ref="shibboleth.SAML2Status.UnknownPrincipal" />
+        <entry key="SessionNotFound" value-ref="shibboleth.SAML2Status.UnknownPrincipal" />
         
         <entry key="InvalidNameIDPolicy" value-ref="shibboleth.SAML2Status.InvalidNameIDPolicy" />
         

@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
@@ -272,7 +254,11 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
                     </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
+                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor">
+                        <property name="activationCondition">
+                            <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
+                        </property>
+                    </bean>
                 </entry>
                 <entry>
                     <key>
@@ -371,6 +357,38 @@
         </property>
     </bean>
     
+    <bean id="shibboleth.DefaultLogoutRequestAuditExtractors"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID_FORMAT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
     <bean id="shibboleth.DefaultLogoutAuditExtractors"
             class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
         <property name="sourceMap">
@@ -437,12 +455,6 @@
                         </constructor-arg>
                     </bean>
                 </entry>
-                <entry>
-                    <key>
-                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
-                    </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
-                </entry>
             </map>
         </property>
     </bean>
@@ -455,19 +467,19 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_URL"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.ServiceLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.ServiceLookupFunction" />
                 </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.GATEWAY"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.GatewayLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.GatewayLookupFunction" />
                 </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.RENEW"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.RenewLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.RenewLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -486,7 +498,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_TICKET"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.TicketLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.TicketLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -508,7 +520,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_URL"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.ServiceLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.ServiceLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -527,7 +539,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_TICKET"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.TicketLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.TicketLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -541,13 +553,13 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.STATUS_CODE"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.StatusCodeLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.StatusCodeLookupFunction" />
                 </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.STATUS_DETAIL"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.StatusDetailLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.StatusDetailLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -568,7 +580,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.GRANTING_TICKET"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.ProxyGrantingTicketLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.ProxyGrantingTicketLookupFunction" />
                 </entry>
             </map>
         </property>

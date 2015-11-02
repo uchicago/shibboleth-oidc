@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans
     xmlns="http://www.springframework.org/schema/beans"
     xmlns:c="http://www.springframework.org/schema/c"
@@ -66,6 +48,30 @@
                 </constructor-arg>
             </bean>
         </property>
+        <property name="activationCondition">
+            <bean parent="shibboleth.Conditions.NOT">
+                <constructor-arg>
+                    <bean parent="shibboleth.Conditions.Expression">
+                        <constructor-arg>
+                            <value>
+                                #profileContext.getProfileId().equals('http://shibboleth.net/ns/profiles/liberty/ssos')
+                            </value>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="AddAttributeStatementToAssertion"
+            class="net.shibboleth.idp.saml.saml2.profile.impl.AddAttributeStatementToAssertion" scope="prototype">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
+        </property>
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
+        </property>
     </bean>
 
     <bean id="InitializeOutboundMessageContextForError"
@@ -104,10 +110,24 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="EncryptToSelfParametersStrategy" class="org.opensaml.saml.security.impl.InlineSelfEncryptionParametersStrategy">
+        <constructor-arg>
+            <bean class="net.shibboleth.idp.relyingparty.impl.EncryptionCredentialsResolver" 
+                c:_0-ref="shibboleth.RelyingPartyResolverService" />
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.opensaml.xmlsec.impl.BasicEncryptionParametersResolver" />
+        </constructor-arg>
+        <constructor-arg ref="shibboleth.SelfEncryptionConfigurationLookup" />
+    </bean>
 
     <bean id="EncryptNameIDs"
             class="org.opensaml.saml.saml2.profile.impl.EncryptNameIDs" scope="prototype"
-            p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
+            p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple"
+            p:encryptToSelf-ref="shibboleth.Conditions.IssuingDelegatedAssertion"
+            p:encryptToSelfParametersStrategy-ref="EncryptToSelfParametersStrategy"
+            p:selfRecipientLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple" >
         <property name="encryptionContextLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose"
                 c:g-ref="shibboleth.ChildLookup.EncryptionParameters"

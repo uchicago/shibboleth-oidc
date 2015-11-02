@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <bean id="shibboleth.KerberosRealmSettings"
+        class="net.shibboleth.idp.authn.spnego.impl.KerberosRealmSettings" abstract="true" />
+
+    <import resource="../../../conf/authn/spnego-authn-config.xml" />
+
+    <!-- Make configurable values available in flow. -->
+    
+    <alias name="shibboleth.authn.SPNEGO.EnforceRun" alias="enforceRun"/>
+
+    <bean id="shibboleth.authn.SPNEGO.externalAuthnPath" class="java.lang.String"
+        c:_0="servletRelative:%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}" />
+
+    <!-- Kerberos settings and realms. -->
+    
+    <bean id="shibboleth.authn.SPNEGO.Krb5.Settings" class="net.shibboleth.idp.authn.spnego.impl.KerberosSettings"
+        p:refreshKrb5Config-ref="shibboleth.authn.SPNEGO.Krb5.RefreshConfig"
+        p:realms-ref="shibboleth.authn.SPNEGO.Krb5.Realms" />
+
+    <!-- Action beans. -->
+
+    <bean id="ValidateExternalAuthentication"
+            class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
+            p:classifiedMessages-ref="shibboleth.authn.SPNEGO.ClassifiedMessageMap" />
+            
+    <bean id="SPNEGOAutoLoginManager"
+          class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAutoLoginManager"
+          p:cookieManager-ref="shibboleth.UserPrefsCookieManager" />
+
+</beans>

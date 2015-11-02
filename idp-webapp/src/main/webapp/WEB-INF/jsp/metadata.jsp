@@ -1,54 +1,41 @@
-<%--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
---%>
 <%
 final org.springframework.web.context.WebApplicationContext springContext =
     org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
-final String path = springContext.getEnvironment().getProperty("idp.home") + "/metadata/idp-metadata.xml";
-final String showMetadata = springContext.getEnvironment().getProperty("idp.entityID.url.enable", "true");
 
-if (null != showMetadata && !Boolean.valueOf(showMetadata.trim())) {
-   response.sendError(404);
+String path = springContext.getEnvironment().getProperty("idp.entityID.metadataFile");
+if (path != null) {
+    path = springContext.getEnvironment().resolvePlaceholders(path.replace("%{", "${"));
 } else {
-   java.io.InputStreamReader in = null;
-   try {
-      in = new java.io.InputStreamReader(new java.io.FileInputStream(path),"UTF8");
-      int i;
-      while ((i = in.read()) != -1) {
-         out.write(i);
-      }
-   } catch (final java.io.IOException e) {
-      out.println(e.getMessage());
-      return;
-   } finally {
-      if (null != in) {
-         try {
-            in.close();
-         } catch (java.io.IOException e) {
-         }
-      }
-   }
+    path = springContext.getEnvironment().getProperty("idp.home") + "/metadata/idp-metadata.xml";	
+}
 
-   final String acceptHeader = request.getHeader("Accept");
-   if (acceptHeader != null && !acceptHeader.contains("application/samlmetadata+xml")) {
-      response.setContentType("application/xml");
-   } else {
-      response.setContentType("application/samlmetadata+xml");
-   }
+if (path.isEmpty()) {
+    response.sendError(404);
+} else {
+    java.io.InputStreamReader in = null;
+    try {
+        in = new java.io.InputStreamReader(new java.io.FileInputStream(path),"UTF8");
+        int i;
+        while ((i = in.read()) != -1) {
+            out.write(i);
+        }
+    } catch (final java.io.IOException e) {
+        out.println(e.getMessage());
+        return;
+    } finally {
+        if (null != in) {
+            try {
+                in.close();
+            } catch (java.io.IOException e) {
+            }
+        }
+    }
+
+    final String acceptHeader = request.getHeader("Accept");
+    if (acceptHeader != null && !acceptHeader.contains("application/samlmetadata+xml")) {
+        response.setContentType("application/xml");
+    } else {
+        response.setContentType("application/samlmetadata+xml");
+    }
 }
 %>

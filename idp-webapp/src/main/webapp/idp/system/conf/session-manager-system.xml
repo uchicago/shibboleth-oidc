@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
@@ -51,8 +33,8 @@
                         c:offset="%{idp.session.slop:PT0S}"
                         p:parserPool-ref="shibboleth.ParserPool" />
                 </entry>
-                <entry key="#{T(net.shibboleth.idp.cas.session.CASSPSession)}">
-                    <bean class="net.shibboleth.idp.cas.session.CASSPSessionSerializer"
+                <entry key="#{T(net.shibboleth.idp.cas.session.impl.CASSPSession)}">
+                    <bean class="net.shibboleth.idp.cas.session.impl.CASSPSessionSerializer"
                         c:offset="%{idp.session.slop:PT0S}" />
                 </entry>
             </map>
@@ -69,8 +51,8 @@
                 <entry key="#{T(net.shibboleth.idp.saml.session.SAML2SPSession)}">
                     <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
                 </entry>
-                <entry key="#{T(net.shibboleth.idp.cas.session.CASSPSession)}">
-                    <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
+                <entry key="#{T(net.shibboleth.idp.cas.session.impl.CASSPSession)}">
+                    <util:constant static-field="net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration.PROTOCOL_URI" />
                 </entry>
             </map>
         </property>
@@ -93,13 +75,18 @@
             p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
 
     <!-- Built-in logout propagation flows. -->
-    
-    <bean id="logoutprop/saml2" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor">
-        <property name="activationCondition">
-            <bean class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor.ActivationCondition"
-                p:sessionType="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }" />
-        </property>
-    </bean>
+
+    <bean id="logoutprop/cas" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor"
+          c:_0="#{ T(net.shibboleth.idp.cas.session.impl.CASSPSession) }" />
+
+    <bean id="logoutprop/saml2" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor"
+          c:_0="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }" />
+
+    <!-- Selector function used in logout-propagation UI and logout-propagation master flow -->
+
+    <bean id="shibboleth.LogoutPropagationFlowSelector"
+          class="net.shibboleth.idp.session.logic.LogoutPropagationFlowDescriptorSelector"
+          c:flows-ref="shibboleth.LogoutPropagationFlows" />
 
     <!-- The import is at the bottom to avoid a depends-on in a user-editable file. -->
     <import resource="../../conf/session-manager.xml" />

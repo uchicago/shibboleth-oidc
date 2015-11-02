@@ -1,21 +1,3 @@
-<!--
-
-    Licensed to the University Corporation for Advanced Internet Development,
-    Inc. (UCAID) under one or more contributor license agreements.  See the
-    NOTICE file distributed with this work for additional information regarding
-    copyright ownership. The UCAID licenses this file to You under the Apache
-    License, Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
@@ -29,16 +11,17 @@
         
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
+
+    <!--
+    This flow pulls double duty handling LogoutRequest and LogoutResponse.
+    Response handling is just translating the status of the LogoutResponse into a JSON
+    result compatible with the logout propagation flow contract.
+    -->
     
     <decision-state id="DoProfileWork">
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutResponse)"
-            then="DoLogoutResponse" else="PopulateClientStorageLoadContext"/>
+            then="LogoutResponseView" else="PopulateClientStorageLoadContext"/>
     </decision-state>
-
-    <action-state id="DoLogoutResponse">
-        <evaluate expression="'LogoutResponse'" />
-        <transition to="HandleSuccessWithView" />
-    </action-state>
 
     <!-- Load client storage if needed. -->
     
@@ -111,35 +94,52 @@
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
-            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext')" result="viewScope.custom" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
+        
+        <transition on="proceed" to="CheckAsync" />
+        <transition on="propagate" to="LogoutPropagateView" />
+        <transition on="end" to="LogoutCompleteView" />
+    </view-state>
+    
+    <view-state id="LogoutPropagateView" view="logout-propagate">
+        <on-render>
+            <evaluate expression="SaveLogoutContext" />
+            <evaluate expression="environment" result="viewScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="viewScope.logoutContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext))" result="viewScope.multiRPContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.htmlEncoder" />
+            <evaluate expression="T(java.net.URLEncoder)" result="viewScope.urlEncoder" />
+            <evaluate expression="T(org.cryptacular.util.CodecUtil)" result="viewScope.codecUtil" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LogoutPropagationFlowSelector')" result="viewScope.flowSelector" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
+        </on-render>
+        
+        <transition on="proceed" to="CheckAsync" />
+    </view-state>
+
+    <view-state id="LogoutCompleteView" view="logout-complete">
+        <on-render>
+            <evaluate expression="environment" result="viewScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="viewScope.logoutContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext))" result="viewScope.multiRPContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
+        </on-render>
+
         <transition on="proceed" to="CheckAsync" />
     </view-state>
     
     <decision-state id="CheckAsync">
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() == null or opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
-            then="BuildResponse" else="DoAsync" />
+            then="BuildResponse" else="AsyncLogoutView" />
     </decision-state>
-    
-    <action-state id="DoAsync">
-        <evaluate expression="'AsyncLogout'" />
-        <transition to="HandleSuccessWithView" />
-    </action-state>
-    
-    <!-- Same machinery as error view, but writes audit log unconditionally. -->
-    
-    <end-state id="HandleSuccessWithView" view="#{MapEventToView.apply(currentEvent)}">
-        <on-entry>
-            <evaluate expression="ErrorViewPopulateAuditContext" />
-            <evaluate expression="WriteAuditLog" />
-            <evaluate expression="environment" result="requestScope.environment" />
-            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
-            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext')" result="requestScope.custom" />
-        </on-entry>
-    </end-state>
     
     <action-state id="BuildResponse">
         <evaluate expression="AddLogoutResponse" />
@@ -196,6 +196,34 @@
         
         <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </action-state>
+
+    <!-- Special view machinery, and writes audit log unconditionally. -->
+    
+    <end-state id="AsyncLogoutView" view="logout/saml-async">
+        <on-entry>
+            <evaluate expression="ErrorViewPopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="LogoutResponseView" view="logout/saml-result">
+        <on-entry>
+            <evaluate expression="ErrorViewPopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />
+        </on-entry>
+    </end-state>
 
     <bean-import resource="slo-front-abstract-beans.xml" />
 
