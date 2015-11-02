@@ -40,10 +40,10 @@ INSERT INTO system_scope_TEMP (scope, description, icon, restricted, default_sco
 --
 
 MERGE INTO system_scope
-	USING (SELECT scope, description, icon, restricted, default_scope, structured, structured_param_description FROM system_scope_TEMP) AS vals(scope, description, icon, restricted, default_scope, structured, structured_param_description)
-	ON vals.scope = system_scope.scope
-	WHEN NOT MATCHED THEN
-	  INSERT (scope, description, icon, restricted, default_scope, structured, structured_param_description) VALUES(vals.scope, vals.description, vals.icon, vals.restricted, vals.default_scope, vals.structured, vals.structured_param_description);
+  USING (SELECT scope, description, icon, restricted, default_scope, structured, structured_param_description FROM system_scope_TEMP) AS vals(scope, description, icon, restricted, default_scope, structured, structured_param_description)
+  ON vals.scope = system_scope.scope
+  WHEN NOT MATCHED THEN
+    INSERT (scope, description, icon, restricted, default_scope, structured, structured_param_description) VALUES(vals.scope, vals.description, vals.icon, vals.restricted, vals.default_scope, vals.structured, vals.structured_param_description);
 
 COMMIT;
 
