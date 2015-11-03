@@ -35,7 +35,7 @@ adaptors will be built to close the gap.
 - [Shibboleth Identity Provider v3.2.0-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - Apache Maven v3.x
 - JDK 8
-- Jetty 9.3.x
+- Jetty 9
 
 ## Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,
@@ -66,12 +66,6 @@ A sample keystore is provided under the `idp-webapp-overlay/etc/jetty` directory
 
 ### Run Jetty
 From the root directory, run the following command:
-
-```bash
-mvn verify -Dhost=jetty
-```
-
-Or all in one attempt:
 
 ```bash
 mvn clean package verify -Dhost=jetty
