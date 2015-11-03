@@ -73,6 +73,12 @@ mvn clean package verify -Dhost=jetty
 
 This will spin up an embedded Jetty server to load the IdP context. Remote debugging is available under port 5000 from your IDE.
 
+If you want a somewhat faster build, run:
+
+```bash
+mvn clean package verify -Dhost=jetty --projects idp-oidc-api,idp-oidc-impl,idp-webapp-overlay
+```
+
 ## Overlay Changes
 
 * `login.vm` and `attribute-release.vm` are overlaid to account for CSRF changes
