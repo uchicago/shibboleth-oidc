@@ -141,8 +141,8 @@
         <maven.plugin.properties>1.0-alpha-2</maven.plugin.properties>
         <maven.plugin.pgpverify>1.1.0</maven.plugin.pgpverify>
         <maven-checkstyle-plugin>2.15</maven-checkstyle-plugin>
-        <project.build.sourceVersion>1.8</project.build.sourceVersion>
-        <project.build.targetVersion>1.8</project.build.targetVersion>
+        <project.build.sourceVersion>1.7</project.build.sourceVersion>
+        <project.build.targetVersion>1.7</project.build.targetVersion>
         <install.dir>${project.basedir}</install.dir>
     </properties>
     <profiles>

@@ -3,6 +3,7 @@ package net.shibboleth.idp.oidc.flow;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.oidc.config.SpringSecurityAuthenticationToken;
@@ -189,11 +190,12 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                 final Map<String, String> claimValues = new HashMap<>();
 
                 final Set<String> claims = scopeClaimTranslationService.getClaimsForScope(systemScope.getValue());
-                claims.stream().filter(claim -> userJson.has(claim) &&
-                        userJson.get(claim).isJsonPrimitive()).forEach(claim -> {
-                    claimValues.put(claim, userJson.get(claim).getAsString());
-                });
-
+                for (final String claim : claims) {
+                    final JsonElement element = userJson.get(claim);
+                    if (userJson.has(claim) && element.isJsonPrimitive()) {
+                        claimValues.put(claim, element.getAsString());
+                    }
+                }
                 claimsForScopes.put(systemScope.getValue(), claimValues);
             }
         }
@@ -211,8 +213,11 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         final Set<SystemScope> systemScopes = scopeService.getAll();
 
         // sort scopes for display based on the inherent order of system scopes
-        sortedScopes.addAll(systemScopes.stream().filter(s -> scopes.contains(s)).collect(Collectors.toList()));
-
+        for (final SystemScope systemScope : systemScopes) {
+            if (scopes.contains(systemScope)) {
+                sortedScopes.add(systemScope);
+            }
+        }
         // add in any scopes that aren't system scopes to the end of the list
         sortedScopes.addAll(Sets.difference(scopes, systemScopes));
         return sortedScopes;

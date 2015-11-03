@@ -60,7 +60,7 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
     @NotLive
     @Unmodifiable
     public List<Principal> getDefaultAuthenticationMethods() {
-        return ImmutableList.copyOf(this.defaultAuthenticationContexts);
+        return (List) ImmutableList.copyOf(this.defaultAuthenticationContexts);
     }
 
     /**

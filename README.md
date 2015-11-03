@@ -34,7 +34,7 @@ adaptors will be built to close the gap.
 ## Versions
 - [Shibboleth Identity Provider v3.2.0-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - Apache Maven v3.x
-- JDK 8
+- JDK 7
 - Jetty 9
 
 ## Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
