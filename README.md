@@ -44,7 +44,7 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 ### Initial installs
 
 ```bash
-mvn clean install -P new
+./mvnw clean install -P new
 ```
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
