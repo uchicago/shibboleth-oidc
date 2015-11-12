@@ -44,7 +44,7 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 ### Initial installs
 
 ```bash
-mvn clean install -P new
+./mvnw clean install -P new
 ```
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
@@ -53,7 +53,7 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 ### Subsequent installs
 
 ```bash
-mvn clean package
+./mvnw clean package
 ```
 
 ## Run
@@ -68,7 +68,7 @@ A sample keystore is provided under the `idp-webapp-overlay/etc/jetty` directory
 From the root directory, run the following command:
 
 ```bash
-mvn clean package verify -Dhost=jetty
+./mvnw clean package verify -Dhost=jetty
 ```
 
 This will spin up an embedded Jetty server to load the IdP context. Remote debugging is available under port 5000 from your IDE.
@@ -76,7 +76,7 @@ This will spin up an embedded Jetty server to load the IdP context. Remote debug
 If you want a somewhat faster build, run:
 
 ```bash
-mvn clean package verify -Dhost=jetty --projects idp-oidc-api,idp-oidc-impl,idp-webapp-overlay
+./mvnw clean package verify -Dhost=jetty --projects idp-oidc-api,idp-oidc-impl,idp-webapp-overlay
 ```
 
 ## Overlay Changes
