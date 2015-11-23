@@ -10,6 +10,7 @@
 	   default-init-method="initialize"
        default-destroy-method="destroy">
     
+    <!-- Controls which profiles get audited. -->
     <bean id="shibboleth.ProfileAuditingCondition" class="com.google.common.base.Predicates" factory-method="not">
         <constructor-arg>
             <bean class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
@@ -18,6 +19,25 @@
                 </constructor-arg>
                 <constructor-arg name="collection">
                     <ref bean="shibboleth.AuditSuppressedProfiles" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+    <!-- Reusable bean for extracting a username and hashing it for F-TICKS. -->
+    <bean id="shibboleth.UsernameHasher" class="com.google.common.base.Functions" factory-method="compose">
+        <constructor-arg name="g">
+            <bean class="net.shibboleth.utilities.java.support.codec.StringDigester"
+                c:algorithm="#{'%{idp.fticks.algorithm:SHA-256}'.trim()}" c:format="HEX_LOWER"
+                p:salt="%{idp.fticks.salt:}" p:requireSalt="true" />
+        </constructor-arg>
+        <constructor-arg name="f">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.SubjectContext" />
                 </constructor-arg>
             </bean>
         </constructor-arg>
@@ -81,6 +101,54 @@
                         <constructor-arg name="f">
                             <bean class="com.google.common.base.Functions" factory-method="compose"
                                 c:g-ref="shibboleth.ChildLookupOrCreate.SAMLMessageInfoContext"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IN_RESPONSE_TO"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.InResponseToAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.STATUS_CODE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.StatusCodeAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SUBSTATUS_CODE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SubStatusCodeAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.STATUS_MESSAGE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.StatusMessageAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
                                 c:f-ref="shibboleth.MessageContextLookup.Inbound" />
                         </constructor-arg>
                     </bean>
@@ -239,6 +307,12 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_USERNAME"/>
+                    </key>
+                    <ref bean="shibboleth.UsernameHasher" />
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.SESSION_ID"/>
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
@@ -385,6 +459,18 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SESSION_INDEX"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SessionIndexAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>
@@ -400,6 +486,12 @@
                     <bean class="com.google.common.base.Functions" factory-method="compose"
                         c:g-ref="shibboleth.PrincipalNameLookup.Subject"
                         c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_USERNAME"/>
+                    </key>
+                    <ref bean="shibboleth.UsernameHasher" />
                 </entry>
                 <entry>
                     <key>
@@ -441,6 +533,12 @@
                     <bean class="com.google.common.base.Functions" factory-method="compose"
                         c:g-ref="shibboleth.PrincipalNameLookup.Subject"
                         c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_USERNAME"/>
+                    </key>
+                    <ref bean="shibboleth.UsernameHasher" />
                 </entry>
                 <entry>
                     <key>

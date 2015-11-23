@@ -43,7 +43,7 @@
                       backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
                       metadataURL="http://WHATEVER"> 
         
-        <MetadataFilter xsi:type="SignatureValidation" requireSignedMetadata="true">
+        <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true">
             <PublicKey>
                 MIIBI.....
             </PublicKey>

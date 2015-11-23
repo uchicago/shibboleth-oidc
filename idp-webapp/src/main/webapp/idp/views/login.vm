@@ -77,7 +77,9 @@
 
             #if ($passwordEnabled)
               <div class="form-element-wrapper">
-                <button class="form-element form-button" type="submit" name="_eventId_proceed">#springMessageText("idp.login.login", "Login")</button>
+                <button class="form-element form-button" type="submit" name="_eventId_proceed"
+                    onClick="this.childNodes[0].nodeValue='#springMessageText("idp.login.pleasewait", "Logging in, please wait...")'"
+                    >#springMessageText("idp.login.login", "Login")</button>
               </div>
             #end
 

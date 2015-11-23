@@ -18,7 +18,9 @@
 <html>
   	<head>
         <meta charset="utf-8">
-        <meta http-equiv="refresh" content="10;url=$flowExecutionUrl&_eventId=propagate">
+        #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
+            <meta http-equiv="refresh" content="10;url=$flowExecutionUrl&_eventId=propagate">
+        #end
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
   	</head>

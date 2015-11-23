@@ -12,6 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
     <import resource="../../../conf/c14n/attribute-sourced-subject-c14n-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
