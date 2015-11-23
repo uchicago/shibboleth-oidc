@@ -16,16 +16,6 @@
         <property name="forceHttps" value="%{oidc.force.https:true}" />
     </bean>
 
-    <!--<util:set id="oidcAuthorizedUsers">-->
-        <!--<bean class="org.mitre.openid.connect.model.DefaultUserInfo"-->
-              <!--p:email="admin@admin.com"-->
-              <!--p:name="Admin"-->
-              <!--p:nickname="TheAdmin"-->
-              <!--p:preferredUsername="admin"-->
-              <!--p:sub="90342.ASDFJWFA"-->
-              <!--p:emailVerified="true" />-->
-    <!--</util:set>-->
-
     <util:set id="oidcClients">
         <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
               p:id="#{ T(java.lang.Math).random() * 1000.0 }"
