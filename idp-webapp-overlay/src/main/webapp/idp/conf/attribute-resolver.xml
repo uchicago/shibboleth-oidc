@@ -34,6 +34,7 @@
 
     <!--Subject - Identifier for the End-User at the Issuer.-->
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="sub" sourceAttributeID="sub">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:sub" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="sub" encodeType="false" />
     </resolver:AttributeDefinition>
@@ -44,109 +45,128 @@
     the End-User's locale and preferences.
     -->
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="name" sourceAttributeID="name">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Name</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:name" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="name" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="given_name" sourceAttributeID="given_name">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Given Name</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:given_name" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="given_name" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="family_name" sourceAttributeID="family_name">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Family Name</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:family_name" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="family_name" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="middle_name" sourceAttributeID="middle_name">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Middle Name</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:middle_name" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="middle_name" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="nickname" sourceAttributeID="nickname">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Nickname</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:nickname" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="nickname" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="preferred_username" sourceAttributeID="preferred_username">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:preferred_username" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="preferred_username" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="profile" sourceAttributeID="profile">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Profile</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:profile" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="profile" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="picture" sourceAttributeID="picture">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Picture</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:picture" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="picture" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="website" sourceAttributeID="website">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Website</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:website" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="website" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="email" sourceAttributeID="email">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Email</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:email" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="email" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="email_verified" sourceAttributeID="email_verified">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:email_verified" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="email_verified" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="gender" sourceAttributeID="gender">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Gender</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:gender" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="gender" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="birthdate" sourceAttributeID="birthdate">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Birth Date</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:birthdate" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="birthdate" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="zoneinfo" sourceAttributeID="zoneinfo">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:zoneinfo" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="zoneinfo" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="locale" sourceAttributeID="locale">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:locale" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="locale" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="phone_number" sourceAttributeID="phone_number">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Phone Number</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:phone_number" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="phone_number" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="phone_number_verified" sourceAttributeID="phone_number_verified">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:phone_number_verified" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="phone_number_verified" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="address" sourceAttributeID="address">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:DisplayName>Address</resolver:DisplayName>
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:address" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="address" encodeType="false" />
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="updated_at" sourceAttributeID="updated_at">
+        <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:updated_at" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="updated_at" encodeType="false" />
     </resolver:AttributeDefinition>
@@ -156,8 +176,68 @@
     <!-- ========================================== -->
 
     <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
-        <dc:Attribute id="affiliation">
-            <dc:Value>member</dc:Value>
+        <dc:Attribute id="sub">
+            <dc:Value>90342.ASDFJWFA</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="name">
+            <dc:Value>Admin</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="given_name">
+            <dc:Value>James</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="family_name">
+            <dc:Value>Hicks</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="middle_name">
+            <dc:Value>Ken</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="preferredUsername">
+            <dc:Value>admin</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="nickname">
+            <dc:Value>TheAdmin</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="preferred_username">
+            <dc:Value>jhiks</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="profile">
+            <dc:Value>https://example.com/profile</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="picture">
+            <dc:Value>https://example.com/prifile/image.jpg</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="website">
+            <dc:Value>https://example.com</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="email">
+            <dc:Value>admin@admin.com</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="emailVerified">
+            <dc:Value>true</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="gender">
+            <dc:Value>Male</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="birthdate">
+            <dc:Value>1980-07-16</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="zoneinfo">
+            <dc:Value>America/Los_Angeles</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="locale">
+            <dc:Value>en_US</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="phone_number">
+            <dc:Value>+1 (425) 555-1212</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="phone_number_verified">
+            <dc:Value>true</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="address">
+            <dc:Value>201 Streen Name, Gilbert AZ.</dc:Value>
+        </dc:Attribute>
+        <dc:Attribute id="updated_at">
+            <dc:Value>2800012</dc:Value>
         </dc:Attribute>
     </resolver:DataConnector>
 
