@@ -191,9 +191,6 @@
         <dc:Attribute id="middle_name">
             <dc:Value>Ken</dc:Value>
         </dc:Attribute>
-        <dc:Attribute id="preferredUsername">
-            <dc:Value>admin</dc:Value>
-        </dc:Attribute>
         <dc:Attribute id="nickname">
             <dc:Value>TheAdmin</dc:Value>
         </dc:Attribute>
@@ -212,7 +209,7 @@
         <dc:Attribute id="email">
             <dc:Value>admin@admin.com</dc:Value>
         </dc:Attribute>
-        <dc:Attribute id="emailVerified">
+        <dc:Attribute id="email_verified">
             <dc:Value>true</dc:Value>
         </dc:Attribute>
         <dc:Attribute id="gender">
@@ -234,7 +231,7 @@
             <dc:Value>true</dc:Value>
         </dc:Attribute>
         <dc:Attribute id="address">
-            <dc:Value>201 Streen Name, Gilbert AZ.</dc:Value>
+            <dc:Value>201 Street Name, Gilbert AZ 85258</dc:Value>
         </dc:Attribute>
         <dc:Attribute id="updated_at">
             <dc:Value>2800012</dc:Value>

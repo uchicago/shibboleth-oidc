@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.oidc.config.SpringSecurityAuthenticationToken;
+import net.shibboleth.idp.oidc.userinfo.OpenIdConnectUserInfoService;
 import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
@@ -24,12 +25,14 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.endpoint.RedirectResolver;
+import org.springframework.stereotype.Service;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -63,7 +66,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
     private ScopeClaimTranslationService scopeClaimTranslationService;
 
     @Autowired
-    private UserInfoService userInfoService;
+    @Qualifier("openIdConnectUserInfoService")
+    private OpenIdConnectUserInfoService userInfoService;
 
     @Autowired
     private StatsService statsService;
@@ -84,6 +88,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
+
+        this.userInfoService.initialize(profileRequestContext);
 
         final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
         final HttpSession session = request.getSession();
