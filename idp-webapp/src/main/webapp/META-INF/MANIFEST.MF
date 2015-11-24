@@ -1,59 +1,6 @@
 Manifest-Version: 1.0
-Archiver-Version: Plexus Archiver
-Built-By: jenkins
-Class-Path: opensaml-core-3.2.0-20151102.050843-207.jar joda-time-2.7.
- jar java-support-7.2.0-20151102.045739-221.jar commons-codec-1.10.jar
-  jsr305-3.0.1.jar guava-18.0.jar slf4j-api-1.7.12.jar opensaml-messag
- ing-api-3.2.0-20151102.050938-207.jar httpclient-4.3.6.jar httpcore-4
- .3.3.jar opensaml-messaging-impl-3.2.0-20151102.051727-207.jar opensa
- ml-profile-api-3.2.0-20151102.051159-207.jar opensaml-profile-impl-3.
- 2.0-20151102.052228-203.jar opensaml-xmlsec-api-3.2.0-20151102.051106
- -207.jar opensaml-security-api-3.2.0-20151102.051008-207.jar xmlsec-2
- .0.3.jar woodstox-core-asl-4.4.1.jar stax-api-1.0-2.jar stax2-api-3.1
- .4.jar cryptacular-1.0.jar bcprov-jdk15on-1.53.jar opensaml-saml-api-
- 3.2.0-20151102.051240-207.jar opensaml-soap-api-3.2.0-20151102.051137
- -207.jar opensaml-storage-api-3.2.0-20151102.050917-207.jar opensaml-
- saml-impl-3.2.0-20151102.051947-203.jar opensaml-security-impl-3.2.0-
- 20151102.051601-207.jar opensaml-xmlsec-impl-3.2.0-20151102.051651-20
- 7.jar opensaml-soap-impl-3.2.0-20151102.051801-207.jar velocity-1.7.j
- ar commons-collections-3.2.1.jar commons-lang-2.4.jar opensaml-storag
- e-impl-3.2.0-20151102.051436-207.jar ldaptive-1.0.6.jar javax.json-ap
- i-1.0.jar hibernate-entitymanager-4.3.5.Final.jar jboss-logging-3.1.3
- .GA.jar jboss-logging-annotations-1.2.0.Beta1.jar hibernate-core-4.3.
- 5.Final.jar jboss-transaction-api_1.2_spec-1.0.0.Final.jar dom4j-1.6.
- 1.jar xml-apis-1.4.01.jar hibernate-commons-annotations-4.0.4.Final.j
- ar hibernate-jpa-2.1-api-1.0.0.Final.jar javassist-3.18.1-GA.jar antl
- r-2.7.7.jar jandex-1.1.0.Final.jar spymemcached-2.11.4.jar javax.json
- -1.0.4.jar spring-orm-4.2.2.RELEASE.jar spring-beans-4.2.2.RELEASE.ja
- r spring-core-4.2.2.RELEASE.jar spring-jdbc-4.2.2.RELEASE.jar spring-
- tx-4.2.2.RELEASE.jar idp-attribute-api-3.2.0-20151102.053029-209.jar 
- janino-2.7.8.jar commons-compiler-2.7.8.jar mail-1.4.7.jar activation
- -1.1.jar spring-context-support-4.2.2.RELEASE.jar spring-context-4.2.
- 2.RELEASE.jar spring-aop-4.2.2.RELEASE.jar aopalliance-1.0.jar spring
- -expression-4.2.2.RELEASE.jar idp-attribute-filter-api-3.2.0-20151102
- .053239-207.jar idp-core-3.2.0-20151102.052940-210.jar jcommander-1.4
- 8.jar spring-web-4.2.2.RELEASE.jar logback-classic-1.1.3.jar logback-
- core-1.1.3.jar spring-extensions-5.2.0-20151102.050539-221.jar httpcl
- ient-cache-4.3.6.jar idp-attribute-filter-impl-3.2.0-20151102.053833-
- 207.jar idp-saml-api-3.2.0-20151102.053406-207.jar idp-profile-api-3.
- 2.0-20151102.053101-209.jar spring-webflow-2.4.2.RELEASE.jar ognl-2.6
- .11.jar spring-binding-2.4.2.RELEASE.jar spring-js-2.4.2.RELEASE.jar 
- spring-js-resources-2.4.2.RELEASE.jar spring-webmvc-4.2.2.RELEASE.jar
-  idp-attribute-resolver-api-3.2.0-20151102.053209-207.jar idp-authn-a
- pi-3.2.0-20151102.053135-208.jar idp-session-api-3.2.0-20151102.05330
- 5-207.jar idp-attribute-resolver-impl-3.2.0-20151102.053749-207.jar i
- dp-attribute-resolver-spring-3.2.0-20151102.054224-206.jar idp-saml-i
- mpl-3.2.0-20151102.053651-207.jar idwsfconsumer-1.0.0-20150616.074118
- -5.jar log4j-over-slf4j-1.7.10.jar c3p0-0.9.2.1.jar mchange-commons-j
- ava-0.2.3.4.jar idp-schema-3.2.0-20151102.053003-210.jar idp-profile-
- spring-3.2.0-20151102.054102-206.jar idp-profile-impl-3.2.0-20151102.
- 054001-207.jar idp-attribute-filter-spring-3.2.0-20151102.053918-207.
- jar idp-authn-impl-3.2.0-20151102.053511-207.jar idp-consent-api-3.2.
- 0-20151102.053439-83.jar idp-cas-api-3.2.0-20151102.053332-207.jar id
- p-cas-impl-3.2.0-20151102.054326-206.jar idp-session-impl-3.2.0-20151
- 102.053554-207.jar idp-ui-3.2.0-20151102.054506-204.jar idp-consent-i
- mpl-3.2.0-20151102.054423-81.jar jcl-over-slf4j-1.7.12.jar ant-1.9.4.
- jar ant-launcher-1.9.4.jar
+Built-By: tzeller
 Build-Jdk: 1.7.0_80
 Created-By: Apache Maven 3.3.1
+Archiver-Version: Plexus Archiver
 

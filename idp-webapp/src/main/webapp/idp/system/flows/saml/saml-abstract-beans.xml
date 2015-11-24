@@ -329,6 +329,11 @@
 
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+        
+    <bean id="WriteFTICKSLog" class="net.shibboleth.idp.saml.audit.impl.WriteFTICKSLog" scope="prototype"
+        p:activationCondition="#{'%{idp.fticks.federation:null}' != 'null'}"
+        p:federationId="#{'%{idp.fticks.federation:Undefined}'.trim()}"
+        p:digestAlgorithm="#{'%{idp.fticks.algorithm:SHA-256}'.trim()}" p:salt="%{idp.fticks.salt:}" />
 
     <bean id="LocalErrorPredicate"
             class="org.opensaml.saml.common.profile.logic.DefaultLocalErrorPredicate"

@@ -134,10 +134,6 @@
         <webflow:flow-location id="cas/samlValidate" path="../system/flows/cas/samlValidate/samlValidate-flow.xml" />
         <webflow:flow-location id="cas/logout" path="../system/flows/logout/logout-flow.xml" />
 
-        <!-- Local storage flows. -->
-        <webflow:flow-location id="local-storage/read" path="../system/flows/local-storage/local-storage-read-flow.xml" />
-        <webflow:flow-location id="local-storage/write" path="../system/flows/local-storage/local-storage-write-flow.xml" />
-
         <!-- Client storage flows. -->
         <webflow:flow-location id="client-storage/read" path="../system/flows/client-storage/client-storage-read-flow.xml" />
         <webflow:flow-location id="client-storage/write" path="../system/flows/client-storage/client-storage-write-flow.xml" />

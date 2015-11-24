@@ -50,6 +50,12 @@
         </property>
     </bean>
 
+    <!-- This is a little iffy, but the post-assertion extractors include the fields we want here. -->
+    <bean id="LogoutPopulateAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors"
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
     <bean id="EncryptNameIDs"
             class="org.opensaml.saml.saml2.profile.impl.EncryptNameIDs" scope="prototype"
             p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
@@ -59,6 +65,11 @@
                 c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>
     </bean>
+
+    <bean id="PostResponsePopulateAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
     
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

@@ -276,14 +276,14 @@
     <bean id="shibboleth.NonCachingHttpClient"
         lazy-init="true"
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} ? @'shibboleth.TrustEngineTLSSocketFactory' : null }"
+        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
         p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
         p:connectionTimeout="%{idp.httpclient.connectionTimeout:-1}" />
     
     <bean id="shibboleth.FileCachingHttpClient"
         lazy-init="true"
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} ? @'shibboleth.TrustEngineTLSSocketFactory' : null }"
+        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
         p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
         p:connectionTimeout="%{idp.httpclient.connectionTimeout:-1}"
         p:cacheDirectory="%{idp.httpclient.filecaching.cacheDirectory}"
@@ -293,18 +293,18 @@
     <bean id="shibboleth.MemoryCachingHttpClient"
         lazy-init="true"
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} ? @'shibboleth.TrustEngineTLSSocketFactory' : null }"
+        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
         p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
         p:connectionTimeout="%{idp.httpclient.connectionTimeout:-1}"
         p:maxCacheEntries="%{idp.httpclient.memorycaching.maxCacheEntries:50}"
         p:maxCacheEntrySize="%{idp.httpclient.memorycaching.maxCacheEntrySize:1048576}" />
         
-    <bean id="shibboleth.TrustEngineTLSSocketFactory" 
+    <bean id="shibboleth.SecurityEnhancedTLSSocketFactory" name="shibboleth.TrustEngineTLSSocketFactory" 
         lazy-init="true"
-        class="org.opensaml.security.httpclient.impl.TrustEngineTLSSocketFactory">
+        class="org.opensaml.security.httpclient.impl.SecurityEnhancedTLSSocketFactory">
         <constructor-arg>
             <bean class="net.shibboleth.utilities.java.support.httpclient.HttpClientSupport"
-                factory-method="buildNoTrustSSLConnectionSocketFactory" />
+                factory-method="buildNoTrustTLSSocketFactory" />
         </constructor-arg>
         <constructor-arg>
             <bean class="org.apache.http.conn.ssl.StrictHostnameVerifier" />

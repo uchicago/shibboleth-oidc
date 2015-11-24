@@ -17,6 +17,9 @@
     <bean id="shibboleth.CommaDelimStringArray"
         class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray" abstract="true" />
     
+    <bean id="shibboleth.NonFailFastValidator"
+        class="net.shibboleth.idp.attribute.resolver.dc.NonFailFastValidator" lazy-init="true" />
+    
     <bean id="shibboleth.Conditions.AND"
         class="com.google.common.base.Predicates" factory-method="and" abstract="true" />
     <bean id="shibboleth.Conditions.NOT"

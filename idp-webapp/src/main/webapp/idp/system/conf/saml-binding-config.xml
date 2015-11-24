@@ -14,12 +14,10 @@
 
     <!--
     This file configures the IdP with the set of SAML bindings to support for sending messages back through
-    a browser to SPs. Separate binding lists are provided for SAML 1, SAML 2 SSO, and SAML 2 SLO.
+    a browser to SPs. Separate binding lists are provided for the various SAML versions and profiles.
     
     For advanced use cases, it's possible to configure an activationCondition property that can evaluate the
     profile request context to determine whether a binding applies, for example based on the SP identity.
-    
-    In most cases, simply leaving this alone, or reordering the bindings to fit your preferences, is enough.
     
     Note: the p:id syntax MUST be used to specify the binding URI. Using id alone will cause problems due to
     duplicate bean IDs. 
@@ -31,7 +29,8 @@
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
             p:encoderBeanId="shibboleth.Encoders.SAML1PostEncoder" />
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01"
-            p:encoderBeanId="shibboleth.Encoders.SAML1ArtifactEncoder" p:artifact="true" />
+            p:encoderBeanId="shibboleth.Encoders.SAML1ArtifactEncoder" p:artifact="true"
+            p:activationCondition="%{idp.artifact.enabled:true}" />
     </util:list>
 
     <util:list id="shibboleth.OutgoingSAML2SSOBindings">
@@ -40,7 +39,8 @@
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
             p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" p:signatureCapable="true" />
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
-            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
+            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true"
+            p:activationCondition="%{idp.artifact.enabled:true}" />
     </util:list>
 
     <util:list id="shibboleth.OutgoingSAML2SLOBindings">
@@ -51,7 +51,8 @@
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
             p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" p:signatureCapable="true" />
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
-            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
+            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true"
+            p:activationCondition="%{idp.artifact.enabled:true}" />
     </util:list>
 
     <util:list id="shibboleth.OutgoingSOAPBindings">

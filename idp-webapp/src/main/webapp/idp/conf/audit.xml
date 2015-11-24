@@ -15,7 +15,7 @@
     for compatibility with V2 audit logging.
     -->
     <util:map id="shibboleth.AuditFormattingMap">
-        <entry key="Shibboleth-Audit" value="%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i" />
+        <entry key="Shibboleth-Audit" value="%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i|" />
     </util:map>
 
     <!-- Allows auditing to be disabled selectively for particular profiles/flows. -->

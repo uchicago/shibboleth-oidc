@@ -152,6 +152,14 @@
         <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </action-state>
 
+    <!-- Splice in an additional step to write out the F-TICKS log entry on a successful completion. -->
+
+    <end-state id="end">
+        <on-entry>
+            <evaluate expression="WriteFTICKSLog" />
+        </on-entry>
+    </end-state>
+
     <bean-import resource="sso-abstract-beans.xml" />
 
 </flow>

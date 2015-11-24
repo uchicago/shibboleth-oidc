@@ -14,6 +14,7 @@
 <%@ page import="net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.DataConnector" %>
+<%@ page import="net.shibboleth.idp.attribute.resolver.DataConnectorEx" %>
 <%@ page import="net.shibboleth.utilities.java.support.component.IdentifiedComponent" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ReloadableService" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ServiceableComponent" %>
@@ -103,14 +104,18 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
             final Collection<DataConnector> connectors = resolver.getDataConnectors().values();
             
             for (final DataConnector connector: connectors) {
-                final long lastFail = connector.getLastFail();
-                if (0 != lastFail) {
-                    DateTime failDateTime = new DateTime(lastFail);
-                    out.println("\tDataConnector " +  connector.getId() + ": last failed at " + failDateTime.toString(dateTimeFormatter));
-                } else {
-                    out.println("\tDataConnector " +  connector.getId() + ": has never failed");
+                if (connector instanceof DataConnectorEx) {
+                    DataConnectorEx connectorEx = (DataConnectorEx) connector;
+                
+                    final long lastFail = connectorEx.getLastFail();
+                    if (0 != lastFail) {
+                        DateTime failDateTime = new DateTime(lastFail);
+                        out.println("\tDataConnector " +  connectorEx.getId() + ": last failed at " + failDateTime.toString(dateTimeFormatter));
+                    } else {
+                        out.println("\tDataConnector " +  connectorEx.getId() + ": has never failed");
+                    }
+                    out.println();
                 }
-                out.println();
             }
         } finally {
             if (null != component) {

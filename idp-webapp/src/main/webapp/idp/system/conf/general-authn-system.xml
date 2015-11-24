@@ -56,6 +56,7 @@
             <list>
                 <bean class="net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer" />
+                <bean class="net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
                     p:dataSealer-ref="shibboleth.DataSealer" />
             </list>
