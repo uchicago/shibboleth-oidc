@@ -74,7 +74,7 @@ This will spin up an embedded Jetty server to load the IdP context. Remote debug
 If you want a somewhat faster build, run:
 
 ```bash
-./mvnw clean package verify -Dhost=jetty --projects idp-oidc-api,idp-oidc-impl,idp-webapp-overlay
+./mvnw clean package verify -Dhost=jetty --projects idp-oidc-impl,idp-webapp-overlay
 ```
 
 ## Overlay Changes

@@ -7,7 +7,6 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.impl.ConsentContext;
 import net.shibboleth.idp.consent.impl.Consent;
-import org.mitre.openid.connect.model.Address;
 import org.mitre.openid.connect.model.DefaultAddress;
 import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.mitre.openid.connect.model.UserInfo;

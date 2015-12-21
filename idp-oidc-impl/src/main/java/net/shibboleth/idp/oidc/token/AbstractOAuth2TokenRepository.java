@@ -12,18 +12,21 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
+import org.mitre.oauth2.model.OAuth2AccessTokenEntity;
+import org.mitre.oauth2.model.OAuth2RefreshTokenEntity;
 import org.opensaml.storage.StorageSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.Set;
 
 @Component("abstractOAuth2TokenRepository")
 public abstract class AbstractOAuth2TokenRepository {
@@ -40,7 +43,7 @@ public abstract class AbstractOAuth2TokenRepository {
         return ExpiringOAuth2RefreshToken.class.getCanonicalName();
     }
 
-    public void storeOAuth2AccessToken(final OAuth2AccessToken t) {
+    public void storeOAuth2AccessToken(final OAuth2AccessTokenEntity t) {
         try {
             final String context = getOAuth2AccessTokenStorageContext();
             final DateTime dt = new DateTime(t.getExpiration());
@@ -56,14 +59,14 @@ public abstract class AbstractOAuth2TokenRepository {
         }
     }
 
-    public void storeOAuth2RefreshToken(final ExpiringOAuth2RefreshToken t) {
+    public void storeOAuth2RefreshToken(final OAuth2RefreshTokenEntity t) {
         try {
             final String context = getOAuth2RefreshTokenStorageContext();
             final DateTime dt = new DateTime(t.getExpiration());
             final long exp = Seconds.secondsBetween(DateTime.now(), dt).toPeriod().getMillis();
 
             if (!this.storageService.create(context, t.getValue(), t,
-                    new OAuth2TokenStorageSerializer(ExpiringOAuth2RefreshToken.class),
+                    new OAuth2TokenStorageSerializer(OAuth2RefreshTokenEntity.class),
                     exp)) {
                 throw new RuntimeException("Failed to store token " + t);
             }
@@ -72,7 +75,45 @@ public abstract class AbstractOAuth2TokenRepository {
         }
     }
 
-    private class OAuth2TokenStorageSerializer<T> implements StorageSerializer<T> {
+    public void deleteOAuth2RefreshToken(final OAuth2RefreshTokenEntity t) {
+        try {
+            final String context = getOAuth2RefreshTokenStorageContext();
+            if (!this.storageService.delete(context, t.getValue())) {
+                throw new RuntimeException("Failed to delete token " + t);
+            }
+        } catch (final IOException e) {
+            throw new RuntimeException("Failed to delete token " + t, e);
+        }
+    }
+
+    public void deleteOAuth2AccessToken(final OAuth2AccessTokenEntity t) {
+        try {
+            final String context = getOAuth2AccessTokenStorageContext();
+            if (!this.storageService.delete(context, t.getValue())) {
+                throw new RuntimeException("Failed to delete token " + t);
+            }
+        } catch (final IOException e) {
+            throw new RuntimeException("Failed to delete token " + t, e);
+        }
+    }
+
+    public Set<OAuth2AccessTokenEntity> getAllAccessTokens() {
+        try {
+            return Collections.emptySet();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Set<OAuth2RefreshTokenEntity> getAllRefreshTokens() {
+        try {
+            return Collections.emptySet();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static class OAuth2TokenStorageSerializer<T> implements StorageSerializer<T> {
         private ObjectMapper objectMapper;
         private final Class<T> objectType;
 
@@ -113,7 +154,7 @@ public abstract class AbstractOAuth2TokenRepository {
             this.objectMapper = initializeObjectMapper();
         }
 
-        private ObjectMapper initializeObjectMapper() {
+        private static ObjectMapper initializeObjectMapper() {
             final ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);

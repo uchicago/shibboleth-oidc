@@ -34,7 +34,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public OAuth2RefreshTokenEntity getRefreshTokenByValue(final String s) {
-
+        final Set<OAuth2RefreshTokenEntity> refreshTokenEntities = getAllRefreshTokens();
         for (final OAuth2RefreshTokenEntity refreshTokenEntity : refreshTokenEntities) {
             if (refreshTokenEntity.getValue().equals(s)) {
                 return refreshTokenEntity;
@@ -45,6 +45,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public OAuth2RefreshTokenEntity getRefreshTokenById(final Long aLong) {
+        final Set<OAuth2RefreshTokenEntity> refreshTokenEntities = getAllRefreshTokens();
         for (final OAuth2RefreshTokenEntity refreshTokenEntity : refreshTokenEntities) {
             if (refreshTokenEntity.getId().equals(aLong)) {
                 return refreshTokenEntity;
@@ -55,6 +56,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public void clearAccessTokensForRefreshToken(final OAuth2RefreshTokenEntity oAuth2RefreshTokenEntity) {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         final Iterator<OAuth2AccessTokenEntity> it = accessTokenEntities.iterator();
         while (it.hasNext()) {
             final OAuth2AccessTokenEntity accessTokenEntity = it.next();
@@ -66,13 +68,14 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public void removeRefreshToken(final OAuth2RefreshTokenEntity oAuth2RefreshTokenEntity) {
-        refreshTokenEntities.remove(oAuth2RefreshTokenEntity);
+        deleteOAuth2RefreshToken(oAuth2RefreshTokenEntity);
     }
 
 
 
     @Override
     public OAuth2AccessTokenEntity getAccessTokenByValue(final String s) {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         for (final OAuth2AccessTokenEntity accessTokenEntity : accessTokenEntities) {
             if (accessTokenEntity.getValue().equals(s)) {
                 return accessTokenEntity;
@@ -83,6 +86,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public OAuth2AccessTokenEntity getAccessTokenById(final Long aLong) {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         for (final OAuth2AccessTokenEntity accessTokenEntity : accessTokenEntities) {
             if (accessTokenEntity.getId().equals(aLong)) {
                 return accessTokenEntity;
@@ -93,11 +97,12 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public void removeAccessToken(final OAuth2AccessTokenEntity oAuth2AccessTokenEntity) {
-        accessTokenEntities.remove(oAuth2AccessTokenEntity);
+        deleteOAuth2AccessToken(oAuth2AccessTokenEntity);
     }
 
     @Override
     public void clearTokensForClient(final ClientDetailsEntity clientDetailsEntity) {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         final Iterator<OAuth2AccessTokenEntity> it = accessTokenEntities.iterator();
         while (it.hasNext()) {
             final OAuth2AccessTokenEntity accessTokenEntity = it.next();
@@ -105,7 +110,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
                 it.remove();
             }
         }
-
+        final Set<OAuth2RefreshTokenEntity> refreshTokenEntities = getAllRefreshTokens();
         final Iterator<OAuth2RefreshTokenEntity> it2 = refreshTokenEntities.iterator();
         while (it.hasNext()) {
             final OAuth2RefreshTokenEntity refreshTokenEntity = it2.next();
@@ -117,6 +122,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public List<OAuth2AccessTokenEntity> getAccessTokensForClient(final ClientDetailsEntity clientDetailsEntity) {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         final List<OAuth2AccessTokenEntity> list = new ArrayList<>();
         final Iterator<OAuth2AccessTokenEntity> it = accessTokenEntities.iterator();
         while (it.hasNext()) {
@@ -130,6 +136,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public List<OAuth2RefreshTokenEntity> getRefreshTokensForClient(final ClientDetailsEntity clientDetailsEntity) {
+        final Set<OAuth2RefreshTokenEntity> refreshTokenEntities = getAllRefreshTokens();
         final List<OAuth2RefreshTokenEntity> list = new ArrayList<>();
         final Iterator<OAuth2RefreshTokenEntity> it = refreshTokenEntities.iterator();
         while (it.hasNext()) {
@@ -143,6 +150,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public OAuth2AccessTokenEntity getAccessTokenForIdToken(final OAuth2AccessTokenEntity oAuth2AccessTokenEntity) {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         for (final OAuth2AccessTokenEntity accessTokenEntity : accessTokenEntities) {
             if (accessTokenEntity.getIdToken().equals(oAuth2AccessTokenEntity)) {
                 return accessTokenEntity;
@@ -152,17 +160,8 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
     }
 
     @Override
-    public Set<OAuth2AccessTokenEntity> getAllAccessTokens() {
-        return accessTokenEntities;
-    }
-
-    @Override
-    public Set<OAuth2RefreshTokenEntity> getAllRefreshTokens() {
-        return refreshTokenEntities;
-    }
-
-    @Override
     public Set<OAuth2AccessTokenEntity> getAllExpiredAccessTokens() {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         final Set<OAuth2AccessTokenEntity> expiredTokenEntities = new HashSet<>();
         for (final OAuth2AccessTokenEntity accessTokenEntity : accessTokenEntities) {
             final DateTime expDate = new DateTime(accessTokenEntity.getExpiration());
@@ -175,6 +174,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public Set<OAuth2RefreshTokenEntity> getAllExpiredRefreshTokens() {
+        final Set<OAuth2RefreshTokenEntity> refreshTokenEntities = getAllRefreshTokens();
         final Set<OAuth2RefreshTokenEntity> expiredTokenEntities = new HashSet<>();
         for (final OAuth2RefreshTokenEntity refreshTokenEntity : refreshTokenEntities) {
             final DateTime expDate = new DateTime(refreshTokenEntity.getExpiration());
@@ -187,6 +187,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public Set<OAuth2AccessTokenEntity> getAccessTokensForResourceSet(final ResourceSet resourceSet) {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         final Set<OAuth2AccessTokenEntity> tokenEntities = new HashSet<>();
         for (final OAuth2AccessTokenEntity accessTokenEntity : accessTokenEntities) {
             for (final Permission perm : accessTokenEntity.getPermissions()) {
@@ -200,6 +201,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public void clearDuplicateAccessTokens() {
+        final Set<OAuth2AccessTokenEntity> accessTokenEntities = getAllAccessTokens();
         final Iterator<OAuth2AccessTokenEntity> it = accessTokenEntities.iterator();
         while (it.hasNext()) {
             final OAuth2AccessTokenEntity accessTokenEntity = it.next();
@@ -215,6 +217,7 @@ public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository i
 
     @Override
     public void clearDuplicateRefreshTokens() {
+        final Set<OAuth2RefreshTokenEntity> refreshTokenEntities = getAllRefreshTokens();
         final Iterator<OAuth2RefreshTokenEntity> it = refreshTokenEntities.iterator();
         while (it.hasNext()) {
             final OAuth2RefreshTokenEntity refreshTokenEntity = it.next();
