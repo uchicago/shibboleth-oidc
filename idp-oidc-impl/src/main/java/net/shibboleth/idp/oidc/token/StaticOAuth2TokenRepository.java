@@ -18,19 +18,23 @@ import java.util.Set;
 
 @Repository("staticOAuth2TokenRepository")
 @Primary
-public class StaticOAuth2TokenRepository implements OAuth2TokenRepository {
-
-    private final Set<OAuth2AccessTokenEntity> accessTokenEntities = new HashSet<>();
-    private final Set<OAuth2RefreshTokenEntity> refreshTokenEntities = new HashSet<>();
+public class StaticOAuth2TokenRepository extends AbstractOAuth2TokenRepository implements OAuth2TokenRepository {
 
     @Override
     public OAuth2AccessTokenEntity saveAccessToken(final OAuth2AccessTokenEntity oAuth2AccessTokenEntity) {
-        accessTokenEntities.add(oAuth2AccessTokenEntity);
+        storeOAuth2AccessToken(oAuth2AccessTokenEntity);
         return oAuth2AccessTokenEntity;
     }
 
     @Override
+    public OAuth2RefreshTokenEntity saveRefreshToken(final OAuth2RefreshTokenEntity oAuth2RefreshTokenEntity) {
+        storeOAuth2RefreshToken(oAuth2RefreshTokenEntity);
+        return oAuth2RefreshTokenEntity;
+    }
+
+    @Override
     public OAuth2RefreshTokenEntity getRefreshTokenByValue(final String s) {
+
         for (final OAuth2RefreshTokenEntity refreshTokenEntity : refreshTokenEntities) {
             if (refreshTokenEntity.getValue().equals(s)) {
                 return refreshTokenEntity;
@@ -65,11 +69,7 @@ public class StaticOAuth2TokenRepository implements OAuth2TokenRepository {
         refreshTokenEntities.remove(oAuth2RefreshTokenEntity);
     }
 
-    @Override
-    public OAuth2RefreshTokenEntity saveRefreshToken(final OAuth2RefreshTokenEntity oAuth2RefreshTokenEntity) {
-        refreshTokenEntities.add(oAuth2RefreshTokenEntity);
-        return oAuth2RefreshTokenEntity;
-    }
+
 
     @Override
     public OAuth2AccessTokenEntity getAccessTokenByValue(final String s) {
@@ -176,10 +176,10 @@ public class StaticOAuth2TokenRepository implements OAuth2TokenRepository {
     @Override
     public Set<OAuth2RefreshTokenEntity> getAllExpiredRefreshTokens() {
         final Set<OAuth2RefreshTokenEntity> expiredTokenEntities = new HashSet<>();
-        for (final OAuth2RefreshTokenEntity accessTokenEntity : refreshTokenEntities) {
-            final DateTime expDate = new DateTime(accessTokenEntity.getExpiration());
+        for (final OAuth2RefreshTokenEntity refreshTokenEntity : refreshTokenEntities) {
+            final DateTime expDate = new DateTime(refreshTokenEntity.getExpiration());
             if (expDate.isBeforeNow()) {
-                expiredTokenEntities.add(accessTokenEntity);
+                expiredTokenEntities.add(refreshTokenEntity);
             }
         }
         return expiredTokenEntities;

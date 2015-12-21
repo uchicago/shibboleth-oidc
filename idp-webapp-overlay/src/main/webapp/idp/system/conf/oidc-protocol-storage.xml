@@ -59,4 +59,6 @@
 
     </util:set>
 
+    <bean id="openidConnectStorageService" class="net.shibboleth.idp.oidc.token.DefaultOpenIdConnectStorageService"
+          p:storageService-ref="#{'%{idp.cas.StorageService:shibboleth.StorageService}'.trim()}" />
 </beans>

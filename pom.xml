@@ -55,7 +55,6 @@
     <modules>
         <module>idp-webapp</module>
         <module>idp-webapp-support</module>
-        <module>idp-oidc-api</module>
         <module>idp-oidc-impl</module>
         <module>idp-webapp-overlay</module>
     </modules>
