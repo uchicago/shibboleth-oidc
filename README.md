@@ -10,7 +10,8 @@ are the items we are planning to address:
 * Ability to resolve, consume and release OIDC claims, taking advantage of IdP's machinery to release attributes. 
 * Ability to configure an expiration and revocation policy around OIDC access and refresh tokens from an admin perspective. 
 
-Note that no significant UI enhancements are taken into account. All configuration and changes are directly assumed to be applied to the IdP config without the presence of a web interface to facilitate. This includes administration and management of metadata, authZ codes and more.
+Note that no significant UI enhancements are taken into account. All configuration and changes are directly assumed to be applied to the 
+IdP config without the presence of a web interface to facilitate. This includes administration and management of metadata, authZ codes and more.
 
 ### Resources
 * http://openid.net/specs/openid-connect-basic-1_0.html
@@ -32,7 +33,7 @@ The following may be considered in future versions:
 adaptors will be built to close the gap.
 
 ## Versions
-- [Shibboleth Identity Provider v3.2.0-SNAPSHOT](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
+- [Shibboleth Identity Provider v3.2.1](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - JDK 7
 
 ## Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
