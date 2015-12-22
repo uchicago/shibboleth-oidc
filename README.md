@@ -11,7 +11,8 @@ are the items we are planning to address:
 * Ability to configure an expiration and revocation policy around OIDC access and refresh tokens from an admin perspective. 
 
 Note that no significant UI enhancements are taken into account. All configuration and changes are directly assumed to be applied to the 
-IdP config without the presence of a web interface to facilitate. This includes administration and management of metadata, authZ codes and more.
+IdP config without the presence of a web interface to facilitate. This includes administration and management of metadata, 
+authZ codes and more.
 
 ### Resources
 * http://openid.net/specs/openid-connect-basic-1_0.html
@@ -29,10 +30,7 @@ The following may be considered in future versions:
 * Web UIs that facilitate managing tokens, whitelisted/blacklisted RPs, etc. 
 
 ### Toolkit
-[MITREid Connect](https://github.com/mitreid-connect/) will be used as a starting point and a foundation on top of which
-adaptors will be built to close the gap.
-
-## Versions
+- [MITREid Connect](https://github.com/mitreid-connect/) handles the OIDC implementation.
 - [Shibboleth Identity Provider v3.2.1](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - JDK 7
 
@@ -48,7 +46,6 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
 
-
 ### Subsequent installs
 
 ```bash
@@ -59,7 +56,8 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 
 ### Prepare HTTPS
 
-You will also need to set up a keystore under `/etc/jetty` and name it `thekeystore`. The keystore password and the key password should both be `changeit`.
+You will also need to set up a keystore under `/etc/jetty` and name it `thekeystore`. The keystore password and the 
+key password should both be `changeit`.
  
 A sample keystore is provided under the `idp-webapp-overlay/etc/jetty` directory that is empty, and can be used to set up the environment. 
 
@@ -86,4 +84,5 @@ If you want a somewhat faster build, run:
 * `mvc-beans.xml` is used in the overlay `conf` directory to override the default beans and config.
 - This is used to define a new view resolver based on Spring bean names and remaps the excluded exceptions from the view resolver. 
 * A custom JAR is dropped into the overlay's `WEB-INF/lib` that mocks authentication. This is configured via the `jaas.config` file.
-* `oidc.properties` controls the OIDC module configuration. This is appended to the list of property files loaded by the IdP via `idp.properties`. 
+* `oidc.properties` controls the OIDC module configuration. This is appended to the list of property files loaded by 
+the IdP via `idp.properties`. 
