@@ -49,7 +49,7 @@
     
     <util:map id="shibboleth.AuthnComparisonRules">
     
-        <!-- Exact matching, this can be left as-is. -->
+        <!-- Exact matching, should be left alone to avoid tricking the IdP into behaving incorrectly. -->
         <entry key-ref="shibboleth.SAMLAuthnMethodExact" value-ref="shibboleth.ExactMatchFactory"/>
         <entry key-ref="shibboleth.SAMLACClassRefExact" value-ref="shibboleth.ExactMatchFactory"/>
         <entry key-ref="shibboleth.SAMLACDeclRefExact" value-ref="shibboleth.ExactMatchFactory"/>

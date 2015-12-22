@@ -211,6 +211,10 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />
+            <evaluate expression="T(eu.bitwalker.useragentutils.UserAgent).parseUserAgentString(externalContext.nativeRequest.getHeader('User-Agent')).browser" result="requestScope.browser" />
+            <evaluate expression="browser.getGroup().equals(T(eu.bitwalker.useragentutils.Browser).IE)
+                ? externalContext.nativeResponse.setContentType('text/plain')
+                : externalContext.nativeResponse.setContentType('application/json')" />
         </on-entry>
     </end-state>
 

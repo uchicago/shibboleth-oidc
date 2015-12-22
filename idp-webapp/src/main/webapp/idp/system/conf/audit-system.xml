@@ -563,6 +563,14 @@
             <map>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                          c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                          c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_URL"/>
                     </key>
                     <bean class="net.shibboleth.idp.cas.audit.impl.ServiceLookupFunction" />
@@ -614,6 +622,14 @@
           class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                          c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                          c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_URL"/>

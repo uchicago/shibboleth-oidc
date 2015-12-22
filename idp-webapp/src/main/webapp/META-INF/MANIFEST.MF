@@ -1,52 +1,6 @@
 Manifest-Version: 1.0
-Archiver-Version: Plexus Archiver
 Built-By: tzeller
-Class-Path: opensaml-core-3.2.0-SNAPSHOT.jar opensaml-messaging-api-3.
- 2.0-SNAPSHOT.jar opensaml-messaging-impl-3.2.0-SNAPSHOT.jar opensaml-
- profile-api-3.2.0-SNAPSHOT.jar opensaml-profile-impl-3.2.0-SNAPSHOT.j
- ar opensaml-saml-api-3.2.0-SNAPSHOT.jar opensaml-saml-impl-3.2.0-SNAP
- SHOT.jar opensaml-security-api-3.2.0-SNAPSHOT.jar opensaml-security-i
- mpl-3.2.0-SNAPSHOT.jar opensaml-soap-api-3.2.0-SNAPSHOT.jar opensaml-
- soap-impl-3.2.0-SNAPSHOT.jar opensaml-storage-api-3.2.0-SNAPSHOT.jar 
- opensaml-storage-impl-3.2.0-SNAPSHOT.jar opensaml-xmlsec-api-3.2.0-SN
- APSHOT.jar opensaml-xmlsec-impl-3.2.0-SNAPSHOT.jar idp-attribute-api-
- 3.2.0-SNAPSHOT.jar idp-attribute-filter-api-3.2.0-SNAPSHOT.jar idp-at
- tribute-filter-impl-3.2.0-SNAPSHOT.jar idp-attribute-resolver-api-3.2
- .0-SNAPSHOT.jar idp-attribute-resolver-impl-3.2.0-SNAPSHOT.jar idp-at
- tribute-resolver-spring-3.2.0-SNAPSHOT.jar idp-attribute-filter-sprin
- g-3.2.0-SNAPSHOT.jar idp-authn-api-3.2.0-SNAPSHOT.jar idp-authn-impl-
- 3.2.0-SNAPSHOT.jar idp-cas-api-3.2.0-SNAPSHOT.jar idp-cas-impl-3.2.0-
- SNAPSHOT.jar idp-profile-api-3.2.0-SNAPSHOT.jar idp-profile-impl-3.2.
- 0-SNAPSHOT.jar idp-profile-spring-3.2.0-SNAPSHOT.jar idp-saml-api-3.2
- .0-SNAPSHOT.jar idp-saml-impl-3.2.0-SNAPSHOT.jar idwsfconsumer-1.0.0-
- SNAPSHOT.jar log4j-over-slf4j-1.7.10.jar idp-session-api-3.2.0-SNAPSH
- OT.jar idp-session-impl-3.2.0-SNAPSHOT.jar idp-ui-3.2.0-SNAPSHOT.jar 
- idp-core-3.2.0-SNAPSHOT.jar idp-consent-api-3.2.0-SNAPSHOT.jar idp-co
- nsent-impl-3.2.0-SNAPSHOT.jar idp-schema-3.2.0-SNAPSHOT.jar spring-ao
- p-4.2.2.RELEASE.jar spring-beans-4.2.2.RELEASE.jar spring-context-4.2
- .2.RELEASE.jar spring-context-support-4.2.2.RELEASE.jar spring-jdbc-4
- .2.2.RELEASE.jar spring-orm-4.2.2.RELEASE.jar spring-web-4.2.2.RELEAS
- E.jar spring-tx-4.2.2.RELEASE.jar spring-webmvc-4.2.2.RELEASE.jar spr
- ing-expression-4.2.2.RELEASE.jar spring-core-4.2.2.RELEASE.jar spring
- -binding-2.4.2.RELEASE.jar spring-webflow-2.4.2.RELEASE.jar spring-js
- -2.4.2.RELEASE.jar spring-js-resources-2.4.2.RELEASE.jar hibernate-co
- re-4.3.5.Final.jar hibernate-entitymanager-4.3.5.Final.jar guava-18.0
- .jar ldaptive-1.0.6.jar httpclient-4.3.6.jar httpcore-4.3.3.jar httpc
- lient-cache-4.3.6.jar joda-time-2.7.jar activation-1.1.jar antlr-2.7.
- 7.jar aopalliance-1.0.jar bcprov-jdk15on-1.53.jar c3p0-0.9.2.1.jar co
- mmons-codec-1.10.jar commons-collections-3.2.1.jar commons-compiler-2
- .7.8.jar commons-lang-2.4.jar cryptacular-1.0.jar janino-2.7.8.jar ve
- locity-1.7.jar xmlsec-2.0.3.jar dom4j-1.6.1.jar logback-classic-1.1.3
- .jar logback-core-1.1.3.jar javassist-3.18.1-GA.jar ognl-2.6.11.jar m
- change-commons-java-0.2.3.4.jar mail-1.4.7.jar woodstox-core-asl-4.4.
- 1.jar spymemcached-2.11.4.jar spring-extensions-5.2.0-SNAPSHOT.jar st
- ax2-api-3.1.4.jar stax-api-1.0-2.jar javax.json-api-1.0.jar javax.jso
- n-1.0.4.jar jandex-1.1.0.Final.jar jcl-over-slf4j-1.7.12.jar jsr305-3
- .0.1.jar hibernate-jpa-2.1-api-1.0.0.Final.jar xml-apis-1.4.01.jar hi
- bernate-commons-annotations-4.0.4.Final.jar jboss-logging-3.1.3.GA.ja
- r jboss-logging-annotations-1.2.0.Beta1.jar jboss-transaction-api_1.2
- _spec-1.0.0.Final.jar java-support-7.2.0-SNAPSHOT.jar jcommander-1.48
- .jar slf4j-api-1.7.12.jar ant-1.9.4.jar ant-launcher-1.9.4.jar
 Build-Jdk: 1.7.0_80
 Created-By: Apache Maven 3.3.1
+Archiver-Version: Plexus Archiver
 

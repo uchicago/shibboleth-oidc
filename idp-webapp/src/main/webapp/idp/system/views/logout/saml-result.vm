@@ -9,7 +9,6 @@
 ## environment - Spring Environment object for property resolution
 ## custom - arbitrary object injected by deployer
 ##
-$response.setContentType('application/json')
 #set ( $success = false )
 #set ( $detail = "" )
 #set ( $logout = $profileRequestContext.getInboundMessageContext().getMessage() )

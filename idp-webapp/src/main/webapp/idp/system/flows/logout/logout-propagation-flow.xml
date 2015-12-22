@@ -26,7 +26,10 @@
 
     <end-state id="RenderResult" view="logout/result">
         <on-entry>
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse().setContentType('application/json')" />
+            <evaluate expression="T(eu.bitwalker.useragentutils.UserAgent).parseUserAgentString(externalContext.nativeRequest.getHeader('User-Agent')).browser" result="requestScope.browser" />
+            <evaluate expression="browser.getGroup().equals(T(eu.bitwalker.useragentutils.Browser).IE)
+                ? externalContext.nativeResponse.setContentType('text/plain')
+                : externalContext.nativeResponse.setContentType('application/json')" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="WriteAuditLog" />
         </on-entry>

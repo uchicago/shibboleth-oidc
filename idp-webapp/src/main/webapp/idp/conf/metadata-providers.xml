@@ -48,7 +48,7 @@
                 MIIBI.....
             </PublicKey>
         </MetadataFilter>
-        <MetadataFilter xsi:type="metadata:RequiredValidUntil" maxValidityInterval="P30D"/>
+        <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P30D"/>
         <MetadataFilter xsi:type="EntityRoleWhiteList">
             <RetainedRole>md:SPSSODescriptor</RetainedRole>
         </MetadataFilter>

@@ -84,7 +84,7 @@
     <!-- Default comparator which orders attributes according to the whitelist. -->
     <bean id="DefaultAttributeIDComparator"
         class="net.shibboleth.idp.consent.logic.impl.PreferExplicitOrderComparator"
-        c:order-ref="shibboleth.consent.attribute-release.WhitelistedAttributeIDs" />
+        c:order="#{getObject('shibboleth.consent.attribute-release.AttributeDisplayOrder')}" />
 
     <!-- Action beans -->
 

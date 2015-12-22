@@ -186,6 +186,12 @@
 
     <end-state id="proceed" />
 
+
+    <global-transitions>
+        <!-- Catch "InvalidAttributeContext" and short-circuit this intercept flow. -->
+        <transition on="InvalidAttributeContext" to="proceed" />
+    </global-transitions>
+
     <bean-import resource="../../../system/flows/intercept/attribute-release-beans.xml" />
 
 </flow>
