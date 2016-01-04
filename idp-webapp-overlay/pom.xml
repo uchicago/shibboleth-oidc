@@ -109,13 +109,9 @@
     <profiles>
         <profile>
             <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>host</name>
-                    <value>jetty</value>
-                </property>
+                <activeByDefault>true</activeByDefault>
             </activation>
-            <id>jetty</id>
+            <id>install</id>
             <build>
                 <plugins>
                     <plugin>
@@ -125,7 +121,7 @@
                         <executions>
                             <execution>
                                 <id>regex-property</id>
-                                <phase>verify</phase>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>regex-property</goal>
                                 </goals>
@@ -143,14 +139,26 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>properties-maven-plugin</artifactId>
-                        <version>1.0-alpha-2</version>
+                        <version>${maven.plugin.properties}</version>
                         <executions>
+                            <execution>
+                                <id>readprops</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>${basedir}/src/main/webapp/idp/conf/idp.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>setProps</id>
                                 <goals>
                                     <goal>set-system-properties</goal>
                                 </goals>
-                                <phase>verify</phase>
+                                <phase>initialize</phase>
                                 <configuration>
                                     <properties>
                                         <property>
@@ -162,68 +170,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <version>9.3.2.v20150730</version>
-                        <configuration>
-                            <jettyXml>${project.basedir}/etc/jetty/jetty.xml,${project.basedir}/etc/jetty/jetty-ssl.xml,${project.basedir}/etc/jetty/jetty-https.xml</jettyXml>
-                            <webApp>
-                                <contextPath>/idp</contextPath>
-                                <overrideDescriptor>${project.basedir}/etc/jetty/web.xml</overrideDescriptor>
-                            </webApp>
-                            <webAppConfig>
-                                <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-                            </webAppConfig>
-
-                            <systemProperties>
-                                <systemProperty>
-                                    <name>org.eclipse.jetty.annotations.maxWait</name>
-                                    <value>240</value>
-                                </systemProperty>
-                            </systemProperties>
-                            <jvmArgs>-Didp.home=${idphome} -Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n</jvmArgs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>deploy</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>run-forked</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <id>new</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <version>${maven.plugin.properties}</version>
-                        <executions>
-                            <execution>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>read-project-properties</goal>
-                                </goals>
-                                <configuration>
-                                    <files>
-                                        <file>${basedir}/src/main/webapp/idp/conf/idp.properties</file>
-                                    </files>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-clean-plugin</artifactId>
@@ -252,9 +198,6 @@
                             </filesets>
                         </configuration>
                     </plugin>
-
-                    <!-- Signing Key Gen -->
-
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
@@ -413,5 +356,7 @@
                 </plugins>
             </build>
         </profile>
+
+
     </profiles>
 </project>
