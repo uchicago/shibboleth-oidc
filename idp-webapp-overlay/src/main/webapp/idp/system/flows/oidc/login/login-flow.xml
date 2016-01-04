@@ -5,23 +5,31 @@
           http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
     <action-state id="initializeLogin">
+        <on-entry>
+            <evaluate result="flowScope.hasAuthenticationContext" expression="false" />
+        </on-entry>
         <evaluate expression="initializeProfileRequestContext"/>
+        <evaluate expression="populateClientStorageLoadContext" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="clientStorageLoad" />
+        <transition on="NoLoadNeeded" to="continueLogin" />
+    </action-state>
+
+    <subflow-state id="clientStorageLoad" subflow="client-storage/read">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="continueLogin"/>
+    </subflow-state>
+
+    <action-state id="continueLogin">
         <evaluate expression="populateSessionContext"/>
         <evaluate expression="initializeLoginAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
         <evaluate expression="buildSAMLMetadataContextAction" />
         <evaluate expression="selectRelyingPartyConfiguration" />
         <evaluate expression="selectProfileConfiguration" />
-        <evaluate expression="populateClientStorageLoadContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="clientStorageLoad" />
-        <transition on="NoLoadNeeded" to="checkAuthenticationRequired" />
+        <transition on="proceed" to="checkAuthenticationRequired" />
     </action-state>
-
-    <subflow-state id="clientStorageLoad" subflow="client-storage/read">
-        <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="checkAuthenticationRequired"/>
-    </subflow-state>
 
     <action-state id="checkAuthenticationRequired">
         <evaluate expression="checkAuthenticationRequiredAction"/>

@@ -28,9 +28,6 @@ public class InitializeLoginAction extends AbstractProfileAction {
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Initializing login action", getLogPrefix());
-
-        final ParameterMap params = springRequestContext.getRequestParameters();
-
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

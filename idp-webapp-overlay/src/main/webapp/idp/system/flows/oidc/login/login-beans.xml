@@ -120,6 +120,7 @@
         <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
     </bean>
 
+
     <bean id="populateClientStorageLoadContext"
           class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext"
           scope="prototype"

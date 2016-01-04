@@ -16,6 +16,57 @@
         <property name="forceHttps" value="%{oidc.force.https:true}" />
     </bean>
 
+    <util:set id="supportedSystemScopes">
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:value="openid"
+              p:description="log in using your identity"
+              p:restricted="false"
+              p:defaultScope="true"
+              p:structured="false"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:value="profile"
+              p:description="basic profile information"
+              p:restricted="false"
+              p:defaultScope="true"
+              p:structured="false"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:value="email"
+              p:description="email address"
+              p:restricted="false"
+              p:defaultScope="true"
+              p:structured="false"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:value="address"
+              p:description="physical address"
+              p:restricted="false"
+              p:defaultScope="true"
+              p:structured="false"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:value="phone"
+              p:description="telephone number"
+              p:restricted="false"
+              p:defaultScope="true"
+              p:structured="false"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:value="offline_access"
+              p:description="offline access"
+              p:restricted="false"
+              p:defaultScope="false"
+              p:structured="false"/>
+
+    </util:set>
+
     <util:set id="oidcClients">
         <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
               p:id="#{ T(java.lang.Math).random() * 1000.0 }"
@@ -43,7 +94,6 @@
                     <value>authorization_code</value>
                     <value>implicit</value>
                     <value>refresh_token</value>
-                    <value>urn:ietf:params:oauth:grant_type:redelegate</value>
                 </set>
             </property>
 

@@ -1,64 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-    <util:set id="supportedSystemScopes">
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
-              p:value="openid"
-              p:description="log in using your identity"
-              p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <qualifier value="defaultTransactionManager" />
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="packagesToScan" value="org.mitre" />
+        <property name="persistenceProviderClass" value="org.eclipse.persistence.jpa.PersistenceProvider" />
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter" ref="jpaAdapter" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="eclipselink.weaving" value="false" />
+                <entry key="eclipselink.logging.level" value="INFO" />
+                <entry key="eclipselink.logging.level.sql" value="INFO" />
+                <entry key="eclipselink.cache.shared.default" value="false" />
+            </map>
+        </property>
+        <property name="persistenceUnitName" value="defaultPersistenceUnit" />
+    </bean>
 
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
-              p:value="profile"
-              p:description="basic profile information"
-              p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="%{oidc.db.driver}" />
+        <property name="jdbcUrl" value="jdbc:hsqldb:hsql://localhost" />
+        <property name="username" value="%{oidc.db.uid}" />
+        <property name="password" value="%{oidc.db.psw}" />
+    </bean>
 
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
-              p:value="email"
-              p:description="email address"
-              p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+    <!-- Use the following to set up the OIC tables in the in-memory DB
+           If you are using a file based HSQLDB you should not run this every time. -->
+    <jdbc:initialize-database data-source="dataSource">
+        <jdbc:script location="%{oidc.db.schema}"/>
+    </jdbc:initialize-database>
 
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
-              p:value="address"
-              p:description="physical address"
-              p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+    <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+        <property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
+        <property name="showSql" value="true" />
+    </bean>
 
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
-              p:value="phone"
-              p:description="telephone number"
-              p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
-
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
-              p:value="offline_access"
-              p:description="offline access"
-              p:restricted="false"
-              p:defaultScope="false"
-              p:structured="false"/>
-
-    </util:set>
-
-    <bean id="openidConnectStorageService" class="net.shibboleth.idp.oidc.token.DefaultOpenIdConnectStorageService"
-          p:storageService-ref="#{'%{idp.cas.StorageService:shibboleth.StorageService}'.trim()}" />
 </beans>

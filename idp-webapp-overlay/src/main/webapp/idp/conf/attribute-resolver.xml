@@ -195,7 +195,7 @@
             <dc:Value>TheAdmin</dc:Value>
         </dc:Attribute>
         <dc:Attribute id="preferred_username">
-            <dc:Value>jhiks</dc:Value>
+            <dc:Value>jsmith</dc:Value>
         </dc:Attribute>
         <dc:Attribute id="profile">
             <dc:Value>https://example.com/profile</dc:Value>
