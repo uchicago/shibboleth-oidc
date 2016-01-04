@@ -52,6 +52,11 @@
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
+    <logger name="net.shibboleth.idp" level="DEBUG"">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+
     <logger name="org.springframework.security" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
