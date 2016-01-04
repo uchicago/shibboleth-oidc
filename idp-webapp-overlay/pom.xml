@@ -200,7 +200,7 @@
 
         <profile>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <id>new</id>
             <build>
