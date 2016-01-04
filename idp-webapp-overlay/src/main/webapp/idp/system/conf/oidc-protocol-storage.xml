@@ -34,7 +34,7 @@
 
     <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="driverClassName" value="%{oidc.db.driver}" />
-        <property name="jdbcUrl" value="jdbc:hsqldb:hsql://localhost" />
+        <property name="jdbcUrl" value="%{oidc.db.url}" />
         <property name="username" value="%{oidc.db.uid}" />
         <property name="password" value="%{oidc.db.psw}" />
     </bean>
