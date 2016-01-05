@@ -4,7 +4,7 @@
          metadata-complete="true">
 
     <display-name>Shibboleth Identity Provider</display-name>
-    
+
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>

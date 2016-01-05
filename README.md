@@ -1,4 +1,5 @@
-# shibboleth-oidc [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/uchicago/shibboleth-oidc/blob/master/LICENSE)
+# shibboleth-oidc [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/uchicago/shibboleth-oidc/blob/master/LICENSE) 
+[![](https://heroku-badge.herokuapp.com/?app=shibboleth-oidc)](https://shibboleth-oidc.herokuapp.com/)
 OpenIDConnect support for the Shibboleth Identity Provider version 3
 
 ## Scope
