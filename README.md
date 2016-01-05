@@ -80,6 +80,7 @@ If you want a somewhat faster build, run:
 
 * `login.vm` and `attribute-release.vm` are overlaid to account for CSRF changes
 * `password-authn-config.xml` is overlaid to indicate JAAS is used for authN. 
+* `global-system.xml` registers the `oidc-protocol-system` file
 * `webflow-config.xml` is overlaid to add the OIDC flow configuration.
 * `mvc-beans.xml` is used in the overlay `conf` directory to override the default beans and config.
 - This is used to define a new view resolver based on Spring bean names and remaps the excluded exceptions from the view resolver. 
