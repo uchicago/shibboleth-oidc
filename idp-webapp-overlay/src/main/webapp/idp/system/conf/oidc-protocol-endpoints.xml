@@ -22,11 +22,10 @@
             token-endpoint-url="#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
             error-page="/error">
         <oauth:authorization-code authorization-code-services-ref="defaultOAuth2AuthorizationCodeService"/>
-        <!--
+
         <oauth:implicit />
         <oauth:refresh-token/>
         <oauth:client-credentials/>
-        -->
         <oauth:custom-grant token-granter-ref="chainedTokenGranter" />
         <oauth:custom-grant token-granter-ref="jwtAssertionTokenGranter" />
 
@@ -42,10 +41,8 @@
     <bean id="clientAuthMatcher" class="org.mitre.openid.connect.filter.MultiUrlRequestMatcher">
         <constructor-arg name="filterProcessesUrls">
             <set>
-                <!--
-                <value>/introspect</value>
-                <value>/revoke</value>
-                -->
+                <value>/profile#{T(net.shibboleth.idp.oidc.jwk.IntrospectionEndpoint).URL}</value>
+                <value>/profile#{T(net.shibboleth.idp.oidc.jwk.RevocationEndpoint).URL}</value>
                 <value>/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}</value>
             </set>
         </constructor-arg>
@@ -84,6 +81,24 @@
         <security:csrf disabled="true" />
     </security:http>
 
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.client.WellKnownEndpoint).URL}/**"
+                   use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.client.WellKnownEndpoint).URL}/**" access="permitAll"/>
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+    </security:http>
+
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.client.DiscoveryEndpoint).URL}/**"
+                   use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.client.DiscoveryEndpoint).URL}/**" access="permitAll"/>
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+    </security:http>
+
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.client.WebfingerEndpoint).URL}/**"
+                   use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.client.WebfingerEndpoint).URL}/**" access="permitAll"/>
+        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+    </security:http>
+
     <security:http disable-url-rewriting="true" use-expressions="true">
         <security:form-login login-page="/profile#{T(net.shibboleth.idp.oidc.login.LoginEndpoint).URL}"
                              authentication-success-handler-ref="authenticationTimeStamper" />
@@ -97,17 +112,14 @@
         <security:authentication-provider ref="authenticationProviderAdapter" />
     </security:authentication-manager>
 
+
+
+
     <!--
     <security:http pattern="/#{T(org.mitre.openid.connect.web.RootController).API_URL}/**"
                    use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="never">
         <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
         <security:expression-handler ref="oauthWebExpressionHandler" />
-    </security:http>
-
-    <security:http pattern="/#{T(org.mitre.discovery.web.DiscoveryEndpoint).WELL_KNOWN_URL}/**"
-                   use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
-        <security:intercept-url pattern="/#{T(org.mitre.discovery.web.DiscoveryEndpoint).WELL_KNOWN_URL}/**" access="permitAll"/>
-        <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
     </security:http>
 
     <security:http pattern="/#{T(org.mitre.openid.connect.web.DynamicClientRegistrationEndpoint).URL}/**"

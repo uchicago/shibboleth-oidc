@@ -5,16 +5,6 @@
 
     <display-name>Shibboleth Identity Provider</display-name>
 
-    <!-- Spring application context files. Files are loaded in the order they appear with subsequent files overwriting
-    same named beans in previous files. -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            ${idp.home}/system/conf/global-system.xml
-            ${idp.home}/system/conf/oidc-protocol-system.xml
-        </param-value>
-    </context-param>
-
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
