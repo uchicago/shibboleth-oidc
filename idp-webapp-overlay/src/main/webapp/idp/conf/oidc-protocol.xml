@@ -69,7 +69,7 @@
 
     <util:set id="oidcClients">
         <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:id="1"
               p:clientId="client"
               p:clientSecret="secret"
               p:clientName="Test Client"
