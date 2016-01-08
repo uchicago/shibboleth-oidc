@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.oidc.config.SpringSecurityAuthenticationToken;
+import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationToken;
 import net.shibboleth.idp.oidc.client.userinfo.ShibbolethUserInfoService;
 import net.shibboleth.idp.oidc.util.OidcUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -125,7 +125,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         SecurityContextHolder.setContext(securityContext);
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
-        final OpenIdConnectResponse response = buildOpenIdConnectResponse(authRequest, client);
+        final OidcResponse response = buildOpenIdConnectResponse(authRequest, client);
 
         OidcUtils.setResponse(springRequestContext, response);
         OidcUtils.setAuthorizationRequest(request, authRequest,
@@ -141,9 +141,9 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
      * @param client the client
      * @return the open id connect response
      */
-    private OpenIdConnectResponse buildOpenIdConnectResponse(final AuthorizationRequest authRequest,
-                                                             final ClientDetailsEntity client) {
-        final OpenIdConnectResponse response = new OpenIdConnectResponse();
+    private OidcResponse buildOpenIdConnectResponse(final AuthorizationRequest authRequest,
+                                                    final ClientDetailsEntity client) {
+        final OidcResponse response = new OidcResponse();
         response.setAuthorizationRequest(authRequest);
         response.setClient(client);
         response.setRedirectUri(authRequest.getRedirectUri());
@@ -248,7 +248,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                 uriBuilder.addParameter("state", authRequest.getState());
             }
 
-            final OpenIdConnectResponse response = new OpenIdConnectResponse();
+            final OidcResponse response = new OidcResponse();
             response.setRedirectUri(uriBuilder.toString());
             response.setAuthorizationRequest(authRequest);
             response.setClient(client);

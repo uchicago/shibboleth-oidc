@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.config;
+package net.shibboleth.idp.oidc.client.userinfo.authn;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
