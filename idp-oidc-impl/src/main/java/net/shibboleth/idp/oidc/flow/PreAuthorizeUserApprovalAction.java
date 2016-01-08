@@ -7,8 +7,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.oidc.config.SpringSecurityAuthenticationToken;
-import net.shibboleth.idp.oidc.userinfo.OpenIdConnectUserInfoService;
-import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
+import net.shibboleth.idp.oidc.client.userinfo.ShibbolethUserInfoService;
+import net.shibboleth.idp.oidc.util.OidcUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import org.apache.http.client.utils.URIBuilder;
@@ -65,7 +65,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
     @Autowired
     @Qualifier("openIdConnectUserInfoService")
-    private OpenIdConnectUserInfoService userInfoService;
+    private ShibbolethUserInfoService userInfoService;
 
     @Autowired
     private StatsService statsService;
@@ -91,7 +91,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
         final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
         final HttpSession session = request.getSession();
-        final AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
+        final AuthorizationRequest authRequest = OidcUtils.getAuthorizationRequest(request);
         if (authRequest == null || Strings.isNullOrEmpty(authRequest.getClientId())) {
             log.warn("Authorization request could not be loaded from session");
             return Events.Failure.event(this);
@@ -127,9 +127,9 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
         final OpenIdConnectResponse response = buildOpenIdConnectResponse(authRequest, client);
 
-        OpenIdConnectUtils.setResponse(springRequestContext, response);
-        OpenIdConnectUtils.setAuthorizationRequest(request, authRequest,
-                OpenIdConnectUtils.getAuthorizationRequestParameters(request));
+        OidcUtils.setResponse(springRequestContext, response);
+        OidcUtils.setAuthorizationRequest(request, authRequest,
+                OidcUtils.getAuthorizationRequestParameters(request));
 
         return Events.Proceed.event(this);
     }
@@ -253,9 +253,9 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             response.setAuthorizationRequest(authRequest);
             response.setClient(client);
 
-            OpenIdConnectUtils.setResponse(springRequestContext, response);
-            OpenIdConnectUtils.setAuthorizationRequest(request, authRequest,
-                    OpenIdConnectUtils.getAuthorizationRequestParameters(request));
+            OidcUtils.setResponse(springRequestContext, response);
+            OidcUtils.setAuthorizationRequest(request, authRequest,
+                    OidcUtils.getAuthorizationRequestParameters(request));
             return Events.Redirect.event(this);
 
         } catch (final URISyntaxException e) {

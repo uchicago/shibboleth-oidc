@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.client;
+package net.shibboleth.idp.oidc.client.metadata;
 
 import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceMultiMap;
 import net.shibboleth.utilities.java.support.logic.Constraint;

@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.userinfo;
+package net.shibboleth.idp.oidc.client.userinfo;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;

@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.client;
+package net.shibboleth.idp.oidc.endpoints;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

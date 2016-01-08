@@ -17,9 +17,9 @@
             user-approval-handler-ref="tofuUserApprovalHandler"
             request-validator-ref="oauthRequestValidator"
             redirect-resolver-ref="blacklistAwareRedirectResolver"
-            user-approval-page="forward:/profile#{T(net.shibboleth.idp.oidc.login.LoginEndpoint).URL}"
-            authorization-endpoint-url="#{T(net.shibboleth.idp.oidc.login.AuthorizeEndpoint).URL}"
-            token-endpoint-url="#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
+            user-approval-page="forward:/profile#{T(net.shibboleth.idp.oidc.endpoints.LoginEndpoint).URL}"
+            authorization-endpoint-url="#{T(net.shibboleth.idp.oidc.endpoints.AuthorizeEndpoint).URL}"
+            token-endpoint-url="#{T(net.shibboleth.idp.oidc.endpoints.TokenEndpoint).URL}"
             error-page="/error">
         <oauth:authorization-code authorization-code-services-ref="defaultOAuth2AuthorizationCodeService"/>
 
@@ -41,21 +41,21 @@
     <bean id="clientAuthMatcher" class="org.mitre.openid.connect.filter.MultiUrlRequestMatcher">
         <constructor-arg name="filterProcessesUrls">
             <set>
-                <value>/profile#{T(net.shibboleth.idp.oidc.jwk.IntrospectionEndpoint).URL}</value>
-                <value>/profile#{T(net.shibboleth.idp.oidc.jwk.RevocationEndpoint).URL}</value>
-                <value>/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}</value>
+                <value>/profile#{T(net.shibboleth.idp.oidc.endpoints.IntrospectionEndpoint).URL}</value>
+                <value>/profile#{T(net.shibboleth.idp.oidc.endpoints.RevocationEndpoint).URL}</value>
+                <value>/profile#{T(net.shibboleth.idp.oidc.endpoints.TokenEndpoint).URL}</value>
             </set>
         </constructor-arg>
     </bean>
 
-    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.TokenEndpoint).URL}"
                    create-session="stateless"
                    authentication-manager-ref="clientAuthenticationManager"
                    entry-point-ref="oauthAuthenticationEntryPoint"
                    use-expressions="true">
-        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.TokenEndpoint).URL}"
                                 access="permitAll" method="OPTIONS" />
-        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.TokenEndpoint).URL}"
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.TokenEndpoint).URL}"
                                 access="isAuthenticated()" />
         <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
         <security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" />
@@ -65,15 +65,15 @@
         <security:access-denied-handler ref="oauthAccessDeniedHandler" />
     </security:http>
 
-    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.JWKPublishingEndpoint).URL}"
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.JWKPublishingEndpoint).URL}"
                    use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
-        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.jwk.JWKPublishingEndpoint).URL}"
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.JWKPublishingEndpoint).URL}"
                                 access="permitAll"/>
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
         <security:csrf disabled="true" />
     </security:http>
 
-    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.userinfo.UserInfoEndpoint).URL}"
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.UserInfoEndpoint).URL}"
                    use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
         <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
@@ -81,26 +81,26 @@
         <security:csrf disabled="true" />
     </security:http>
 
-    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.client.WellKnownEndpoint).URL}/**"
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.WellKnownEndpoint).URL}/**"
                    use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
-        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.client.WellKnownEndpoint).URL}/**" access="permitAll"/>
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.WellKnownEndpoint).URL}/**" access="permitAll"/>
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
     </security:http>
 
-    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.client.DiscoveryEndpoint).URL}/**"
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.DiscoveryEndpoint).URL}/**"
                    use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
-        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.client.DiscoveryEndpoint).URL}/**" access="permitAll"/>
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.DiscoveryEndpoint).URL}/**" access="permitAll"/>
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
     </security:http>
 
-    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.client.WebfingerEndpoint).URL}/**"
+    <security:http pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.WebfingerEndpoint).URL}/**"
                    use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
-        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.client.WebfingerEndpoint).URL}/**" access="permitAll"/>
+        <security:intercept-url pattern="/profile#{T(net.shibboleth.idp.oidc.endpoints.WebfingerEndpoint).URL}/**" access="permitAll"/>
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
     </security:http>
 
     <security:http disable-url-rewriting="true" use-expressions="true">
-        <security:form-login login-page="/profile#{T(net.shibboleth.idp.oidc.login.LoginEndpoint).URL}"
+        <security:form-login login-page="/profile#{T(net.shibboleth.idp.oidc.endpoints.LoginEndpoint).URL}"
                              authentication-success-handler-ref="authenticationTimeStamper" />
         <security:csrf />
         <security:custom-filter ref="authzRequestFilter" after="SECURITY_CONTEXT_FILTER" />

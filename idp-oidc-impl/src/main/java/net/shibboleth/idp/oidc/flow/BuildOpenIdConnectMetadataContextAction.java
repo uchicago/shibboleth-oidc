@@ -1,6 +1,6 @@
 package net.shibboleth.idp.oidc.flow;
 
-import net.shibboleth.idp.oidc.client.ClientEntityDescriptor;
+import net.shibboleth.idp.oidc.client.metadata.ClientEntityDescriptor;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;

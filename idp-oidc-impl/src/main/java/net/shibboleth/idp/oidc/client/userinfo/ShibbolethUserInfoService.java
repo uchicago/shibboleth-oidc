@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.userinfo;
+package net.shibboleth.idp.oidc.client.userinfo;
 
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service("openIdConnectUserInfoService")
 @Primary
-public class OpenIdConnectUserInfoService implements UserInfoService {
+public class ShibbolethUserInfoService implements UserInfoService {
 
     private ProfileRequestContext profileRequestContext;
 

@@ -17,7 +17,7 @@ import java.util.Map;
  * OpenId Connect Utility methods that deal with setting and removing
  * session data.
  */
-public final class OpenIdConnectUtils {
+public final class OidcUtils {
     /** Attribute name for the OIDC response. */
     private static final String FLOW_SCOPE_ATTRIBUTE_RESPONSE = "oidcResponse";
 
@@ -43,12 +43,12 @@ public final class OpenIdConnectUtils {
     /**
      * The constant LOG.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(OpenIdConnectUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OidcUtils.class);
 
     /**
      * Instantiates a new Open id connect utils.
      */
-    private OpenIdConnectUtils() {}
+    private OidcUtils() {}
 
     /**
      * Gets authorization request.

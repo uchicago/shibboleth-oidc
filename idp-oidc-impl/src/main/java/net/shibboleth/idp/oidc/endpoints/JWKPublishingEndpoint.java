@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.jwk;
+package net.shibboleth.idp.oidc.endpoints;
 
 import com.nimbusds.jose.jwk.JWK;
 import org.mitre.jwt.signer.service.JWTSigningAndValidationService;

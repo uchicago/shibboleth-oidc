@@ -1,17 +1,10 @@
-package net.shibboleth.idp.oidc.client;
+package net.shibboleth.idp.oidc.endpoints;
 
-import net.shibboleth.idp.oidc.jwk.IntrospectionEndpoint;
-import net.shibboleth.idp.oidc.jwk.JWKPublishingEndpoint;
-import net.shibboleth.idp.oidc.jwk.RevocationEndpoint;
-import net.shibboleth.idp.oidc.jwk.TokenEndpoint;
-import net.shibboleth.idp.oidc.login.AuthorizeEndpoint;
-import net.shibboleth.idp.oidc.userinfo.UserInfoEndpoint;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,7 +30,7 @@ public final class DiscoveryEndpoint extends org.mitre.discovery.web.DiscoveryEn
         m.put("jwks_uri", baseUrl + "profile" + JWKPublishingEndpoint.URL);
         m.put("revocation_endpoint", baseUrl + "profile" + RevocationEndpoint.URL);
         m.put("introspection_endpoint", baseUrl + "profile" + IntrospectionEndpoint.URL);
-        
+
         m.remove("service_documentation");
         m.remove("op_policy_uri");
         m.remove("op_tos_uri");

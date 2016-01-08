@@ -2,7 +2,7 @@ package net.shibboleth.idp.oidc.flow;
 
 
 import com.google.common.base.Strings;
-import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
+import net.shibboleth.idp.oidc.util.OidcUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -32,13 +32,13 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
 
 
         final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
-        final AuthorizationRequest authRequest = OpenIdConnectUtils.getAuthorizationRequest(request);
+        final AuthorizationRequest authRequest = OidcUtils.getAuthorizationRequest(request);
         if (authRequest == null || Strings.isNullOrEmpty(authRequest.getClientId())) {
             log.warn("Authorization request could not be loaded from session");
             return Events.Failure.event(this);
         }
 
-        final ClientDetailsEntity client = OpenIdConnectUtils.getClient(request);
+        final ClientDetailsEntity client = OidcUtils.getClient(request);
 
         if (client == null) {
             log.warn("Client configuration could not be loaded from session");

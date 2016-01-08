@@ -2,7 +2,7 @@ package net.shibboleth.idp.oidc.flow;
 
 import net.shibboleth.idp.consent.context.impl.ConsentContext;
 import net.shibboleth.idp.consent.impl.Consent;
-import net.shibboleth.idp.oidc.util.OpenIdConnectUtils;
+import net.shibboleth.idp.oidc.util.OidcUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -35,8 +35,8 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
         final ConsentContext context = profileRequestContext.getSubcontext(ConsentContext.class);
         final Map<String, Consent> attributes = context.getCurrentConsents();
         final AuthorizationRequest authorizationRequest =
-                OpenIdConnectUtils.getAuthorizationRequest(HttpServletRequestResponseContext.getRequest());
-        final OpenIdConnectResponse response = OpenIdConnectUtils.getResponse(springRequestContext);
+                OidcUtils.getAuthorizationRequest(HttpServletRequestResponseContext.getRequest());
+        final OpenIdConnectResponse response = OidcUtils.getResponse(springRequestContext);
 
         springRequestContext.getViewScope().put("postAuthorizationAttributes", map);
         return super.doExecute(springRequestContext, profileRequestContext);
