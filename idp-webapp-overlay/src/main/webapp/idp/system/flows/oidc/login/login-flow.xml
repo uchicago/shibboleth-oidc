@@ -153,5 +153,5 @@
         </on-entry>
     </end-state>
 
-    <bean-import resource="authorize-beans.xml" />
+    <bean-import resource="login-beans.xml" />
 </flow>
