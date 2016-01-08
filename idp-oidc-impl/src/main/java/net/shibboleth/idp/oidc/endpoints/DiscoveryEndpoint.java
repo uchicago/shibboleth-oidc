@@ -1,5 +1,6 @@
-package net.shibboleth.idp.oidc.client;
+package net.shibboleth.idp.oidc.endpoints;
 
+import net.shibboleth.idp.oidc.util.OidcUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,9 @@ public final class DiscoveryEndpoint extends org.mitre.discovery.web.DiscoveryEn
     @RequestMapping(method= RequestMethod.GET)
     @Override
     public String providerConfiguration(final Model model) {
-        return super.providerConfiguration(model);
+        final String view = super.providerConfiguration(model);
+        model.mergeAttributes(OidcUtils.buildOidcServerConfigurationModelForDiscovery(model));
+        return view;
     }
 }
 

@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.login;
+package net.shibboleth.idp.oidc.config.login;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;

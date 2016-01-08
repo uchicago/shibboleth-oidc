@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.login;
+package net.shibboleth.idp.oidc.endpoints;
 
 /**
  * Represents the initial login endpoint for openid connect.

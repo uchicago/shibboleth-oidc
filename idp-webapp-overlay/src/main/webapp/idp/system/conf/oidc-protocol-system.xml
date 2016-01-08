@@ -87,7 +87,7 @@
 
     <!-- Profile Configuration -->
     <bean id="OIDC.LoginConfiguration"
-          class="net.shibboleth.idp.oidc.login.LoginConfiguration" />
+          class="net.shibboleth.idp.oidc.config.login.LoginConfiguration" />
 
     <!-- Resources to pull -->
     <import resource="oidc-protocol-endpoints.xml" />

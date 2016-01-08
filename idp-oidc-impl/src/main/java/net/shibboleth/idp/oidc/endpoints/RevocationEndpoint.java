@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.jwk;
+package net.shibboleth.idp.oidc.endpoints;
 
 /**
  * Represents the invoke endpoint.

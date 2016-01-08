@@ -1,11 +1,18 @@
 package net.shibboleth.idp.oidc.util;
 
-import net.shibboleth.idp.oidc.flow.OpenIdConnectResponse;
+import net.shibboleth.idp.oidc.endpoints.AuthorizeEndpoint;
+import net.shibboleth.idp.oidc.endpoints.IntrospectionEndpoint;
+import net.shibboleth.idp.oidc.endpoints.JWKPublishingEndpoint;
+import net.shibboleth.idp.oidc.endpoints.RevocationEndpoint;
+import net.shibboleth.idp.oidc.endpoints.TokenEndpoint;
+import net.shibboleth.idp.oidc.endpoints.UserInfoEndpoint;
+import net.shibboleth.idp.oidc.flow.OidcResponse;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.openid.connect.web.AuthenticationTimeStamper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.ui.Model;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +24,7 @@ import java.util.Map;
  * OpenId Connect Utility methods that deal with setting and removing
  * session data.
  */
-public final class OpenIdConnectUtils {
+public final class OidcUtils {
     /** Attribute name for the OIDC response. */
     private static final String FLOW_SCOPE_ATTRIBUTE_RESPONSE = "oidcResponse";
 
@@ -43,12 +50,12 @@ public final class OpenIdConnectUtils {
     /**
      * The constant LOG.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(OpenIdConnectUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OidcUtils.class);
 
     /**
      * Instantiates a new Open id connect utils.
      */
-    private OpenIdConnectUtils() {}
+    private OidcUtils() {}
 
     /**
      * Gets authorization request.
@@ -76,7 +83,7 @@ public final class OpenIdConnectUtils {
      * @return the authorization request parameters
      */
     public static Map<String, String> getAuthorizationRequestParameters(final HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         return (Map<String, String>) session.getAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS);
     }
 
@@ -193,9 +200,9 @@ public final class OpenIdConnectUtils {
      * @param context the context
      * @return the response
      */
-    public static OpenIdConnectResponse getResponse(final RequestContext context) {
-        final OpenIdConnectResponse response =
-                context.getFlowScope().get(FLOW_SCOPE_ATTRIBUTE_RESPONSE, OpenIdConnectResponse.class);
+    public static OidcResponse getResponse(final RequestContext context) {
+        final OidcResponse response =
+                context.getFlowScope().get(FLOW_SCOPE_ATTRIBUTE_RESPONSE, OidcResponse.class);
         return response;
     }
 
@@ -205,7 +212,23 @@ public final class OpenIdConnectUtils {
      * @param context the context
      * @param response the response
      */
-    public static void setResponse(final RequestContext context, final OpenIdConnectResponse response) {
+    public static void setResponse(final RequestContext context, final OidcResponse response) {
         context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_RESPONSE, response);
+    }
+
+    public static Map<String, Object> buildOidcServerConfigurationModelForDiscovery(final Model model) {
+        final Map<String, Object> m = Map.class.cast(model.asMap().get("entity"));
+        final String baseUrl = m.get("issuer").toString();
+        m.put("authorization_endpoint", baseUrl + "profile" + AuthorizeEndpoint.URL);
+        m.put("token_endpoint", baseUrl + "profile" + TokenEndpoint.URL);
+        m.put("userinfo_endpoint", baseUrl + "profile" + UserInfoEndpoint.URL);
+        m.put("jwks_uri", baseUrl + "profile" + JWKPublishingEndpoint.URL);
+        m.put("revocation_endpoint", baseUrl + "profile" + RevocationEndpoint.URL);
+        m.put("introspection_endpoint", baseUrl + "profile" + IntrospectionEndpoint.URL);
+
+        m.remove("service_documentation");
+        m.remove("op_policy_uri");
+        m.remove("op_tos_uri");
+        return m;
     }
 }

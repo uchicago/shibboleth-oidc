@@ -14,7 +14,7 @@ import java.util.Set;
  * Indicates the initial OpenIdConnect response that is send back to the
  * application when an access token is generated.
  */
-public class OpenIdConnectResponse {
+public class OidcResponse {
 
     /**
      * The Redirect uri.

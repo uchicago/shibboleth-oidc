@@ -14,7 +14,7 @@
 
     <bean id="initializeProfileRequestContext"
           class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
-          p:profileId="#{T(net.shibboleth.idp.oidc.login.LoginConfiguration).PROFILE_ID}"
+          p:profileId="#{T(net.shibboleth.idp.oidc.config.login.LoginConfiguration).PROFILE_ID}"
           p:loggingId="%{idp.service.logging.oidc:OIDC}"
           p:browserProfile="true" />
 
@@ -110,7 +110,7 @@
 
     <bean id="loginConfigLookup"
           class="net.shibboleth.idp.oidc.config.ConfigLookupFunction"
-          c:clazz="net.shibboleth.idp.oidc.login.LoginConfiguration" />
+          c:clazz="net.shibboleth.idp.oidc.config.login.LoginConfiguration" />
 
     <bean id="subjectContextLookup"
           class="org.opensaml.messaging.context.navigate.ChildContextLookup"
