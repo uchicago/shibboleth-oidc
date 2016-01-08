@@ -1,4 +1,4 @@
-package net.shibboleth.idp.oidc.config;
+package net.shibboleth.idp.oidc.client.userinfo.authn;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;

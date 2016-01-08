@@ -36,7 +36,7 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
         final Map<String, Consent> attributes = context.getCurrentConsents();
         final AuthorizationRequest authorizationRequest =
                 OidcUtils.getAuthorizationRequest(HttpServletRequestResponseContext.getRequest());
-        final OpenIdConnectResponse response = OidcUtils.getResponse(springRequestContext);
+        final OidcResponse response = OidcUtils.getResponse(springRequestContext);
 
         springRequestContext.getViewScope().put("postAuthorizationAttributes", map);
         return super.doExecute(springRequestContext, profileRequestContext);
