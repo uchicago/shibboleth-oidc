@@ -115,7 +115,7 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
         } catch (final InvalidClientException e) {
             log.debug("Invalid client specified in the request", e);
-            chain.doFilter(req, res);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

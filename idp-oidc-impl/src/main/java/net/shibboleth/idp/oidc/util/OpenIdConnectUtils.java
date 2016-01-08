@@ -76,7 +76,7 @@ public final class OpenIdConnectUtils {
      * @return the authorization request parameters
      */
     public static Map<String, String> getAuthorizationRequestParameters(final HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         return (Map<String, String>) session.getAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS);
     }
 
