@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -24,10 +23,6 @@ public class ShibbolethOAuth2RequestFactory extends ConnectOAuth2RequestFactory 
     @Override
     public AuthorizationRequest createAuthorizationRequest(final Map<String, String> inputParams) {
         final AuthorizationRequest request = super.createAuthorizationRequest(inputParams);
-        if (request.getResponseTypes().isEmpty()) {
-            request.setResponseTypes(Collections.singleton("code"));
-        }
-
         return request;
     }
 }
