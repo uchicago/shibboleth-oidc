@@ -78,14 +78,6 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                 throw new InvalidClientException("No client id is specified in the authorization request");
             }
 
-            log.debug("Loading client by id {}", authRequest.getClientId());
-            final ClientDetailsEntity client = clientService.loadClientByClientId(authRequest.getClientId());
-            OidcUtils.setAuthorizationRequest(request, authRequest, requestParameters);
-            log.debug("Saved authorization request");
-
-            log.debug("Found client {}.", client.toString());
-            OidcUtils.setClient(request, client);
-            log.debug("Saved client request");
 
             final Object loginHint = authRequest.getExtensions().get(ConnectRequestParameters.LOGIN_HINT);
             if (loginHint != null) {
@@ -96,20 +88,32 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                 log.debug("Removed login hint attribute from session");
             }
 
+            log.debug("Loading client by id {}", authRequest.getClientId());
+            final ClientDetailsEntity client = clientService.loadClientByClientId(authRequest.getClientId());
+            OidcUtils.setAuthorizationRequest(request, authRequest, requestParameters);
+            log.debug("Saved authorization request");
+            log.debug("Found client {}.", client.getClientId());
+            OidcUtils.setClient(request, client);
+            log.debug("Saved client request");
+
+            boolean invokeFilterChain = false;
             final String prompt = (String) authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
             if (prompt != null) {
                 log.debug("Authorization request contains prompt {}", prompt);
-                if (checkForPrompts(prompt, response, request)) {
-                    chain.doFilter(req, res);
-                    return;
-                }
+                invokeFilterChain = checkForPrompts(prompt, response, request);
             } else if (authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE) != null ||
                     client.getDefaultMaxAge() != null) {
                 log.debug("Authorization request or client configuration contains max age");
                 checkForMaxAge(request);
-                chain.doFilter(req, res);
+                invokeFilterChain = true;
             } else {
                 log.debug("Evaluated authorization request. Invoking filter chain normally");
+                invokeFilterChain = true;
+            }
+
+
+            if (invokeFilterChain) {
+
                 chain.doFilter(req, res);
             }
 
