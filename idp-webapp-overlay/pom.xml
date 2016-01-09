@@ -145,7 +145,6 @@
                             <jettyXml>${project.basedir}/etc/jetty/jetty.xml,${project.basedir}/etc/jetty/jetty-ssl.xml,${project.basedir}/etc/jetty/jetty-https.xml</jettyXml>
                             <webApp>
                                 <contextPath>/idp</contextPath>
-                                <overrideDescriptor>${project.basedir}/etc/jetty/web.xml</overrideDescriptor>
                             </webApp>
                             <webAppConfig>
                                 <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>

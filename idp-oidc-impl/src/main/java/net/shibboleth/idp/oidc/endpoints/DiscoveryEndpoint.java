@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * The discovery endpoint.
  */
 @Controller("oidcDiscoveryEndpoint")
-@RequestMapping("/oidc/" + org.mitre.discovery.web.DiscoveryEndpoint.OPENID_CONFIGURATION_URL)
+@RequestMapping("/openid-configuration")
 public final class DiscoveryEndpoint extends org.mitre.discovery.web.DiscoveryEndpoint {
     /** URL endpoint. */
-    public static final String URL = "/oidc/" + OPENID_CONFIGURATION_URL;
+    public static final String URL = "/openid-configuration";
 
     @RequestMapping(method= RequestMethod.GET)
     @Override

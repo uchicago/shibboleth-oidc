@@ -1,6 +1,7 @@
 package net.shibboleth.idp.oidc.util;
 
 import net.shibboleth.idp.oidc.endpoints.AuthorizeEndpoint;
+import net.shibboleth.idp.oidc.endpoints.DynamicRegistrationEndpoint;
 import net.shibboleth.idp.oidc.endpoints.IntrospectionEndpoint;
 import net.shibboleth.idp.oidc.endpoints.JWKPublishingEndpoint;
 import net.shibboleth.idp.oidc.endpoints.RevocationEndpoint;
@@ -68,7 +69,7 @@ public final class OidcUtils {
         final AuthorizationRequest authorizationRequest = (AuthorizationRequest)
                 session.getAttribute(ATTR_OIDC_AUTHZ_REQUEST);
         if (authorizationRequest != null) {
-            LOG.debug("Authorization request found in session.");
+            LOG.debug("Authorization request found in session for client id {}", authorizationRequest.getClientId());
         } else {
             LOG.debug("Authorization request not found in session.");
         }
@@ -225,6 +226,7 @@ public final class OidcUtils {
         m.put("jwks_uri", baseUrl + "profile" + JWKPublishingEndpoint.URL);
         m.put("revocation_endpoint", baseUrl + "profile" + RevocationEndpoint.URL);
         m.put("introspection_endpoint", baseUrl + "profile" + IntrospectionEndpoint.URL);
+        m.put("registration_endpoint", baseUrl + "profile" + DynamicRegistrationEndpoint.URL);
 
         m.remove("service_documentation");
         m.remove("op_policy_uri");

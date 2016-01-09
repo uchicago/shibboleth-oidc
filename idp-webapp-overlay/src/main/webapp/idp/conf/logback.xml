@@ -38,7 +38,7 @@
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.web" level="WARN">
+    <logger name="org.springframework.web" level="DEBUG">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
