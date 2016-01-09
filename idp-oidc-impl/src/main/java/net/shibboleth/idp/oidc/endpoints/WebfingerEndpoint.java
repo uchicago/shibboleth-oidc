@@ -1,6 +1,5 @@
 package net.shibboleth.idp.oidc.endpoints;
 
-import org.mitre.discovery.web.DiscoveryEndpoint;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
  * This is {@link WebfingerEndpoint}.
  */
 @Controller("oidcWebfingerEndpoint")
-@RequestMapping("/oidc/" + DiscoveryEndpoint.WEBFINGER_URL)
+@RequestMapping("/webfinger" )
 public class WebfingerEndpoint extends org.mitre.discovery.web.DiscoveryEndpoint {
-    public static final String URL = "/oidc/" + WEBFINGER_URL;
+    public static final String URL = "/webfinger";
 
     @RequestMapping(
             method = RequestMethod.GET,

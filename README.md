@@ -88,3 +88,4 @@ If you want a somewhat faster build, run:
 * A custom JAR is dropped into the overlay's `WEB-INF/lib` that mocks authentication. This is configured via the `jaas.config` file.
 * `oidc.properties` controls the OIDC module configuration. This is appended to the list of property files loaded by 
 the IdP via `idp.properties`. 
+* `web.xml` is modified to register the `.well-known` endpoint.
