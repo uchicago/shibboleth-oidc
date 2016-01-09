@@ -3,6 +3,7 @@
 
     <!-- Logs IdP, but not OpenSAML, messages -->
     <logger name="net.shibboleth.idp" level="INFO"/>
+    <logger name="org.mitre" level="DEBUG"/>
 
     <logger name="net.shibboleth.idp.oidc" level="DEBUG"/>
 
@@ -28,7 +29,7 @@
     <logger name="net.shibboleth.idp.log.LogbackLoggingService" level="DEBUG" />
     -->
 
-    <logger name="org.mitre" level="DEBUG" additivity="false">
+    <logger name="org.mitre" level="DEBUG">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
@@ -38,7 +39,7 @@
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.web" level="DEBUG">
+    <logger name="org.springframework.web" level="INFO">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
@@ -47,11 +48,16 @@
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
-    <logger name="org.springframework.security.oauth2" level="WARN">
+    <logger name="org.springframework.security.oauth2" level="DEBUG">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
     </logger>
 
+    <logger name="net.shibboleth.idp" level="DEBUG">
+        <appender-ref ref="IDP_CONSOLE" />
+        <appender-ref ref="IDP_PROCESS"/>
+    </logger>
+    
     <logger name="org.springframework.security" level="WARN">
         <appender-ref ref="IDP_CONSOLE" />
         <appender-ref ref="IDP_PROCESS"/>
