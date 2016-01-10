@@ -18,7 +18,7 @@
 
     <util:set id="supportedSystemScopes">
         <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:id="1"
               p:value="openid"
               p:description="log in using your identity"
               p:restricted="false"
@@ -26,7 +26,7 @@
               p:structured="false"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:id="2"
               p:value="profile"
               p:description="basic profile information"
               p:restricted="false"
@@ -34,7 +34,7 @@
               p:structured="false"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:id="3"
               p:value="email"
               p:description="email address"
               p:restricted="false"
@@ -42,7 +42,7 @@
               p:structured="false"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:id="4"
               p:value="address"
               p:description="physical address"
               p:restricted="false"
@@ -50,7 +50,7 @@
               p:structured="false"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:id="5"
               p:value="phone"
               p:description="telephone number"
               p:restricted="false"
@@ -58,7 +58,7 @@
               p:structured="false"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="#{ T(java.lang.Math).random() * 1000.0 }"
+              p:id="6"
               p:value="offline_access"
               p:description="offline access"
               p:restricted="false"
@@ -100,6 +100,7 @@
             <property name="redirectUris">
                 <set>
                     <value>https://op.certification.openid.net:60233/authz_cb</value>
+                    <value>http://localhost:8081/</value>
                 </set>
             </property>
         </bean>

@@ -55,7 +55,7 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
             for (final String attributeKey : consentableAttributes.keySet()) {
                 final IdPAttribute attribute = consentableAttributes.get(attributeKey);
 
-                final boolean releaseAttribute = (getConsentContext() == null) || consentedToAttributeRelease(attribute);
+                final boolean releaseAttribute = getConsentContext() == null || consentedToAttributeRelease(attribute);
                 if (releaseAttribute) {
                     switch (attribute.getId()) {
                         case "sub":

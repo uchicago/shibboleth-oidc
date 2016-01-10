@@ -16,10 +16,8 @@ import org.springframework.stereotype.Service;
 @Primary
 public class ShibbolethUserInfoService implements UserInfoService {
 
-    private ProfileRequestContext profileRequestContext;
-
     @Autowired
-    @Qualifier("staticUserInfoRepository")
+    @Qualifier("shibbolethUserInfoRepository")
     private ShibbolethUserInfoRepository userInfoRepository;
 
     @Autowired
@@ -34,7 +32,6 @@ public class ShibbolethUserInfoService implements UserInfoService {
     }
 
     public void initialize(final ProfileRequestContext prc) {
-        this.profileRequestContext = prc;
         this.userInfoRepository.initialize(prc);
     }
 
