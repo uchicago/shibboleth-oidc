@@ -20,7 +20,7 @@ public class ShibbolethUserInfoService implements UserInfoService {
 
     @Autowired
     @Qualifier("staticUserInfoRepository")
-    private StaticUserInfoRepository userInfoRepository;
+    private ShibbolethUserInfoRepository userInfoRepository;
 
     @Autowired
     private ClientDetailsEntityService clientService;

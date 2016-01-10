@@ -18,9 +18,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 
-@Repository("staticUserInfoRepository")
+@Repository("shibbolethUserInfoRepository")
 @Primary
-public class StaticUserInfoRepository implements UserInfoRepository {
+public class ShibbolethUserInfoRepository implements UserInfoRepository {
 
     private ProfileRequestContext profileRequestContext;
 
