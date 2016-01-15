@@ -34,6 +34,7 @@ The following may be considered in future versions:
 - [MITREid Connect](https://github.com/mitreid-connect/) handles the OIDC implementation.
 - [Shibboleth Identity Provider v3.2.1](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - JDK 7
+- [Modified test client application from MITREid Connect](https://github.com/mmoayyed/simple-web-app)
 
 ## Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,
