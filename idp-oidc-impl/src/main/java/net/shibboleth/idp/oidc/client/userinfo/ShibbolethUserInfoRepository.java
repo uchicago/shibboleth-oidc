@@ -7,8 +7,8 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.impl.ConsentContext;
 import net.shibboleth.idp.consent.impl.Consent;
+import net.shibboleth.idp.oidc.config.userinfo.ShibbolethUserInfo;
 import org.mitre.openid.connect.model.DefaultAddress;
-import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.mitre.openid.connect.model.UserInfo;
 import org.mitre.openid.connect.repository.UserInfoRepository;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -47,7 +47,7 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
         if (principal == null || principal.getPrincipalName() == null) {
             throw new InsufficientAuthenticationException("No SubjectContext found in the profile request context");
         }
-        final DefaultUserInfo userInfo = new DefaultUserInfo();
+        final ShibbolethUserInfo userInfo = new ShibbolethUserInfo();
         userInfo.setPreferredUsername(principal.getPrincipalName());
 
         if (getAttributeReleaseContext() != null) {
