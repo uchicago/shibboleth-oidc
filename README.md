@@ -1,5 +1,5 @@
 # shibboleth-oidc [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/uchicago/shibboleth-oidc/blob/master/LICENSE) 
-[![](https://heroku-badge.herokuapp.com/?app=shibboleth-oidc)](https://shibboleth-oidc.herokuapp.com/)
+[![](https://heroku-badge.herokuapp.com/?app=shibboleth-oidc)](https://shibboleth-oidc.herokuapp.com/idp)
 OpenIDConnect support for the Shibboleth Identity Provider version 3
 
 ## Scope
@@ -7,6 +7,7 @@ We are working on adding support for the OpenID Connect protocol to the Shibbole
 are the items we are planning to address:
 
 * Authorization code workflow
+* Dynamic discovery
 * Administration and registration of OIDC RPs with the IdP. 
 * Ability to resolve, consume and release OIDC claims, taking advantage of IdP's machinery to release attributes. 
 * Ability to configure an expiration and revocation policy around OIDC access and refresh tokens from an admin perspective. 
@@ -23,7 +24,6 @@ authZ codes and more.
 
 The following may be considered in future versions:
 
-* Dynamic discovery
 * Implicit flow
 * Hybrid flow
 * Dynamic RP registration
@@ -34,6 +34,7 @@ The following may be considered in future versions:
 - [MITREid Connect](https://github.com/mitreid-connect/) handles the OIDC implementation.
 - [Shibboleth Identity Provider v3.2.1](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 - JDK 7
+- [Modified test client application from MITREid Connect](https://github.com/mmoayyed/simple-web-app)
 
 ## Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,
@@ -84,7 +85,7 @@ If you want a somewhat faster build, run:
 * `global-system.xml` registers the `oidc-protocol-system` file
 * `webflow-config.xml` is overlaid to add the OIDC flow configuration.
 * `mvc-beans.xml` is used in the overlay `conf` directory to override the default beans and config.
-- This is used to define a new view resolver based on Spring bean names and remaps the excluded exceptions from the view resolver. 
+ - This is used to define a new view resolver based on Spring bean names and remaps the excluded exceptions from the view resolver. 
 * A custom JAR is dropped into the overlay's `WEB-INF/lib` that mocks authentication. This is configured via the `jaas.config` file.
 * `oidc.properties` controls the OIDC module configuration. This is appended to the list of property files loaded by 
 the IdP via `idp.properties`. 
