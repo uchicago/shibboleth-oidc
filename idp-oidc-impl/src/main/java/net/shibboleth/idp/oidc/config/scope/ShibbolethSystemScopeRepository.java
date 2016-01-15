@@ -12,16 +12,16 @@ import java.util.Set;
 /**
  * Repository to define system scopes statically.
  */
-@Component("staticSystemScopeRepository")
+@Component("shibbolethSystemScopeRepository")
 @Primary
-public class StaticSystemScopeRepository implements SystemScopeRepository {
+public class ShibbolethSystemScopeRepository implements SystemScopeRepository {
 
     @Resource(name="supportedSystemScopes")
     private Set<SystemScope> scopes = new HashSet<>();
 
-    protected StaticSystemScopeRepository() {}
+    protected ShibbolethSystemScopeRepository() {}
 
-    public StaticSystemScopeRepository(final Set<SystemScope> scopes) {
+    public ShibbolethSystemScopeRepository(final Set<SystemScope> scopes) {
         this.scopes = scopes;
     }
 

@@ -1,5 +1,6 @@
 package net.shibboleth.idp.oidc.util;
 
+import com.google.common.collect.Lists;
 import net.shibboleth.idp.oidc.endpoints.AuthorizeEndpoint;
 import net.shibboleth.idp.oidc.endpoints.DynamicRegistrationEndpoint;
 import net.shibboleth.idp.oidc.endpoints.IntrospectionEndpoint;
@@ -18,7 +19,9 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -227,6 +230,11 @@ public final class OidcUtils {
         m.put("revocation_endpoint", baseUrl + "profile" + RevocationEndpoint.URL);
         m.put("introspection_endpoint", baseUrl + "profile" + IntrospectionEndpoint.URL);
         m.put("registration_endpoint", baseUrl + "profile" + DynamicRegistrationEndpoint.URL);
+
+        final List claimsSupported = new ArrayList((List) m.get("claims_supported"));
+        claimsSupported.remove("zone_info");
+        claimsSupported.add("zoneinfo");
+        m.put("claims_supported", claimsSupported);
 
         m.remove("service_documentation");
         m.remove("op_policy_uri");
