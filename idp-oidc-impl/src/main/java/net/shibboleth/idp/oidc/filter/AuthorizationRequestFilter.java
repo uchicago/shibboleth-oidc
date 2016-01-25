@@ -90,21 +90,17 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
             log.debug("Loading client by id {}", authRequest.getClientId());
             final ClientDetailsEntity client = clientService.loadClientByClientId(authRequest.getClientId());
-            OidcUtils.setAuthorizationRequest(request, authRequest, requestParameters);
-            log.debug("Saved authorization request");
             log.debug("Found client {}.", client.getClientId());
-            OidcUtils.setClient(request, client);
-            log.debug("Saved client request");
 
             boolean invokeFilterChain = false;
             final String prompt = (String) authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
             if (prompt != null) {
                 log.debug("Authorization request contains prompt {}", prompt);
-                invokeFilterChain = checkForPrompts(prompt, response, request);
+                invokeFilterChain = checkForPrompts(prompt, response, request, client, authRequest);
             } else if (authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE) != null ||
                     client.getDefaultMaxAge() != null) {
                 log.debug("Authorization request or client configuration contains max age");
-                checkForMaxAge(request);
+                checkForMaxAge(request, client, authRequest);
                 invokeFilterChain = true;
             } else {
                 log.debug("Evaluated authorization request. Invoking filter chain normally");
@@ -113,6 +109,12 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
 
             if (invokeFilterChain) {
+
+                OidcUtils.setAuthorizationRequest(request, authRequest, requestParameters);
+                log.debug("Saved authorization request");
+
+                OidcUtils.setClient(request, client);
+                log.debug("Saved client request");
 
                 chain.doFilter(req, res);
             }
@@ -173,13 +175,12 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      *
      * @param request the request
      */
-    private void checkForMaxAge(final HttpServletRequest request) {
+    private void checkForMaxAge(final HttpServletRequest request, final ClientDetailsEntity client,
+                                final AuthorizationRequest authRequest) {
 
-        final ClientDetailsEntity client = OidcUtils.getClient(request);
         Integer max = client != null ? client.getDefaultMaxAge() : null;
         log.debug("Client configuration set to max age {}", max);
 
-        final AuthorizationRequest authRequest = OidcUtils.getAuthorizationRequest(request);
         final String maxAge = (String) authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE);
         log.debug("Authorization request contains max age {}", maxAge);
         if (maxAge != null) {
@@ -216,71 +217,76 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      */
     private boolean checkForPrompts(final String prompt,
                                     final HttpServletResponse response,
-                                    final HttpServletRequest request)
+                                    final HttpServletRequest request,
+                                    final ClientDetailsEntity client,
+                                    final AuthorizationRequest authRequest)
             throws IOException {
-
-        final ClientDetailsEntity client = OidcUtils.getClient(request);
-        final AuthorizationRequest authRequest = OidcUtils.getAuthorizationRequest(request);
 
         final List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
                     .splitToList(Strings.nullToEmpty(prompt));
         if (prompts.contains(ConnectRequestParameters.PROMPT_NONE)) {
-            log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_NONE);
-            final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            return checkForNonePrompt(response, client, authRequest);
+        }
 
-            if (auth != null) {
-                log.debug("Authentication context is empty");
-            } else {
-                log.info("Client requested no prompt");
-                if (client != null && authRequest.getRedirectUri() != null) {
-                    final String url = redirectResolver.resolveRedirect(authRequest.getRedirectUri(), client);
+        if (prompts.contains(ConnectRequestParameters.PROMPT_LOGIN)) {
+            return checkForLoginPrompt(request);
+        }
 
-                    try {
-                        final URIBuilder uriBuilder = new URIBuilder(url);
+        log.debug("Prompt is not supported and we do not care. Proceeding with filter chain");
+        return true;
+    }
 
-                        uriBuilder.addParameter(ConnectRequestParameters.ERROR,
-                                ConnectRequestParameters.LOGIN_REQUIRED);
-                        if (!Strings.isNullOrEmpty(authRequest.getState())) {
-                            uriBuilder.addParameter(ConnectRequestParameters.STATE, authRequest.getState());
-                        }
-                        log.debug("Resolved redirect url {}", uriBuilder.toString());
-                        response.sendRedirect(uriBuilder.toString());
-                        return true;
+    private boolean checkForNonePrompt(final HttpServletResponse response, final ClientDetailsEntity client,
+                                       final AuthorizationRequest authRequest) throws IOException {
+        log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_NONE);
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-                    } catch (final URISyntaxException e) {
-                        log.error("Can't build redirect URI for prompt=none, sending error instead", e);
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-                        return true;
-                    }
+        if (auth != null) {
+            log.debug("Authentication context is found for {}. Already logged in; continue without prompt", auth.getPrincipal());
+            return true;
+        }
+
+        log.info("Client requested no prompt");
+        if (client != null && authRequest.getRedirectUri() != null) {
+            try {
+                final String url = redirectResolver.resolveRedirect(authRequest.getRedirectUri(), client);
+                log.debug("Initial redirect url resolved for client {} is {}", client.getClientName(), url);
+
+                final URIBuilder uriBuilder = new URIBuilder(url);
+                uriBuilder.addParameter(ConnectRequestParameters.ERROR,
+                        ConnectRequestParameters.LOGIN_REQUIRED);
+                if (!Strings.isNullOrEmpty(authRequest.getState())) {
+                    uriBuilder.addParameter(ConnectRequestParameters.STATE, authRequest.getState());
                 }
-
-                log.warn("Access denied. Either client is not found or no redirect uri is specified");
+                log.debug("Resolved redirect url {}", uriBuilder.toString());
+                response.sendRedirect(uriBuilder.toString());
+            } catch (final URISyntaxException e) {
+                log.error("Can't build redirect URI for prompt=none, sending error instead", e);
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-                return true;
             }
-        } else if (prompts.contains(ConnectRequestParameters.PROMPT_LOGIN)) {
-            log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
+        }
 
-            if (OidcUtils.isRequestPrompted(request)) {
-                OidcUtils.setPromptRequested(request);
+        log.warn("Access denied. Either client is not found or no redirect uri is specified");
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+        return false;
+    }
 
-                final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                if (auth != null) {
-                    SecurityContextHolder.getContext().setAuthentication(null);
-                    log.debug("Cleared authentication from context. Proceeding with filter chain");
+    private boolean checkForLoginPrompt(final HttpServletRequest request) {
+        log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
 
-                } else {
-                    log.debug("Authentication is not found in the context. Proceeding with filter chain");
-
-                }
+        if (OidcUtils.isRequestPrompted(request)) {
+            OidcUtils.setPromptRequested(request);
+            final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null) {
+                SecurityContextHolder.getContext().setAuthentication(null);
+                log.debug("Cleared authentication {} from context. Proceeding with filter chain", auth.getName());
             } else {
-                OidcUtils.removeRequestPrompted(request);
+                log.debug("Authentication is not found in the context. Proceeding with filter chain");
             }
         } else {
-            log.debug("Prompt is not supported. Proceeding with filter chain");
-
+            OidcUtils.removeRequestPrompted(request);
         }
-        return false;
+        return true;
     }
 
     /**
@@ -291,11 +297,11 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
      */
     private Map<String, String> createRequestMap(final Map<String, String[]> parameterMap) {
         final Map<String, String> requestMap = new HashMap<>();
-        for (final String key : parameterMap.keySet()) {
-            final String[] val = parameterMap.get(key);
+        for (final Map.Entry<String, String[]> stringEntry : parameterMap.entrySet()) {
+            final String[] val = stringEntry.getValue();
             if (val != null && val.length > 0) {
-                log.debug("Added request parameter {} with value {}", key, val[0]);
-                requestMap.put(key, val[0]);
+                log.debug("Added request parameter {} with value {}", stringEntry.getKey(), val[0]);
+                requestMap.put(stringEntry.getKey(), val[0]);
             }
         }
 

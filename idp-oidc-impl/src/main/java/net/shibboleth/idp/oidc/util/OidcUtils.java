@@ -235,7 +235,6 @@ public final class OidcUtils {
         claimsSupported.remove("zone_info");
         claimsSupported.add("zoneinfo");
         m.put("claims_supported", claimsSupported);
-
         m.remove("service_documentation");
         m.remove("op_policy_uri");
         m.remove("op_tos_uri");
