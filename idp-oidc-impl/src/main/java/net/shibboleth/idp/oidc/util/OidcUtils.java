@@ -230,12 +230,6 @@ public final class OidcUtils {
         m.put("revocation_endpoint", baseUrl + "profile" + RevocationEndpoint.URL);
         m.put("introspection_endpoint", baseUrl + "profile" + IntrospectionEndpoint.URL);
         m.put("registration_endpoint", baseUrl + "profile" + DynamicRegistrationEndpoint.URL);
-
-        final List claimsSupported = new ArrayList((List) m.get("claims_supported"));
-        claimsSupported.remove("zone_info");
-        claimsSupported.add("zoneinfo");
-        m.put("claims_supported", claimsSupported);
-
         m.remove("service_documentation");
         m.remove("op_policy_uri");
         m.remove("op_tos_uri");
