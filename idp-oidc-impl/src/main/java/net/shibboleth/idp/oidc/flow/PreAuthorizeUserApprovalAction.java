@@ -88,9 +88,12 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                               @Nonnull final ProfileRequestContext profileRequestContext) {
 
         this.userInfoService.initialize(profileRequestContext);
-
         final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
-        final HttpSession session = request.getSession();
+
+        if (request == null) {
+            throw new RuntimeException("HttpServletRequest cannot be null");
+        }
+
         final AuthorizationRequest authRequest = OidcUtils.getAuthorizationRequest(request);
         if (authRequest == null || Strings.isNullOrEmpty(authRequest.getClientId())) {
             log.warn("Authorization request could not be loaded from session");
@@ -114,16 +117,19 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             return Events.BadRequest.event(this);
         }
 
+        /*
         if (prompts.contains(ConnectRequestParameters.PROMPT_NONE)) {
             log.debug("Handling authorization when prompt contains none");
             return handleWhenNoPromptIsPresent(springRequestContext, request, authRequest, client);
         }
+        */
 
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         final SpringSecurityAuthenticationToken token = new SpringSecurityAuthenticationToken(profileRequestContext);
         final Authentication authentication = authenticationManager.authenticate(token);
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);
+        final HttpSession session = request.getSession();
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
         final OidcResponse response = buildOpenIdConnectResponse(authRequest, client);
