@@ -114,7 +114,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             return Events.BadRequest.event(this);
         }
 
-        if (prompts.contains("none")) {
+        if (prompts.contains(ConnectRequestParameters.PROMPT_NONE)) {
+            log.debug("Handling authorization when prompt contains none");
             return handleWhenNoPromptIsPresent(springRequestContext, request, authRequest, client);
         }
 
@@ -241,6 +242,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                                               @Nonnull final ClientDetailsEntity client) {
         try {
             final String url = redirectResolver.resolveRedirect(authRequest.getRedirectUri(), client);
+            log.debug("Initial redirect url resolved for client {} is {}", client.getClientName(), url);
+
             final URIBuilder uriBuilder = new URIBuilder(url);
 
             uriBuilder.addParameter("error", "interaction_required");
@@ -249,7 +252,10 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             }
 
             final OidcResponse response = new OidcResponse();
+
+            log.debug("Resolved redirect url {}", uriBuilder.toString());
             response.setRedirectUri(uriBuilder.toString());
+
             response.setAuthorizationRequest(authRequest);
             response.setClient(client);
 

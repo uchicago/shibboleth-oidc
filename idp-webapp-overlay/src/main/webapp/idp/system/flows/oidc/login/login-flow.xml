@@ -111,7 +111,7 @@
         <transition on="failure" to="error" />
         <transition on="badRequest" to="error" />
         <transition on="clientNotFound" to="error" />
-        <transition on="redirect" to="externalRedirect:${flowScope.openIdConnectResponse.redirectUri}" />
+        <transition on="redirect" to="redirectResponse" />
         <transition on="proceed" to="doPostAuthnInterceptSubflow" />
     </action-state>
 
@@ -141,8 +141,8 @@
         <transition to="done"/>
     </view-state>
 
+    <end-state id="redirectResponse" view="externalRedirect:#{flowScope.oidcResponse.redirectUri}"/>
     <end-state id="done"/>
-
     <end-state id="error" view="error">
         <on-entry>
             <evaluate expression="environment" result="requestScope.environment" />
