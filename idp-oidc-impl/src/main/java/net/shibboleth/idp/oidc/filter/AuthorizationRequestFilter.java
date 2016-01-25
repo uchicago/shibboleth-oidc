@@ -264,10 +264,10 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                 log.error("Can't build redirect URI for prompt=none, sending error instead", e);
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             }
+        } else {
+            log.warn("Access denied. Either client is not found or no redirect uri is specified");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
         }
-
-        log.warn("Access denied. Either client is not found or no redirect uri is specified");
-        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
         return false;
     }
 
