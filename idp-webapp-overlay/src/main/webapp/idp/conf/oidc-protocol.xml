@@ -67,8 +67,6 @@
 
     </util:set>
 
-    <util:constant static-field="com.nimbusds.jose.Algorithm.NONE" id="noneSigningAlgorithm" />
-
     <util:set id="oidcClients">
         <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
               p:id="1"
@@ -77,7 +75,6 @@
               p:clientName="Test Client"
               p:dynamicallyRegistered="false"
               p:accessTokenValiditySeconds="3600"
-              p:requestObjectSigningAlg-ref="noneSigningAlgorithm"
               p:idTokenValiditySeconds="600"
               p:allowIntrospection="true">
 
