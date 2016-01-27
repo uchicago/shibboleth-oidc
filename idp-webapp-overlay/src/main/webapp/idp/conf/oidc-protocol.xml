@@ -75,6 +75,7 @@
               p:clientName="Test Client"
               p:dynamicallyRegistered="false"
               p:accessTokenValiditySeconds="3600"
+              p:requestObjectSigningAlg="none"
               p:idTokenValiditySeconds="600"
               p:allowIntrospection="true">
 
