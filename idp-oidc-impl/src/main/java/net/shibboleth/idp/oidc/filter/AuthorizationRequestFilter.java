@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -90,6 +91,18 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
             log.debug("Loading client by id {}", authRequest.getClientId());
             final ClientDetailsEntity client = clientService.loadClientByClientId(authRequest.getClientId());
+
+            if (!Strings.isNullOrEmpty(authRequest.getRedirectUri())) {
+                boolean found = false;
+                final Iterator<String> it = client.getRedirectUris().iterator();
+
+                while (!found && it.hasNext()) {
+                    found = it.next().equals(authRequest.getRedirectUri());
+                }
+                if (!found) {
+                    throw new InvalidClientException("Redirect uri in the authorization request is not registered for client");
+                }
+            }
             log.debug("Found client {}.", client.getClientId());
 
             boolean invokeFilterChain = false;
@@ -109,7 +122,6 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
 
 
             if (invokeFilterChain) {
-
                 OidcUtils.setAuthorizationRequest(request, authRequest, requestParameters);
                 log.debug("Saved authorization request");
 
