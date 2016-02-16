@@ -5,13 +5,9 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collections;
-import java.util.UUID;
+import java.util.Collection;
 
 /**
  * A wrapper for an authentication object managed by Spring security
@@ -22,8 +18,9 @@ public final class SpringSecurityAuthenticationToken extends AbstractAuthenticat
 
     private final ProfileRequestContext profileRequestContext;
 
-    public SpringSecurityAuthenticationToken(final ProfileRequestContext prc) {
-        super(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+    SpringSecurityAuthenticationToken(final ProfileRequestContext prc,
+                                      final Collection<GrantedAuthority> authorities) {
+        super(authorities);
         this.profileRequestContext = prc;
     }
 
@@ -51,18 +48,5 @@ public final class SpringSecurityAuthenticationToken extends AbstractAuthenticat
         return profileRequestContext;
     }
 
-    public Authentication buildAuthentication() {
-        final SubjectContext principal = (SubjectContext) getPrincipal();
 
-        if (principal == null || principal.getPrincipalName() == null) {
-            throw new InsufficientAuthenticationException("No SubjectContext found in the profile request context");
-        }
-
-        final SpringSecurityAuthenticationToken authenticationToken =
-                new SpringSecurityAuthenticationToken(getProfileRequestContext());
-        authenticationToken.setAuthenticated(true);
-        final User user = new User(principal.getPrincipalName(), UUID.randomUUID().toString(), getAuthorities());
-        authenticationToken.setDetails(user);
-        return authenticationToken;
-    }
 }

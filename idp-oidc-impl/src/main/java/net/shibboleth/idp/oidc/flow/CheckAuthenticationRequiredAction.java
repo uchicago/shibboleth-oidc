@@ -40,9 +40,8 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
         final SessionContext sessionContext = sessionContextFunction.apply(prc);
         if(sessionContext != null && sessionContext.getIdPSession() != null) {
             return sessionContext.getIdPSession();
-        } else {
-            throw new IllegalStateException("Cannot locate IdP session");
         }
+        throw new IllegalStateException("Cannot locate IdP session");
     }
 
     @Override

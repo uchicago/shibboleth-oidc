@@ -34,7 +34,7 @@ public final class SpringSecurityAuthenticationTokenFactory {
          */
         final Set<GrantedAuthority> authorities = new LinkedHashSet<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-
+        
         final AuthenticationContext authCtx = profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (authCtx != null) {
             final RequestedPrincipalContext principalContext = authCtx.getSubcontext(RequestedPrincipalContext.class);

@@ -1,6 +1,5 @@
 package net.shibboleth.idp.oidc.util;
 
-import com.google.common.collect.Lists;
 import net.shibboleth.idp.oidc.endpoints.AuthorizeEndpoint;
 import net.shibboleth.idp.oidc.endpoints.DynamicRegistrationEndpoint;
 import net.shibboleth.idp.oidc.endpoints.IntrospectionEndpoint;
@@ -9,7 +8,6 @@ import net.shibboleth.idp.oidc.endpoints.RevocationEndpoint;
 import net.shibboleth.idp.oidc.endpoints.TokenEndpoint;
 import net.shibboleth.idp.oidc.endpoints.UserInfoEndpoint;
 import net.shibboleth.idp.oidc.flow.OidcResponse;
-import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.openid.connect.web.AuthenticationTimeStamper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,29 +103,6 @@ public final class OidcUtils {
         session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST, authorizationRequest);
         session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS, parameterMap);
         request.setAttribute(ATTR_OIDC_AUTHZ_REQUEST, authorizationRequest);
-    }
-
-    /**
-     * Sets client.
-     *
-     * @param request the request
-     * @param client the client
-     */
-    public static void setClient(final HttpServletRequest request,
-                               final ClientDetailsEntity client) {
-        final HttpSession session = request.getSession();
-        session.setAttribute(ATTR_OIDC_CLIENT, client);
-    }
-
-    /**
-     * Gets client.
-     *
-     * @param request the request
-     * @return the client
-     */
-    public static ClientDetailsEntity getClient(final HttpServletRequest request) {
-        final HttpSession session = request.getSession();
-        return (ClientDetailsEntity) session.getAttribute(ATTR_OIDC_CLIENT);
     }
 
     /**

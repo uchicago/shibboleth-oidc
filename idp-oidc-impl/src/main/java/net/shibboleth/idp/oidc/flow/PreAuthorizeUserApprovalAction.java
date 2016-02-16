@@ -6,8 +6,8 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationToken;
 import net.shibboleth.idp.oidc.client.userinfo.ShibbolethUserInfoService;
+import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationTokenFactory;
 import net.shibboleth.idp.oidc.util.OidcUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,9 +71,6 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
     @Autowired
     private RedirectResolver redirectResolver;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     /**
      * Instantiates a Pre-authorize user approval action.
@@ -125,8 +121,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         */
 
         final SecurityContext securityContext = SecurityContextHolder.getContext();
-        final SpringSecurityAuthenticationToken token = new SpringSecurityAuthenticationToken(profileRequestContext);
-        final Authentication authentication = authenticationManager.authenticate(token);
+        final Authentication authentication = SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);
         final HttpSession session = request.getSession();
