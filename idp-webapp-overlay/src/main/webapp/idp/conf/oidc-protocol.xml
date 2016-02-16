@@ -100,7 +100,7 @@
             <property name="redirectUris">
                 <set>
                     <value>https://op.certification.openid.net:60233/authz_cb</value>
-                    <value>http://localhost:8081/</value>
+                    <value>http://localhost:8081/simple-web-app/openid_connect_login</value>
                 </set>
             </property>
         </bean>

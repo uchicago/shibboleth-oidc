@@ -9,9 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-/**
- * This is {@link ShibbolethOAuth2RequestFactory}.
- */
 @Service("shibbolethOAuth2RequestFactory")
 @Primary
 public class ShibbolethOAuth2RequestFactory extends ConnectOAuth2RequestFactory {
@@ -23,6 +20,9 @@ public class ShibbolethOAuth2RequestFactory extends ConnectOAuth2RequestFactory 
     @Override
     public AuthorizationRequest createAuthorizationRequest(final Map<String, String> inputParams) {
         final AuthorizationRequest request = super.createAuthorizationRequest(inputParams);
+        if(inputParams.containsKey("acr_values")) {
+            request.getExtensions().put("acr_values", inputParams.get("acr_values"));
+        }
         return request;
     }
 }

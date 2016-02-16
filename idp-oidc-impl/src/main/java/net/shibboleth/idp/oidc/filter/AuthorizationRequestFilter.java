@@ -100,7 +100,8 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
                     found = it.next().equals(authRequest.getRedirectUri());
                 }
                 if (!found) {
-                    throw new InvalidClientException("Redirect uri in the authorization request is not registered for client");
+                    throw new InvalidClientException("Redirect uri in the authorization request " +
+                            authRequest.getRedirectUri() + " is not registered for client " + client.getClientId());
                 }
             }
             log.debug("Found client {}.", client.getClientId());
@@ -124,10 +125,6 @@ public class AuthorizationRequestFilter extends GenericFilterBean {
             if (invokeFilterChain) {
                 OidcUtils.setAuthorizationRequest(request, authRequest, requestParameters);
                 log.debug("Saved authorization request");
-
-                OidcUtils.setClient(request, client);
-                log.debug("Saved client request");
-
                 chain.doFilter(req, res);
             }
 

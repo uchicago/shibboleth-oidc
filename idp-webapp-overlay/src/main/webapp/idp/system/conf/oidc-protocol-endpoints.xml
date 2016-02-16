@@ -115,12 +115,7 @@
         <security:expression-handler ref="oauthWebExpressionHandler" />
     </security:http>
 
-
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider ref="authenticationProviderAdapter" />
-    </security:authentication-manager>
-
-
+    <security:authentication-manager alias="authenticationManager" />
 
 
     <!--

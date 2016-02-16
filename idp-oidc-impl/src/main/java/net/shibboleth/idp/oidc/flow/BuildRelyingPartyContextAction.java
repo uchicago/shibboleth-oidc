@@ -8,9 +8,11 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import org.mitre.oauth2.model.ClientDetailsEntity;
+import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,6 +27,9 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(BuildRelyingPartyContextAction.class);
 
 
+    @Autowired
+    private ClientDetailsEntityService clientService;
+
     @Nonnull
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
@@ -38,7 +43,7 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
             return Events.Failure.event(this);
         }
 
-        final ClientDetailsEntity client = OidcUtils.getClient(request);
+        final ClientDetailsEntity client = this.clientService.loadClientByClientId(authRequest.getClientId());
 
         if (client == null) {
             log.warn("Client configuration could not be loaded from session");
