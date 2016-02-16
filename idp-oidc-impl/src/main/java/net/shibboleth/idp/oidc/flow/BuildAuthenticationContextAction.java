@@ -3,8 +3,10 @@ package net.shibboleth.idp.oidc.flow;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Strings;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.oidc.config.OidcConstants;
 import net.shibboleth.idp.oidc.util.OidcUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Builds an authentication context message from an incoming request.
@@ -39,12 +42,24 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
     @Nullable
     private AuthnRequest authnRequest;
 
+    private List<AuthenticationFlowDescriptor> availableAuthenticationFlows;
+
+    private Map<AuthnContextClassRefPrincipal, Integer> authenticationPrincipalWeightMap;
+
     /**
      * Instantiates a new authentication context action.
      */
     public BuildAuthenticationContextAction() {
         requestLookupStrategy =
                 Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
+    }
+
+    public void setAvailableAuthenticationFlows(final List<AuthenticationFlowDescriptor> availableAuthenticationFlows) {
+        this.availableAuthenticationFlows = availableAuthenticationFlows;
+    }
+
+    public void setAuthenticationPrincipalWeightMap(final Map<AuthnContextClassRefPrincipal, Integer> authenticationPrincipalWeightMap) {
+        this.authenticationPrincipalWeightMap = authenticationPrincipalWeightMap;
     }
 
     /**
@@ -56,6 +71,7 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         requestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
     }
+
 
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -85,18 +101,31 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
             return Events.Failure.event(this);
         }
 
-        if (authorizationRequest.getExtensions().containsKey("acr_values")) {
-            final String[] acrValues = authorizationRequest.getExtensions().get("acr_values").toString().split("\\+");
-            final List<Principal> principals = new ArrayList<>();
-            final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
-            rpc.setOperator("exact");
-
+        final List<Principal> principals = new ArrayList<>();
+        if (authorizationRequest.getExtensions().containsKey(OidcConstants.ACR_VALUES)) {
+            final String[] acrValues = authorizationRequest.getExtensions().get(OidcConstants.ACR_VALUES).toString().split(" ");
             for (final String acrValue : acrValues) {
-                principals.add(new AuthnContextClassRefPrincipal(acrValue.trim()));
+                final AuthnContextClassRefPrincipal requestedPrincipal = new AuthnContextClassRefPrincipal(acrValue.trim());
+                for (final AuthenticationFlowDescriptor flow : this.availableAuthenticationFlows) {
+                    if (!principals.contains(requestedPrincipal) && flow.getSupportedPrincipals().contains(requestedPrincipal)) {
+                        principals.add(requestedPrincipal);
+                    }
+                }
             }
-            rpc.setRequestedPrincipals(principals);
-            ac.addSubcontext(rpc, true);
+
         }
+
+        if (principals.isEmpty()) {
+            final AuthnContextClassRefPrincipal requestedPrincipal =
+                    new AuthnContextClassRefPrincipal("urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
+            principals.add(requestedPrincipal);
+        }
+
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
+        ac.addSubcontext(rpc, true);
+
 
         profileRequestContext.addSubcontext(ac, true);
         profileRequestContext.setBrowserProfile(true);
