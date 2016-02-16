@@ -25,7 +25,9 @@
           class="net.shibboleth.idp.oidc.flow.CheckAuthenticationRequiredAction" />
 
     <bean id="buildAuthenticationContextAction"
-          class="net.shibboleth.idp.oidc.flow.BuildAuthenticationContextAction" />
+          class="net.shibboleth.idp.oidc.flow.BuildAuthenticationContextAction"
+          p:authenticationPrincipalWeightMap-ref="shibboleth.AuthenticationPrincipalWeightMap"
+          p:availableAuthenticationFlows-ref="shibboleth.AvailableAuthenticationFlows"/>
 
     <bean id="sessionPrincipalLookupFunction"
           class="com.google.common.base.Functions"
