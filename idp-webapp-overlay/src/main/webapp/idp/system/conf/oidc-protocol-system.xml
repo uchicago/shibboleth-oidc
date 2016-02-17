@@ -87,7 +87,8 @@
 
     <!-- Profile Configuration -->
     <bean id="OIDC.LoginConfiguration"
-          class="net.shibboleth.idp.oidc.config.login.LoginConfiguration" />
+          class="net.shibboleth.idp.oidc.config.login.LoginConfiguration"
+          p:postAuthenticationFlows="attribute-release" />
 
     <!-- Resources to pull -->
     <import resource="oidc-protocol-endpoints.xml" />

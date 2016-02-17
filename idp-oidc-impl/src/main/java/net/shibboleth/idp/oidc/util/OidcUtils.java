@@ -11,15 +11,15 @@ import net.shibboleth.idp.oidc.flow.OidcResponse;
 import org.mitre.openid.connect.web.AuthenticationTimeStamper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.ui.Model;
+import org.springframework.util.Assert;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,18 +27,6 @@ import java.util.Map;
  * session data.
  */
 public final class OidcUtils {
-    /** Attribute name for the OIDC response. */
-    private static final String FLOW_SCOPE_ATTRIBUTE_RESPONSE = "oidcResponse";
-
-    /** Attribute name to store the authorization request. */
-    private static final String ATTR_OIDC_AUTHZ_REQUEST = "authorizationRequest";
-
-    /** Attribute name to store the authorization request parameters as they were received. */
-    private static final String ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS = "OIDC_AUTHZ_REQUEST_PARAMS";
-
-    /** Attribute name to store the openid connect client. */
-    private static final String ATTR_OIDC_CLIENT = "OIDC_CLIENT";
-
     /**
      * The constant PROMPTED.
      */
@@ -58,52 +46,6 @@ public final class OidcUtils {
      * Instantiates a new Open id connect utils.
      */
     private OidcUtils() {}
-
-    /**
-     * Gets authorization request.
-     *
-     * @param request the request
-     * @return the authorization request
-     */
-    public static AuthorizationRequest getAuthorizationRequest(final HttpServletRequest request) {
-        final HttpSession session = request.getSession();
-        final AuthorizationRequest authorizationRequest = (AuthorizationRequest)
-                session.getAttribute(ATTR_OIDC_AUTHZ_REQUEST);
-        if (authorizationRequest != null) {
-            LOG.debug("Authorization request found in session for client id {}", authorizationRequest.getClientId());
-        } else {
-            LOG.debug("Authorization request not found in session.");
-        }
-
-        return authorizationRequest;
-    }
-
-    /**
-     * Gets authorization request parameters.
-     *
-     * @param request the request
-     * @return the authorization request parameters
-     */
-    public static Map<String, String> getAuthorizationRequestParameters(final HttpServletRequest request) {
-        final HttpSession session = request.getSession();
-        return (Map<String, String>) session.getAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS);
-    }
-
-    /**
-     * Sets authorization request.
-     *
-     * @param request the request
-     * @param authorizationRequest the authorization request
-     * @param parameterMap the parameter map
-     */
-    public static void setAuthorizationRequest(final HttpServletRequest request,
-                                               final AuthorizationRequest authorizationRequest,
-                                               final Map<String, String> parameterMap) {
-        final HttpSession session = request.getSession();
-        session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST, authorizationRequest);
-        session.setAttribute(ATTR_OIDC_AUTHZ_REQUEST_PARAMETERS, parameterMap);
-        request.setAttribute(ATTR_OIDC_AUTHZ_REQUEST, authorizationRequest);
-    }
 
     /**
      * Sets request parameter.
@@ -174,25 +116,35 @@ public final class OidcUtils {
     }
 
     /**
-     * Gets response.
+     * Gets the http servlet response from the context.
      *
      * @param context the context
-     * @return the response
+     * @return the http servlet response
      */
-    public static OidcResponse getResponse(final RequestContext context) {
-        final OidcResponse response =
-                context.getFlowScope().get(FLOW_SCOPE_ATTRIBUTE_RESPONSE, OidcResponse.class);
-        return response;
+    public static HttpServletResponse getHttpServletResponse(
+            final RequestContext context) {
+        Assert.isInstanceOf(ServletExternalContext.class, context
+                        .getExternalContext(),
+                "Cannot obtain HttpServletResponse from event of type: "
+                        + context.getExternalContext().getClass().getName());
+        return (HttpServletResponse) context.getExternalContext()
+                .getNativeResponse();
     }
 
     /**
-     * Sets response.
+     * Gets the http servlet request from the context.
      *
      * @param context the context
-     * @param response the response
+     * @return the http servlet request
      */
-    public static void setResponse(final RequestContext context, final OidcResponse response) {
-        context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_RESPONSE, response);
+    public static HttpServletRequest getHttpServletRequest(
+            final RequestContext context) {
+        Assert.isInstanceOf(ServletExternalContext.class, context
+                        .getExternalContext(),
+                "Cannot obtain HttpServletRequest from event of type: "
+                        + context.getExternalContext().getClass().getName());
+
+        return (HttpServletRequest) context.getExternalContext().getNativeRequest();
     }
 
     public static Map<String, Object> buildOidcServerConfigurationModelForDiscovery(final Model model) {
@@ -205,11 +157,6 @@ public final class OidcUtils {
         m.put("revocation_endpoint", baseUrl + "profile" + RevocationEndpoint.URL);
         m.put("introspection_endpoint", baseUrl + "profile" + IntrospectionEndpoint.URL);
         m.put("registration_endpoint", baseUrl + "profile" + DynamicRegistrationEndpoint.URL);
-
-        final List claimsSupported = new ArrayList((List) m.get("claims_supported"));
-        claimsSupported.remove("zone_info");
-        claimsSupported.add("zoneinfo");
-        m.put("claims_supported", claimsSupported);
         m.remove("service_documentation");
         m.remove("op_policy_uri");
         m.remove("op_tos_uri");

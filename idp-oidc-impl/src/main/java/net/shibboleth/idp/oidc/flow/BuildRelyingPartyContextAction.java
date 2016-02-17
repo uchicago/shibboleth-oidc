@@ -2,11 +2,9 @@ package net.shibboleth.idp.oidc.flow;
 
 
 import com.google.common.base.Strings;
-import net.shibboleth.idp.oidc.util.OidcUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -18,7 +16,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Creates the {@link RelyingPartyContext} as a child of the {@link ProfileRequestContext}.
@@ -26,18 +23,27 @@ import javax.servlet.http.HttpServletRequest;
 public class BuildRelyingPartyContextAction extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(BuildRelyingPartyContextAction.class);
 
+    private ProfileConfiguration profileConfiguration;
 
     @Autowired
     private ClientDetailsEntityService clientService;
+
+    public void setProfileConfiguration(final ProfileConfiguration profileConfiguration) {
+        this.profileConfiguration = profileConfiguration;
+    }
 
     @Nonnull
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
 
+        final OidcAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OidcAuthorizationRequestContext.class);
+        if (authZContext == null) {
+            log.warn("No authorization request could be located in the profile request context");
+            return Events.Failure.event(this);
+        }
 
-        final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
-        final AuthorizationRequest authRequest = OidcUtils.getAuthorizationRequest(request);
+        final AuthorizationRequest authRequest = authZContext.getAuthorizationRequest();
         if (authRequest == null || Strings.isNullOrEmpty(authRequest.getClientId())) {
             log.warn("Authorization request could not be loaded from session");
             return Events.Failure.event(this);
@@ -56,6 +62,6 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
         log.debug("{} Setting up RP context for verified relying party {}",
                 getLogPrefix(), client.getClientId());
         profileRequestContext.addSubcontext(rpc);
-        return ActionSupport.buildProceedEvent(this);
+        return Events.Success.event(this);
     }
 }

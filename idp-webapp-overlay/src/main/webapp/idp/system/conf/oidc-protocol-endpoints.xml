@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -107,13 +109,14 @@
         <security:intercept-url pattern="/register/**" access="permitAll"/>
     </security:http>
 
-    <security:http disable-url-rewriting="true" use-expressions="true">
-        <security:form-login login-page="/profile#{T(net.shibboleth.idp.oidc.endpoints.LoginEndpoint).URL}"
-                             authentication-success-handler-ref="authenticationTimeStamper" />
+    <security:http disable-url-rewriting="true" use-expressions="true" entry-point-ref="loginUrlEntryPoint">
+        <security:form-login authentication-success-handler-ref="authenticationTimeStamper" />
         <security:csrf />
-        <security:custom-filter ref="authzRequestFilter" after="SECURITY_CONTEXT_FILTER" />
         <security:expression-handler ref="oauthWebExpressionHandler" />
     </security:http>
+
+    <bean id="loginUrlEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
+          p:useForward="true" c:loginFormUrl="/profile#{T(net.shibboleth.idp.oidc.endpoints.LoginEndpoint).URL}"/>
 
     <security:authentication-manager alias="authenticationManager" />
 

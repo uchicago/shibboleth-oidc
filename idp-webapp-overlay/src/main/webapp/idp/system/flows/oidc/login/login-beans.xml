@@ -24,6 +24,9 @@
     <bean id="checkAuthenticationRequiredAction"
           class="net.shibboleth.idp.oidc.flow.CheckAuthenticationRequiredAction" />
 
+    <bean id="buildOidcAuthorizationRequestContextAction"
+          class="net.shibboleth.idp.oidc.flow.BuildOidcAuthorizationRequestContextAction" />
+
     <bean id="buildAuthenticationContextAction"
           class="net.shibboleth.idp.oidc.flow.BuildAuthenticationContextAction"
           p:authenticationPrincipalWeightMap-ref="shibboleth.AuthenticationPrincipalWeightMap"
@@ -65,10 +68,11 @@
           class="net.shibboleth.idp.oidc.config.ResolveAttributesProfileConfigPredicate" />
 
     <bean id="buildRelyingPartyContextAction"
-          class="net.shibboleth.idp.oidc.flow.BuildRelyingPartyContextAction"/>
+          class="net.shibboleth.idp.oidc.flow.BuildRelyingPartyContextAction"
+          p:profileConfiguration-ref="OIDC.LoginConfiguration"/>
 
     <bean id="buildSAMLMetadataContextAction"
-      class="net.shibboleth.idp.oidc.flow.BuildOpenIdConnectMetadataContextAction" />
+      class="net.shibboleth.idp.oidc.flow.BuildMetadataContextAction" />
 
     <bean id="selectProfileConfiguration"
           class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
@@ -111,7 +115,7 @@
     </bean>
 
     <bean id="loginConfigLookup"
-          class="net.shibboleth.idp.oidc.config.ConfigLookupFunction"
+          class="net.shibboleth.idp.oidc.flow.LoginConfigurationLookupFunction"
           c:clazz="net.shibboleth.idp.oidc.config.login.LoginConfiguration" />
 
     <bean id="subjectContextLookup"

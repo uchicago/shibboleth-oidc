@@ -215,15 +215,6 @@ public class OidcResponse {
     }
 
     /**
-     * Gets csrf.
-     *
-     * @return the csrf
-     */
-    public String getCsrf() {
-        return (String) authorizationRequest.getExtensions().get("csrf");
-    }
-
-    /**
      * Gets authorization request parameters.
      *
      * @return the authorization request parameters
