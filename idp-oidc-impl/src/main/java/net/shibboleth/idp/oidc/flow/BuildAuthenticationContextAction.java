@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.oidc.config.OidcConstants;
+import net.shibboleth.idp.oidc.config.OIDCConstants;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -17,6 +17,8 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +54,7 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         log.debug("{} Building authentication context", getLogPrefix());
         final AuthenticationContext ac = new AuthenticationContext();
 
-        final OidcAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OidcAuthorizationRequestContext.class);
+        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);
@@ -65,8 +67,8 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         }
 
         final List<Principal> principals = new ArrayList<>();
-        if (authorizationRequest.getExtensions().containsKey(OidcConstants.ACR_VALUES)) {
-            final String[] acrValues = authorizationRequest.getExtensions().get(OidcConstants.ACR_VALUES).toString().split(" ");
+        if (authorizationRequest.getExtensions().containsKey(OIDCConstants.ACR_VALUES)) {
+            final String[] acrValues = authorizationRequest.getExtensions().get(OIDCConstants.ACR_VALUES).toString().split(" ");
             for (final String acrValue : acrValues) {
                 final AuthnContextClassRefPrincipal requestedPrincipal = new AuthnContextClassRefPrincipal(acrValue.trim());
                 for (final AuthenticationFlowDescriptor flow : this.availableAuthenticationFlows) {
@@ -79,9 +81,10 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         }
 
         if (principals.isEmpty()) {
-            final AuthnContextClassRefPrincipal requestedPrincipal =
-                    new AuthnContextClassRefPrincipal("urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
-            principals.add(requestedPrincipal);
+            final AuthnContextClassRefPrincipal[] principalArray =
+                    this.authenticationPrincipalWeightMap.keySet().toArray(new AuthnContextClassRefPrincipal[]{});
+            Arrays.sort(principalArray, new WeightedComparator());
+            principals.add(principalArray[principalArray.length - 1]);
         }
 
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
@@ -93,5 +96,26 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         profileRequestContext.addSubcontext(ac, true);
         profileRequestContext.setBrowserProfile(true);
         return Events.Success.event(this);
+    }
+
+    /**
+     * A {@link Comparator} that compares the mapped weights of the two operands, using a weight of zero
+     * for any unmapped values.
+     */
+    private class WeightedComparator implements Comparator {
+
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            final int weight1 = authenticationPrincipalWeightMap.containsKey(o1) ? authenticationPrincipalWeightMap.get(o1) : 0;
+            final int weight2 = authenticationPrincipalWeightMap.containsKey(o2) ? authenticationPrincipalWeightMap.get(o2) : 0;
+            if (weight1 < weight2) {
+                return -1;
+            } else if (weight1 > weight2) {
+                return 1;
+            }
+
+            return 0;
+        }
+
     }
 }

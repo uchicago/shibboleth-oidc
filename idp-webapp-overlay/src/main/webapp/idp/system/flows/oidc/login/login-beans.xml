@@ -25,7 +25,7 @@
           class="net.shibboleth.idp.oidc.flow.CheckAuthenticationRequiredAction" />
 
     <bean id="buildOidcAuthorizationRequestContextAction"
-          class="net.shibboleth.idp.oidc.flow.BuildOidcAuthorizationRequestContextAction" />
+          class="net.shibboleth.idp.oidc.flow.BuildAuthorizationRequestContextAction" />
 
     <bean id="buildAuthenticationContextAction"
           class="net.shibboleth.idp.oidc.flow.BuildAuthenticationContextAction"

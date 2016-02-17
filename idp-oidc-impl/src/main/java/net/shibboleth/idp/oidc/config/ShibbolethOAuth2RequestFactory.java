@@ -25,11 +25,11 @@ public class ShibbolethOAuth2RequestFactory extends ConnectOAuth2RequestFactory 
     @Override
     public AuthorizationRequest createAuthorizationRequest(final Map<String, String> inputParams) {
         final AuthorizationRequest request = super.createAuthorizationRequest(inputParams);
-        if (inputParams.containsKey(OidcConstants.ACR_VALUES)) {
+        if (inputParams.containsKey(OIDCConstants.ACR_VALUES)) {
             try {
-                log.debug("Authorization request contains {}. Decoding and storing values into the request", OidcConstants.ACR_VALUES);
-                request.getExtensions().put(OidcConstants.ACR_VALUES,
-                        URLDecoder.decode(inputParams.get(OidcConstants.ACR_VALUES), "UTF-8"));
+                log.debug("Authorization request contains {}. Decoding and storing values into the request", OIDCConstants.ACR_VALUES);
+                request.getExtensions().put(OIDCConstants.ACR_VALUES,
+                        URLDecoder.decode(inputParams.get(OIDCConstants.ACR_VALUES), "UTF-8"));
             } catch (final Exception e) {
                 log.warn("Unable to decode acr_values in the authorization request", e);
             }

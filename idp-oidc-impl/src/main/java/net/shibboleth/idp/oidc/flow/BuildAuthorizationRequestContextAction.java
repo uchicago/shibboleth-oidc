@@ -9,6 +9,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.mitre.openid.connect.request.ConnectRequestParameters;
+import org.mitre.openid.connect.web.AuthenticationTimeStamper;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,8 @@ import java.util.Map;
 /**
  * Builds an oidc authZ context message from an incoming request.
  */
-public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileAction {
-    private final Logger log = LoggerFactory.getLogger(BuildOidcAuthorizationRequestContextAction.class);
+public class BuildAuthorizationRequestContextAction extends AbstractProfileAction {
+    private final Logger log = LoggerFactory.getLogger(BuildAuthorizationRequestContextAction.class);
 
     @Autowired
     private OAuth2RequestFactory authRequestFactory;
@@ -51,7 +52,7 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
     /**
      * Instantiates a new authentication context action.
      */
-    public BuildOidcAuthorizationRequestContextAction() {
+    public BuildAuthorizationRequestContextAction() {
     }
 
     @Nonnull
@@ -73,7 +74,10 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
             throw new RuntimeException("No client id is specified in the authorization request");
         }
 
-        final ClientDetailsEntity client = loadClientObject(authorizationRequest);
+        final OIDCAuthorizationRequestContext authZContext = new OIDCAuthorizationRequestContext();
+        authZContext.setAuthorizationRequest(authorizationRequest);
+
+        final ClientDetailsEntity client = loadClientObject(authZContext);
         if (!Strings.isNullOrEmpty(authorizationRequest.getRedirectUri())) {
             boolean found = false;
             final Iterator<String> it = client.getRedirectUris().iterator();
@@ -88,24 +92,26 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
         }
         log.debug("Found client {}.", client.getClientId());
 
-        processLoginHintParameterIfNeeded(request, authorizationRequest);
+
+        processLoginHintParameterIfNeeded(request, authZContext);
 
         Pair<Events, ? extends Object> pairEvent = new Pair<>(Events.Success, null);
         final String prompt = (String) authorizationRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
         if (prompt != null) {
             log.debug("Authorization request contains prompt {}", prompt);
-            pairEvent = checkForPrompts(prompt, request, client, authorizationRequest);
+            pairEvent = checkForPrompts(prompt, request, client, authZContext);
         } else if (authorizationRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE) != null ||
                 client.getDefaultMaxAge() != null) {
             log.debug("Authorization request or client configuration contains max age");
-            checkForMaxAge(request, client, authorizationRequest);
+            checkForMaxAge(request, client, authZContext);
         }
 
-        return produceFinalEvent(profileRequestContext, response, authorizationRequest, pairEvent);
+        return produceFinalEvent(profileRequestContext, response, authZContext, pairEvent);
     }
 
-    private Event produceFinalEvent(final ProfileRequestContext profileRequestContext, final HttpServletResponse response,
-                                    final AuthorizationRequest authorizationRequest,
+    private Event produceFinalEvent(final ProfileRequestContext profileRequestContext,
+                                    final HttpServletResponse response,
+                                    final OIDCAuthorizationRequestContext authorizationRequest,
                                     final Pair<Events, ? extends Object> pairEvent) {
 
         try {
@@ -128,9 +134,7 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
                     }
                 case Success:
                     log.debug("Proceeding with building the authorization context based on the request");
-                    final OidcAuthorizationRequestContext authZContext = new OidcAuthorizationRequestContext();
-                    authZContext.setAuthorizationRequest(authorizationRequest);
-                    profileRequestContext.addSubcontext(authZContext, true);
+                    profileRequestContext.addSubcontext(authorizationRequest, true);
                     break;
             }
             final Event ev = pairEvent.getFirst().event(this);
@@ -142,15 +146,16 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
         }
     }
 
-    private ClientDetailsEntity loadClientObject(final AuthorizationRequest authorizationRequest) {
+    private ClientDetailsEntity loadClientObject(final OIDCAuthorizationRequestContext authorizationRequest) {
         log.debug("Loading client by id {}", authorizationRequest.getClientId());
         return clientService.loadClientByClientId(authorizationRequest.getClientId());
     }
 
-    private void processLoginHintParameterIfNeeded(final HttpServletRequest request, final AuthorizationRequest authorizationRequest) {
-        final Object loginHint = authorizationRequest.getExtensions().get(ConnectRequestParameters.LOGIN_HINT);
+    private void processLoginHintParameterIfNeeded(final HttpServletRequest request,
+                                                   final OIDCAuthorizationRequestContext authorizationRequest) {
+        final Object loginHint = authorizationRequest.getLoginHint();
         if (loginHint != null) {
-            OidcUtils.setRequestParameter(request, ConnectRequestParameters.LOGIN_HINT, loginHint);
+            OidcUtils.putSessionAttribute(request, ConnectRequestParameters.LOGIN_HINT, loginHint);
             log.debug("Saved login hint {} into session", loginHint);
         } else {
             OidcUtils.removeSessionAttribute(request, ConnectRequestParameters.LOGIN_HINT);
@@ -170,15 +175,18 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
      * authentication session bound to spring security is too old, and if so,
      * it will clear it out.
      *
-     * @param request the request
+     * @param request     the request
+     * @param client      the client
+     * @param authRequest the auth request
      */
-    private void checkForMaxAge(final HttpServletRequest request, final ClientDetailsEntity client,
-                                final AuthorizationRequest authRequest) {
+    private void checkForMaxAge(final HttpServletRequest request,
+                                final ClientDetailsEntity client,
+                                final OIDCAuthorizationRequestContext authRequest) {
 
         Integer max = client != null ? client.getDefaultMaxAge() : null;
         log.debug("Client configuration set to max age {}", max);
 
-        final String maxAge = (String) authRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE);
+        final String maxAge = authRequest.getMaxAge();
         log.debug("Authorization request contains max age {}", maxAge);
         if (maxAge != null) {
             max = Integer.parseInt(maxAge);
@@ -186,7 +194,7 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
 
         if (max != null) {
             log.debug("Evaluated max age to use as {}", max);
-            final Date authTime = OidcUtils.getAuthenticationTimestamp(request);
+            final Date authTime = (Date) OidcUtils.getSessionAttribute(request, AuthenticationTimeStamper.AUTH_TIMESTAMP);
             log.debug("Authentication time set to {}", authTime);
             final Date now = new Date();
             if (authTime != null) {
@@ -213,7 +221,7 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
     private Pair<Events, ? extends Object> checkForPrompts(final String prompt,
                                                            final HttpServletRequest request,
                                                            final ClientDetailsEntity client,
-                                                           final AuthorizationRequest authRequest) {
+                                                           final OIDCAuthorizationRequestContext authRequest) {
 
         final List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
                 .splitToList(Strings.nullToEmpty(prompt));
@@ -229,7 +237,8 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
         return new Pair<>(Events.Success, null);
     }
 
-    private Pair<Events, ? extends Object> checkForNonePrompt(final ClientDetailsEntity client, final AuthorizationRequest authRequest) {
+    private Pair<Events, ? extends Object> checkForNonePrompt(final ClientDetailsEntity client,
+                                                              final OIDCAuthorizationRequestContext authRequest) {
         log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_NONE);
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -266,17 +275,17 @@ public class BuildOidcAuthorizationRequestContextAction extends AbstractProfileA
     private void checkForLoginPrompt(final HttpServletRequest request) {
         log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
 
-        if (OidcUtils.isRequestPrompted(request)) {
-            OidcUtils.setPromptRequested(request);
+        if (OidcUtils.getSessionAttribute(request, "PROMPT_FILTER_PROMPTED") != null) {
+            OidcUtils.putSessionAttribute(request, "PROMPT_FILTER_REQUESTED", Boolean.TRUE);
             final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null) {
-                SecurityContextHolder.getContext().setAuthentication(null);
+                SecurityContextHolder.clearContext();
                 log.debug("Cleared authentication {} from context. Proceeding with filter chain", auth.getName());
             } else {
                 log.debug("Authentication is not found in the context. Proceeding with filter chain");
             }
         } else {
-            OidcUtils.removeRequestPrompted(request);
+            OidcUtils.removeSessionAttribute(request, "PROMPT_FILTER_REQUESTED");
         }
     }
 

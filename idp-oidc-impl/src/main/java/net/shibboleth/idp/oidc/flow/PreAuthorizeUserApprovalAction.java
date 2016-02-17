@@ -9,7 +9,6 @@ import net.shibboleth.idp.oidc.client.userinfo.ShibbolethUserInfoService;
 import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationTokenFactory;
 import net.shibboleth.idp.oidc.util.OidcUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import org.apache.http.client.utils.URIBuilder;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.model.SystemScope;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
@@ -33,7 +32,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -78,7 +76,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
         this.userInfoService.initialize(profileRequestContext);
 
-        final OidcAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OidcAuthorizationRequestContext.class);
+        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);
@@ -118,8 +116,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
         storeSpringSecurityAuthenticationContext(profileRequestContext, springRequestContext);
 
-        final OidcResponse response = buildOpenIdConnectResponse(authRequest, client);
-        final OidcAuthorizationResponseContext responseContext = new OidcAuthorizationResponseContext();
+        final OIDCResponse response = buildOpenIdConnectResponse(authRequest, client);
+        final OIDCAuthorizationResponseContext responseContext = new OIDCAuthorizationResponseContext();
         responseContext.setOidcResponse(response);
         profileRequestContext.addSubcontext(responseContext);
         return Events.Proceed.event(this);
@@ -148,9 +146,9 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
      * @param client      the client
      * @return the open id connect response
      */
-    private OidcResponse buildOpenIdConnectResponse(final AuthorizationRequest authRequest,
+    private OIDCResponse buildOpenIdConnectResponse(final AuthorizationRequest authRequest,
                                                     final ClientDetailsEntity client) {
-        final OidcResponse response = new OidcResponse();
+        final OIDCResponse response = new OIDCResponse();
         response.setAuthorizationRequest(authRequest);
         response.setClient(client);
         response.setRedirectUri(authRequest.getRedirectUri());
@@ -273,7 +271,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                 log.debug("Added state value {}", authRequest.getState());
             }
 
-            final OidcResponse response = new OidcResponse();
+            final OIDCResponse response = new OIDCResponse();
 
             log.debug("Resolved redirect url {}", uriBuilder.toString());
             response.setRedirectUri(uriBuilder.toString());
@@ -281,7 +279,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             response.setClient(client);
             log.debug("Built initial response for client {} and redirect uri {}", client, authRequest.getRedirectUri());
 
-            final OidcAuthorizationResponseContext responseContext = new OidcAuthorizationResponseContext();
+            final OIDCAuthorizationResponseContext responseContext = new OIDCAuthorizationResponseContext();
             responseContext.setOidcResponse(response);
             profileRequestContext.addSubcontext(responseContext);
 

@@ -81,16 +81,19 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         final OAuth2AccessTokenEntity idTokenEntity = new OAuth2AccessTokenEntity();
         final JWTClaimsSet.Builder idClaims = new JWTClaimsSet.Builder();
 
-        if (request.getExtensions().containsKey("max_age")
-                || request.getExtensions().containsKey("idtoken")
-                || (client.getRequireAuthTime() != null && client.getRequireAuthTime())) {
+        if (request.getExtensions().containsKey("max_age") || request.getExtensions().containsKey("idtoken")
+                || client.getRequireAuthTime() != null) {
+
+            log.debug("Request max_age extension {}", request.getExtensions().get("max_age"));
+            log.debug("Request idtoken extension {}", request.getExtensions().get("idtoken"));
+            log.debug("Client require authN time {}", client.getRequireAuthTime());
 
             if (request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP) != null) {
 
                 final Long authTimestamp = Long.parseLong((String) request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP));
-                if (authTimestamp != null) {
-                    idClaims.claim("auth_time", authTimestamp / 1000L);
-                }
+                log.debug("Request contains authTimestamp extension {}",
+                        request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP));
+                idClaims.claim("auth_time", authTimestamp / 1000L);
             } else {
                 // we couldn't find the timestamp!
                 log.warn("Unable to find authentication timestamp! There is likely something wrong with the configuration.");

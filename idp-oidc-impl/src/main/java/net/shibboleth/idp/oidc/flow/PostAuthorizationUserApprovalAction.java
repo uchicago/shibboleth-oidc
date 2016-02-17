@@ -28,13 +28,13 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
             throw new RuntimeException("HttpServletRequest cannot be null");
         }
 
-        final OidcAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OidcAuthorizationRequestContext.class);
+        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);
         }
 
-        final OidcAuthorizationResponseContext responseCtx = profileRequestContext.getSubcontext(OidcAuthorizationResponseContext.class);
+        final OIDCAuthorizationResponseContext responseCtx = profileRequestContext.getSubcontext(OIDCAuthorizationResponseContext.class);
         if (responseCtx == null) {
             log.warn("No response context could be located in the profile request context");
             return Events.Failure.event(this);
@@ -56,7 +56,7 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
          * This is required for the authorization endpoint of Spring Security, as it needs
          * the authZ request to be a session attribute.
          */
-        request.getSession().setAttribute("authorizationRequest", authZContext.getAuthorizationRequest());
+        OidcUtils.putSessionAttribute(request, "authorizationRequest", authZContext.getAuthorizationRequest());
         return super.doExecute(springRequestContext, profileRequestContext);
     }
 }

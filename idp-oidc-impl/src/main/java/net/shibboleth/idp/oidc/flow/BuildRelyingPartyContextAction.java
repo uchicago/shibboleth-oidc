@@ -37,7 +37,7 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final OidcAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OidcAuthorizationRequestContext.class);
+        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);
