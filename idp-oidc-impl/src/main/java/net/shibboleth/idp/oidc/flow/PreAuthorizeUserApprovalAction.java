@@ -120,12 +120,14 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         }
         */
 
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         final Authentication authentication = SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);
         final HttpSession session = request.getSession();
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+        log.debug("Stored authentication [{}] into Spring security context", SecurityContextHolder.getContext().getAuthentication());
 
         final OidcResponse response = buildOpenIdConnectResponse(authRequest, client);
 

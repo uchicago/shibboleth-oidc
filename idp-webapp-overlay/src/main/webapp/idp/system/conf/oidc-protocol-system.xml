@@ -34,7 +34,7 @@
 
     <bean id="clientCredentialsEndpointFilter"
           class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter"
-            p:authenticationManager-ref="clientAssertionAuthenticationManager"
+            p:authenticationManager-ref="clientAuthenticationManager"
             p:requiresAuthenticationRequestMatcher-ref="clientAuthMatcher" />
 
     <bean id="clientAssertionEndpointFilter"

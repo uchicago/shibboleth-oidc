@@ -6,8 +6,9 @@
 
     <logger name="org.mitre" level="DEBUG"/>
 
-    <logger name="net.shibboleth.idp.oidc" level="DEBUG"/>
+    <logger name="org.bouncycastle" level="WARN"/>
 
+    <logger name="org.opensaml.saml" level="INFO"/>
 
     <!-- Logs OpenSAML, but not IdP, messages -->
     <logger name="org.opensaml.saml" level="INFO"/>
