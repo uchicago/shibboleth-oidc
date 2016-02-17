@@ -136,7 +136,6 @@ public class LoginConfiguration extends AbstractProfileConfiguration implements 
      *
      * @return true/false
      */
-    @Nonnull
     @NonnullElements
     @NotLive
     @Unmodifiable

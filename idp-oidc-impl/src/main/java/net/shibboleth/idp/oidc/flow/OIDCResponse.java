@@ -14,8 +14,7 @@ import java.util.Set;
  * Indicates the initial OpenIdConnect response that is send back to the
  * application when an access token is generated.
  */
-public class OidcResponse {
-
+public class OIDCResponse {
     /**
      * The Redirect uri.
      */
@@ -203,32 +202,5 @@ public class OidcResponse {
      */
     public void setRedirectUri(final String uri) {
         this.redirectUri = uri;
-    }
-
-    /**
-     * Sets authorization request parameters.
-     *
-     * @param parameters the parameters
-     */
-    public void setAuthorizationRequestParameters(final Map<String, String> parameters) {
-        authorizationRequestParameters = parameters;
-    }
-
-    /**
-     * Gets csrf.
-     *
-     * @return the csrf
-     */
-    public String getCsrf() {
-        return (String) authorizationRequest.getExtensions().get("csrf");
-    }
-
-    /**
-     * Gets authorization request parameters.
-     *
-     * @return the authorization request parameters
-     */
-    public Map<String, String> getAuthorizationRequestParameters() {
-        return authorizationRequestParameters;
     }
 }

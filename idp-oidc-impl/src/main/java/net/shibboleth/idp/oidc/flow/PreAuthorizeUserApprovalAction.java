@@ -1,6 +1,5 @@
 package net.shibboleth.idp.oidc.flow;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
@@ -8,16 +7,13 @@ import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.oidc.client.userinfo.ShibbolethUserInfoService;
 import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationTokenFactory;
-import net.shibboleth.idp.oidc.util.OidcUtils;
+import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
-import org.apache.http.client.utils.URIBuilder;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.model.SystemScope;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.mitre.oauth2.service.SystemScopeService;
 import org.mitre.openid.connect.model.UserInfo;
-import org.mitre.openid.connect.request.ConnectRequestParameters;
 import org.mitre.openid.connect.service.ScopeClaimTranslationService;
 import org.mitre.openid.connect.service.StatsService;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -36,11 +32,9 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,21 +75,24 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                               @Nonnull final ProfileRequestContext profileRequestContext) {
 
         this.userInfoService.initialize(profileRequestContext);
-        final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
 
-        if (request == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
+        if (authZContext == null) {
+            log.warn("No authorization request could be located in the profile request context");
+            return Events.Failure.event(this);
         }
 
-        final AuthorizationRequest authRequest = OidcUtils.getAuthorizationRequest(request);
+        final AuthorizationRequest authRequest = authZContext.getAuthorizationRequest();
         if (authRequest == null || Strings.isNullOrEmpty(authRequest.getClientId())) {
             log.warn("Authorization request could not be loaded from session");
             return Events.Failure.event(this);
         }
 
+        /*
         final String prompt = (String)authRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
         final List<String> prompts = Splitter.on(ConnectRequestParameters.PROMPT_SEPARATOR)
                 .splitToList(Strings.nullToEmpty(prompt));
+        */
 
         final ClientDetailsEntity client;
 
@@ -117,6 +114,22 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         }
         */
 
+        storeSpringSecurityAuthenticationContext(profileRequestContext, springRequestContext);
+
+        final OIDCResponse response = buildOpenIdConnectResponse(authRequest, client);
+        final OIDCAuthorizationResponseContext responseContext = new OIDCAuthorizationResponseContext();
+        responseContext.setOidcResponse(response);
+        profileRequestContext.addSubcontext(responseContext);
+        return Events.Proceed.event(this);
+    }
+
+    private void storeSpringSecurityAuthenticationContext(@Nonnull final ProfileRequestContext profileRequestContext,
+                                                          final RequestContext springRequestContext) {
+        final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
+        if (request == null) {
+            throw new RuntimeException("HttpServletRequest cannot be null");
+        }
+
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         final Authentication authentication = SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
         securityContext.setAuthentication(authentication);
@@ -124,26 +137,18 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         final HttpSession session = request.getSession();
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
         log.debug("Stored authentication [{}] into Spring security context", SecurityContextHolder.getContext().getAuthentication());
-
-        final OidcResponse response = buildOpenIdConnectResponse(authRequest, client);
-
-        OidcUtils.setResponse(springRequestContext, response);
-        OidcUtils.setAuthorizationRequest(request, authRequest,
-                OidcUtils.getAuthorizationRequestParameters(request));
-
-        return Events.Proceed.event(this);
     }
 
     /**
      * Build open id connect response.
      *
      * @param authRequest the auth request
-     * @param client the client
+     * @param client      the client
      * @return the open id connect response
      */
-    private OidcResponse buildOpenIdConnectResponse(final AuthorizationRequest authRequest,
+    private OIDCResponse buildOpenIdConnectResponse(final AuthorizationRequest authRequest,
                                                     final ClientDetailsEntity client) {
-        final OidcResponse response = new OidcResponse();
+        final OIDCResponse response = new OIDCResponse();
         response.setAuthorizationRequest(authRequest);
         response.setClient(client);
         response.setRedirectUri(authRequest.getRedirectUri());
@@ -237,17 +242,21 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         return sortedScopes;
     }
 
+
     /**
      * Handle the case when no prompt is present.
      *
      * @param springRequestContext the spring request context
-     * @param request the request
-     * @param authRequest the auth request
-     * @param client the client
+     * @param request              the request
+     * @param authRequest          the auth request
+     * @param client               the client
      * @return the event
      */
-    private Event handleWhenNoPromptIsPresent(@Nonnull final  RequestContext springRequestContext,
+
+    /*
+    private Event handleWhenNoPromptIsPresent(@Nonnull final RequestContext springRequestContext,
                                               @Nonnull final HttpServletRequest request,
+                                              @Nonnull final ProfileRequestContext profileRequestContext,
                                               @Nonnull final AuthorizationRequest authRequest,
                                               @Nonnull final ClientDetailsEntity client) {
         try {
@@ -262,7 +271,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                 log.debug("Added state value {}", authRequest.getState());
             }
 
-            final OidcResponse response = new OidcResponse();
+            final OIDCResponse response = new OIDCResponse();
 
             log.debug("Resolved redirect url {}", uriBuilder.toString());
             response.setRedirectUri(uriBuilder.toString());
@@ -270,8 +279,10 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             response.setClient(client);
             log.debug("Built initial response for client {} and redirect uri {}", client, authRequest.getRedirectUri());
 
-            OidcUtils.setResponse(springRequestContext, response);
-            OidcUtils.setAuthorizationRequest(request, authRequest, OidcUtils.getAuthorizationRequestParameters(request));
+            final OIDCAuthorizationResponseContext responseContext = new OIDCAuthorizationResponseContext();
+            responseContext.setOidcResponse(response);
+            profileRequestContext.addSubcontext(responseContext);
+
             return Events.Redirect.event(this);
 
         } catch (final URISyntaxException e) {
@@ -279,6 +290,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             return Events.BadRequest.event(this);
         }
     }
+    */
 
 }
 

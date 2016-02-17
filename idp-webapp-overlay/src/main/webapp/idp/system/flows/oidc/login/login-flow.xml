@@ -9,6 +9,7 @@
             <evaluate result="flowScope.hasAuthenticationContext" expression="false" />
         </on-entry>
         <evaluate expression="initializeProfileRequestContext"/>
+        <evaluate expression="initializeLoginAction" />
         <evaluate expression="populateClientStorageLoadContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="clientStorageLoad" />
@@ -21,8 +22,8 @@
     </subflow-state>
 
     <action-state id="continueLogin">
+        <evaluate expression="buildOidcAuthorizationRequestContextAction" />
         <evaluate expression="populateSessionContext"/>
-        <evaluate expression="initializeLoginAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
         <evaluate expression="buildSAMLMetadataContextAction" />
         <evaluate expression="selectRelyingPartyConfiguration" />

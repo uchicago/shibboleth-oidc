@@ -1,14 +1,10 @@
 package net.shibboleth.idp.oidc.flow;
 
-import net.shibboleth.idp.consent.context.impl.ConsentContext;
-import net.shibboleth.idp.consent.impl.Consent;
-import net.shibboleth.idp.oidc.util.OidcUtils;
+import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,24 +17,46 @@ import java.util.Map;
  * An action to handle the user approval/consent post authorization.
  */
 public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
-    private final Logger log = LoggerFactory.getLogger(PreAuthorizeUserApprovalAction.class);
+    private final Logger log = LoggerFactory.getLogger(PostAuthorizationUserApprovalAction.class);
 
     @Nonnull
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
+        final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
+        if (request == null) {
+            throw new RuntimeException("HttpServletRequest cannot be null");
+        }
 
-        final HttpServletRequest request = HttpServletRequestResponseContext.getRequest();
+        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
+        if (authZContext == null) {
+            log.warn("No authorization request could be located in the profile request context");
+            return Events.Failure.event(this);
+        }
+
+        final OIDCAuthorizationResponseContext responseCtx = profileRequestContext.getSubcontext(OIDCAuthorizationResponseContext.class);
+        if (responseCtx == null) {
+            log.warn("No response context could be located in the profile request context");
+            return Events.Failure.event(this);
+        }
+        final Object csrf = request.getAttribute("_csrf");
+        if (csrf == null) {
+            log.warn("CSRF attribute could not be found in the request");
+            return Events.Failure.event(this);
+        }
+
         final Map map = new HashMap<>();
-        map.put("_csrf", request.getAttribute("_csrf"));
-
-        final ConsentContext context = profileRequestContext.getSubcontext(ConsentContext.class);
-        final Map<String, Consent> attributes = context.getCurrentConsents();
-        final AuthorizationRequest authorizationRequest =
-                OidcUtils.getAuthorizationRequest(HttpServletRequestResponseContext.getRequest());
-        final OidcResponse response = OidcUtils.getResponse(springRequestContext);
-
+        map.put("_csrf", csrf);
         springRequestContext.getViewScope().put("postAuthorizationAttributes", map);
+        springRequestContext.getViewScope().put("authorizationRequest", authZContext.getAuthorizationRequest());
+        springRequestContext.getViewScope().put("oidcResponse", responseCtx.getOidcResponse());
+        springRequestContext.getViewScope().put("csrf", csrf);
+
+        /**
+         * This is required for the authorization endpoint of Spring Security, as it needs
+         * the authZ request to be a session attribute.
+         */
+        OIDCUtils.putSessionAttribute(request, "authorizationRequest", authZContext.getAuthorizationRequest());
         return super.doExecute(springRequestContext, profileRequestContext);
     }
 }

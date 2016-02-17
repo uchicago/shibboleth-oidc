@@ -15,7 +15,7 @@
         #foreach ($attribute in $postAuthorizationAttributes.entrySet())
             <input type="hidden" name="$attribute.key" value="$attribute.value.token" />
         #end
-        <input type="hidden" name="csrf" value="$oidcResponse.csrf" />
+        <input type="hidden" name="csrf" value="$csrf.token" />
         <input type="submit" value="Submit" />
 
     </fieldset>
