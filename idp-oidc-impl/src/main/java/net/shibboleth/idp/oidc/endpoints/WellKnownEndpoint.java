@@ -1,6 +1,6 @@
 package net.shibboleth.idp.oidc.endpoints;
 
-import net.shibboleth.idp.oidc.util.OidcUtils;
+import net.shibboleth.idp.oidc.util.OIDCUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +18,7 @@ public final class WellKnownEndpoint extends org.mitre.discovery.web.DiscoveryEn
     @RequestMapping(method= RequestMethod.GET)
     public String defaultEndpoint(final Model model) {
         final String view = super.providerConfiguration(model);
-        model.mergeAttributes(OidcUtils.buildOidcServerConfigurationModelForDiscovery(model));
+        model.mergeAttributes(OIDCUtils.buildOidcServerConfigurationModelForDiscovery(model));
         return view;
     }
 }

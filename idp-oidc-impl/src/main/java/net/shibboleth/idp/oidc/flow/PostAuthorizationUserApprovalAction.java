@@ -1,6 +1,6 @@
 package net.shibboleth.idp.oidc.flow;
 
-import net.shibboleth.idp.oidc.util.OidcUtils;
+import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
-        final HttpServletRequest request = OidcUtils.getHttpServletRequest(springRequestContext);
+        final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
             throw new RuntimeException("HttpServletRequest cannot be null");
         }
@@ -56,7 +56,7 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
          * This is required for the authorization endpoint of Spring Security, as it needs
          * the authZ request to be a session attribute.
          */
-        OidcUtils.putSessionAttribute(request, "authorizationRequest", authZContext.getAuthorizationRequest());
+        OIDCUtils.putSessionAttribute(request, "authorizationRequest", authZContext.getAuthorizationRequest());
         return super.doExecute(springRequestContext, profileRequestContext);
     }
 }

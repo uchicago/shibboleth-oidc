@@ -15,6 +15,7 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
+import net.shibboleth.idp.oidc.config.OIDCConstants;
 import org.mitre.jwt.encryption.service.JWTEncryptionAndDecryptionService;
 import org.mitre.jwt.signer.service.JWTSigningAndValidationService;
 import org.mitre.jwt.signer.service.impl.ClientKeyCacheService;
@@ -81,19 +82,20 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         final OAuth2AccessTokenEntity idTokenEntity = new OAuth2AccessTokenEntity();
         final JWTClaimsSet.Builder idClaims = new JWTClaimsSet.Builder();
 
-        if (request.getExtensions().containsKey("max_age") || request.getExtensions().containsKey("idtoken")
+        if (request.getExtensions().containsKey(OIDCConstants.MAX_AGE) || request.getExtensions().containsKey(OIDCConstants.ID_TOKEN)
                 || client.getRequireAuthTime() != null) {
 
-            log.debug("Request max_age extension {}", request.getExtensions().get("max_age"));
-            log.debug("Request idtoken extension {}", request.getExtensions().get("idtoken"));
+            log.debug("Request {} extension {}", OIDCConstants.MAX_AGE, request.getExtensions().get(OIDCConstants.MAX_AGE));
+            log.debug("Request {} extension {}", OIDCConstants.ID_TOKEN, request.getExtensions().get(OIDCConstants.ID_TOKEN));
             log.debug("Client require authN time {}", client.getRequireAuthTime());
 
             if (request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP) != null) {
 
                 final Long authTimestamp = Long.parseLong((String) request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP));
-                log.debug("Request contains authTimestamp extension {}",
+                log.debug("Request contains {} extension {}",
+                        AuthenticationTimeStamper.AUTH_TIMESTAMP,
                         request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP));
-                idClaims.claim("auth_time", authTimestamp / 1000L);
+                idClaims.claim(OIDCConstants.AUTH_TIME, authTimestamp / 1000L);
             } else {
                 // we couldn't find the timestamp!
                 log.warn("Unable to find authentication timestamp! There is likely something wrong with the configuration.");
@@ -108,13 +110,13 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
             log.debug("Evaluating authority {} of the authentication", authority);
             final AuthenticationClassRefAuthority acr = AuthenticationClassRefAuthority.getAuthenticationClassRefAuthority(authority);
             if (acr != null) {
-                idClaims.claim("acr", acr.getAuthority());
-                log.debug("Added acr claim as", acr.getAuthority());
+                idClaims.claim(OIDCConstants.ACR, acr.getAuthority());
+                log.debug("Added {} claim as", OIDCConstants.ACR, acr.getAuthority());
             }
             final AuthenticationMethodRefAuthority amr = AuthenticationMethodRefAuthority.getAuthenticationClassRefAuthority(authority);
             if (amr != null) {
-                idClaims.claim("amr", amr.getAuthority());
-                log.debug("Added amr claim as", amr.getAuthority());
+                idClaims.claim(OIDCConstants.AMR, amr.getAuthority());
+                log.debug("Added {} claim as", OIDCConstants.AMR, amr.getAuthority());
             }
         }
 
@@ -139,20 +141,20 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         log.debug("JWT id is set to {}", jwtId);
 
 
-        final String nonce = (String) request.getExtensions().get("nonce");
+        final String nonce = (String) request.getExtensions().get(OIDCConstants.NONCE);
         if (!Strings.isNullOrEmpty(nonce)) {
-            idClaims.claim("nonce", nonce);
-            log.debug("nonce is set to {}", nonce);
+            idClaims.claim(OIDCConstants.NONCE, nonce);
+            log.debug("{} is set to {}", OIDCConstants.NONCE, nonce);
         }
 
         final Set<String> responseTypes = request.getResponseTypes();
 
-        if (responseTypes.contains("token")) {
+        if (responseTypes.contains(OIDCConstants.TOKEN)) {
             // calculate the token hash
             final Base64URL at_hash = IdTokenHashUtils.getAccessTokenHash(signingAlg, accessToken);
-            idClaims.claim("at_hash", at_hash);
+            idClaims.claim(OIDCConstants.AT_HASH, at_hash);
 
-            log.debug("at_hash is set to {}", at_hash);
+            log.debug("{} is set to {}", OIDCConstants.AT_HASH, at_hash);
         }
 
         if (client.getIdTokenEncryptedResponseAlg() != null && !client.getIdTokenEncryptedResponseAlg().equals(Algorithm.NONE)
@@ -205,7 +207,7 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
                     signer.signJwt((SignedJWT) idToken);
                 } else {
 
-                    idClaims.claim("kid", jwtService.getDefaultSignerKeyId());
+                    idClaims.claim(OIDCConstants.KID, jwtService.getDefaultSignerKeyId());
                     log.debug("Client {} required a signed idToken with signing alg of {} and kid {}",
                             client.getClientId(), signingAlg, jwtService.getDefaultSignerKeyId());
 
@@ -243,16 +245,12 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
 
     @Override
     public OAuth2AccessTokenEntity createRegistrationAccessToken(final ClientDetailsEntity client) {
-
         return createAssociatedToken(client, Sets.newHashSet(SystemScopeService.REGISTRATION_TOKEN_SCOPE));
-
     }
 
     @Override
     public OAuth2AccessTokenEntity createResourceAccessToken(final ClientDetailsEntity client) {
-
         return createAssociatedToken(client, Sets.newHashSet(SystemScopeService.RESOURCE_TOKEN_SCOPE));
-
     }
 
     @Override
@@ -266,7 +264,6 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         } else {
             return null;
         }
-
     }
 
     private OAuth2AccessTokenEntity createAssociatedToken(final ClientDetailsEntity client, final Set<String> scope) {
@@ -319,21 +316,17 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         return configBean;
     }
 
-
     public void setConfigBean(final ConfigurationPropertiesBean configBean) {
         this.configBean = configBean;
     }
-
 
     public JWTSigningAndValidationService getJwtService() {
         return jwtService;
     }
 
-
     public void setJwtService(final JWTSigningAndValidationService jwtService) {
         this.jwtService = jwtService;
     }
-
 
     public AuthenticationHolderRepository getAuthenticationHolderRepository() {
         return authenticationHolderRepository;

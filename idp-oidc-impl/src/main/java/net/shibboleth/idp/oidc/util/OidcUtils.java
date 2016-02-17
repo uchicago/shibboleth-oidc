@@ -21,11 +21,11 @@ import java.util.Map;
  * OpenId Connect Utility methods that deal with setting and removing
  * session data.
  */
-public final class OidcUtils {
+public final class OIDCUtils {
     /**
      * Instantiates a new Open id connect utils.
      */
-    private OidcUtils() {
+    private OIDCUtils() {
     }
 
     /**

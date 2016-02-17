@@ -2,7 +2,7 @@ package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import net.shibboleth.idp.oidc.util.OidcUtils;
+import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import org.apache.http.client.utils.URIBuilder;
@@ -59,12 +59,12 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
-        final HttpServletRequest request = OidcUtils.getHttpServletRequest(springRequestContext);
+        final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
             throw new RuntimeException("HttpServletRequest cannot be null");
         }
 
-        final HttpServletResponse response = OidcUtils.getHttpServletResponse(springRequestContext);
+        final HttpServletResponse response = OIDCUtils.getHttpServletResponse(springRequestContext);
         if (response == null) {
             throw new RuntimeException("HttpServletRequest cannot be null");
         }
@@ -155,10 +155,10 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                                                    final OIDCAuthorizationRequestContext authorizationRequest) {
         final Object loginHint = authorizationRequest.getLoginHint();
         if (loginHint != null) {
-            OidcUtils.putSessionAttribute(request, ConnectRequestParameters.LOGIN_HINT, loginHint);
+            OIDCUtils.putSessionAttribute(request, ConnectRequestParameters.LOGIN_HINT, loginHint);
             log.debug("Saved login hint {} into session", loginHint);
         } else {
-            OidcUtils.removeSessionAttribute(request, ConnectRequestParameters.LOGIN_HINT);
+            OIDCUtils.removeSessionAttribute(request, ConnectRequestParameters.LOGIN_HINT);
             log.debug("Removed login hint attribute from session");
         }
     }
@@ -194,7 +194,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
 
         if (max != null) {
             log.debug("Evaluated max age to use as {}", max);
-            final Date authTime = (Date) OidcUtils.getSessionAttribute(request, AuthenticationTimeStamper.AUTH_TIMESTAMP);
+            final Date authTime = (Date) OIDCUtils.getSessionAttribute(request, AuthenticationTimeStamper.AUTH_TIMESTAMP);
             log.debug("Authentication time set to {}", authTime);
             final Date now = new Date();
             if (authTime != null) {
@@ -275,8 +275,8 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
     private void checkForLoginPrompt(final HttpServletRequest request) {
         log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
 
-        if (OidcUtils.getSessionAttribute(request, "PROMPT_FILTER_PROMPTED") != null) {
-            OidcUtils.putSessionAttribute(request, "PROMPT_FILTER_REQUESTED", Boolean.TRUE);
+        if (OIDCUtils.getSessionAttribute(request, "PROMPT_FILTER_PROMPTED") != null) {
+            OIDCUtils.putSessionAttribute(request, "PROMPT_FILTER_REQUESTED", Boolean.TRUE);
             final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null) {
                 SecurityContextHolder.clearContext();
@@ -285,7 +285,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                 log.debug("Authentication is not found in the context. Proceeding with filter chain");
             }
         } else {
-            OidcUtils.removeSessionAttribute(request, "PROMPT_FILTER_REQUESTED");
+            OIDCUtils.removeSessionAttribute(request, "PROMPT_FILTER_REQUESTED");
         }
     }
 
