@@ -27,6 +27,7 @@ public class ShibbolethOAuth2RequestFactory extends ConnectOAuth2RequestFactory 
         final AuthorizationRequest request = super.createAuthorizationRequest(inputParams);
         if (inputParams.containsKey(OidcConstants.ACR_VALUES)) {
             try {
+                log.debug("Authorization request contains {}. Decoding and storing values into the request", OidcConstants.ACR_VALUES);
                 request.getExtensions().put(OidcConstants.ACR_VALUES,
                         URLDecoder.decode(inputParams.get(OidcConstants.ACR_VALUES), "UTF-8"));
             } catch (final Exception e) {

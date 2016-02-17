@@ -1,9 +1,12 @@
 package net.shibboleth.idp.oidc.client.userinfo.authn;
 
+
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class SpringSecurityAuthenticationTokenFactory {
+    private static final Logger log = LoggerFactory.getLogger(SpringSecurityAuthenticationTokenFactory.class);
 
     public static Authentication buildAuthentication(final ProfileRequestContext profileRequestContext) {
         final SubjectContext principal = profileRequestContext.getSubcontext(SubjectContext.class);
@@ -37,16 +41,23 @@ public final class SpringSecurityAuthenticationTokenFactory {
         
         final AuthenticationContext authCtx = profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (authCtx != null) {
+            log.debug("Found an authentication context in the profile request context");
+
             final RequestedPrincipalContext principalContext = authCtx.getSubcontext(RequestedPrincipalContext.class);
             if (principalContext != null && principalContext.getMatchingPrincipal() != null) {
+                log.debug("Found an requested principal context context in the profile request context with matching principal {}",
+                        principalContext.getMatchingPrincipal().getName());
 
                 final AuthenticationClassRefAuthority authority = new AuthenticationClassRefAuthority(
                         principalContext.getMatchingPrincipal().getName());
+
+                log.debug("Adding authority {}", authority.getAuthority());
                 authorities.add(new SimpleGrantedAuthority(authority.toString()));
             }
             if (authCtx.getAuthenticationResult() != null) {
                 final AuthenticationMethodRefAuthority authority = new AuthenticationMethodRefAuthority(
                         authCtx.getAuthenticationResult().getAuthenticationFlowId());
+                log.debug("Adding authority {}", authority.getAuthority());
                 authorities.add(new SimpleGrantedAuthority(authority.toString()));
             }
         }
@@ -58,8 +69,11 @@ public final class SpringSecurityAuthenticationTokenFactory {
         final User user = new User(principal.getPrincipalName(), UUID.randomUUID().toString(),
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
 
+        log.debug("Created user details object for {} with authorities {}", user.getUsername(), user.getAuthorities());
+
         final SpringSecurityAuthenticationToken authenticationToken =
                 new SpringSecurityAuthenticationToken(profileRequestContext, authorities);
+        log.debug("Final authentication token authorities are {}", authorities);
 
         authenticationToken.setAuthenticated(true);
         authenticationToken.setDetails(user);
