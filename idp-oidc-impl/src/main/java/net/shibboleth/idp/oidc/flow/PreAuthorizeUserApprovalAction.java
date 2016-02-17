@@ -6,7 +6,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.oidc.client.userinfo.ShibbolethUserInfoService;
+import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationToken;
 import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationTokenFactory;
+import net.shibboleth.idp.oidc.config.OIDCConstants;
 import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.mitre.oauth2.model.ClientDetailsEntity;
@@ -114,8 +116,9 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         }
         */
 
-        storeSpringSecurityAuthenticationContext(profileRequestContext, springRequestContext);
-
+        final Authentication authentication = SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
+        storeSpringSecurityAuthenticationContext(profileRequestContext, springRequestContext, authentication);
+        storeAuthenticationTimeIntoAuthorizationRequest(authentication, authRequest);
         final OIDCResponse response = buildOpenIdConnectResponse(authRequest, client);
         final OIDCAuthorizationResponseContext responseContext = new OIDCAuthorizationResponseContext();
         responseContext.setOidcResponse(response);
@@ -123,15 +126,20 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         return Events.Proceed.event(this);
     }
 
+    private static void storeAuthenticationTimeIntoAuthorizationRequest(final Authentication authentication,
+                                                                 final AuthorizationRequest authRequest) {
+        authRequest.getExtensions().put(OIDCConstants.AUTH_TIME,
+                ((SpringSecurityAuthenticationToken) authentication).getAuthenticationDateTime().getMillis());
+    }
+
     private void storeSpringSecurityAuthenticationContext(@Nonnull final ProfileRequestContext profileRequestContext,
-                                                          final RequestContext springRequestContext) {
+                                                          final RequestContext springRequestContext, final Authentication authentication) {
         final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
             throw new RuntimeException("HttpServletRequest cannot be null");
         }
 
         final SecurityContext securityContext = SecurityContextHolder.getContext();
-        final Authentication authentication = SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);
         final HttpSession session = request.getSession();

@@ -3,6 +3,8 @@ package net.shibboleth.idp.oidc.client.userinfo.authn;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.session.context.SessionContext;
+import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,9 +30,10 @@ public final class SpringSecurityAuthenticationToken extends AbstractAuthenticat
     public Object getCredentials() {
         final AuthenticationContext ctx = profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (ctx != null) {
-            return ctx.getSubcontext(UsernamePasswordContext.class);
+            return ctx.getSubcontext(UsernamePasswordContext.class).getUsername();
         }
-        return null;
+        final SubjectContext sub = profileRequestContext.getSubcontext(SubjectContext.class);
+        return sub.getPrincipalName();
     }
 
     @Override
@@ -48,5 +51,16 @@ public final class SpringSecurityAuthenticationToken extends AbstractAuthenticat
         return profileRequestContext;
     }
 
+    public DateTime getAuthenticationDateTime() {
+        final AuthenticationContext ctx = profileRequestContext.getSubcontext(AuthenticationContext.class);
+        if (ctx != null && ctx.getAuthenticationResult() != null) {
+            return new DateTime(ctx.getAuthenticationResult().getAuthenticationInstant());
+        }
+        final SessionContext ctxSession = profileRequestContext.getSubcontext(SessionContext.class);
+        if (ctxSession != null && ctxSession.getIdPSession() != null) {
+            return new DateTime(ctxSession.getIdPSession().getCreationInstant());
+        }
+        throw new RuntimeException("Could not determine authentication time based on authentication or session context");
+    }
 
 }

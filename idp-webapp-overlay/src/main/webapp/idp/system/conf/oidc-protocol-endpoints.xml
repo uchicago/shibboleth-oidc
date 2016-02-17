@@ -110,7 +110,7 @@
     </security:http>
 
     <security:http disable-url-rewriting="true" use-expressions="true" entry-point-ref="loginUrlEntryPoint">
-        <security:form-login authentication-success-handler-ref="authenticationTimeStamper" />
+        <security:form-login />
         <security:csrf />
         <security:expression-handler ref="oauthWebExpressionHandler" />
     </security:http>

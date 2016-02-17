@@ -29,7 +29,6 @@ import org.mitre.oauth2.service.SystemScopeService;
 import org.mitre.openid.connect.config.ConfigurationPropertiesBean;
 import org.mitre.openid.connect.service.OIDCTokenService;
 import org.mitre.openid.connect.util.IdTokenHashUtils;
-import org.mitre.openid.connect.web.AuthenticationTimeStamper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,25 +81,14 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         final OAuth2AccessTokenEntity idTokenEntity = new OAuth2AccessTokenEntity();
         final JWTClaimsSet.Builder idClaims = new JWTClaimsSet.Builder();
 
-        if (request.getExtensions().containsKey(OIDCConstants.MAX_AGE) || request.getExtensions().containsKey(OIDCConstants.ID_TOKEN)
-                || client.getRequireAuthTime() != null) {
+        log.debug("Request {} extension {}", OIDCConstants.MAX_AGE, request.getExtensions().get(OIDCConstants.MAX_AGE));
+        log.debug("Request {} extension {}", OIDCConstants.ID_TOKEN, request.getExtensions().get(OIDCConstants.ID_TOKEN));
+        log.debug("Client require authN time {}", client.getRequireAuthTime());
 
-            log.debug("Request {} extension {}", OIDCConstants.MAX_AGE, request.getExtensions().get(OIDCConstants.MAX_AGE));
-            log.debug("Request {} extension {}", OIDCConstants.ID_TOKEN, request.getExtensions().get(OIDCConstants.ID_TOKEN));
-            log.debug("Client require authN time {}", client.getRequireAuthTime());
-
-            if (request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP) != null) {
-
-                final Long authTimestamp = Long.parseLong((String) request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP));
-                log.debug("Request contains {} extension {}",
-                        AuthenticationTimeStamper.AUTH_TIMESTAMP,
-                        request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP));
-                idClaims.claim(OIDCConstants.AUTH_TIME, authTimestamp / 1000L);
-            } else {
-                // we couldn't find the timestamp!
-                log.warn("Unable to find authentication timestamp! There is likely something wrong with the configuration.");
-            }
-        }
+        final long authTime = Long.parseLong(request.getExtensions().get(OIDCConstants.AUTH_TIME).toString()) / 1000;
+        log.debug("Request contains {} extension. {} set to {}",
+                OIDCConstants.MAX_AGE, OIDCConstants.AUTH_TIME, authTime);
+        idClaims.claim(OIDCConstants.AUTH_TIME, authTime);
 
         idClaims.issueTime(issueTime);
 
