@@ -7,11 +7,13 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.impl.ConsentContext;
 import net.shibboleth.idp.consent.impl.Consent;
-import net.shibboleth.idp.oidc.config.userinfo.ShibbolethUserInfo;
 import org.mitre.openid.connect.model.DefaultAddress;
+import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.mitre.openid.connect.model.UserInfo;
 import org.mitre.openid.connect.repository.UserInfoRepository;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Repository;
@@ -21,6 +23,7 @@ import java.util.Map;
 @Repository("shibbolethUserInfoRepository")
 @Primary
 public class ShibbolethUserInfoRepository implements UserInfoRepository {
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private ProfileRequestContext profileRequestContext;
 
@@ -47,16 +50,24 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
         if (principal == null || principal.getPrincipalName() == null) {
             throw new InsufficientAuthenticationException("No SubjectContext found in the profile request context");
         }
-        final ShibbolethUserInfo userInfo = new ShibbolethUserInfo();
+        final DefaultUserInfo userInfo = new DefaultUserInfo();
         userInfo.setPreferredUsername(principal.getPrincipalName());
+        log.debug("Setting preferred username to {}", principal.getPrincipalName());
 
         if (getAttributeReleaseContext() != null) {
+            log.debug("Found attribute release context. Locating consentable attributes...");
+
             final Map<String, IdPAttribute> consentableAttributes = getAttributeReleaseContext().getConsentableAttributes();
+            log.debug("Consentable attributes are {}", consentableAttributes.keySet());
+
             for (final String attributeKey : consentableAttributes.keySet()) {
                 final IdPAttribute attribute = consentableAttributes.get(attributeKey);
+                log.debug("Processing userinfo claim for attribute {}", attributeKey);
 
                 final boolean releaseAttribute = getConsentContext() == null || consentedToAttributeRelease(attribute);
                 if (releaseAttribute) {
+                    log.debug("Attribute {} is authorized for release. Mapping...", attribute.getId());
+
                     switch (attribute.getId()) {
                         case "sub":
                             userInfo.setSub(getAttributeValue(attribute).getValue().toString());
@@ -127,11 +138,12 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
             }
         }
 
+        log.debug("Final userinfo object constructed from attributes is\n {}", userInfo.toJson());
         return userInfo;
     }
 
     protected IdPAttributeValue<?> getAttributeValue(final IdPAttribute attribute) {
-        if (attribute.getValues().size() > 0) {
+        if (!attribute.getValues().isEmpty()) {
             return attribute.getValues().get(0);
         }
         return new EmptyAttributeValue(EmptyAttributeValue.EmptyType.NULL_VALUE);
