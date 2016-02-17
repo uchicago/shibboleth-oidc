@@ -21,4 +21,8 @@ public interface OIDCConstants {
     String AT_HASH = "at_hash";
 
     String KID = "kid";
+
+    String ROLE_USER = "ROLE_USER";
+
+    String ROLE_CLIENT = "ROLE_CLIENT";
 }

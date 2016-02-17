@@ -4,6 +4,7 @@ package net.shibboleth.idp.oidc.client.userinfo.authn;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.oidc.config.OIDCConstants;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public final class SpringSecurityAuthenticationTokenFactory {
          * locate and reconstruct the actual instance.
          */
         final Set<GrantedAuthority> authorities = new LinkedHashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        authorities.add(new SimpleGrantedAuthority(OIDCConstants.ROLE_USER));
         
         final AuthenticationContext authCtx = profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (authCtx != null) {
@@ -67,7 +68,7 @@ public final class SpringSecurityAuthenticationTokenFactory {
          * object that is combined, when codes are asking to create access tokens.
          */
         final User user = new User(principal.getPrincipalName(), UUID.randomUUID().toString(),
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+                Collections.singleton(new SimpleGrantedAuthority(OIDCConstants.ROLE_USER)));
 
         log.debug("Created user details object for {} with authorities {}", user.getUsername(), user.getAuthorities());
 

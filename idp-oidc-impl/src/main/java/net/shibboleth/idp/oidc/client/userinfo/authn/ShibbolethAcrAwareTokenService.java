@@ -278,7 +278,7 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
 
         final Map<String, String> authorizationParameters = Maps.newHashMap();
         final OAuth2Request clientAuth = new OAuth2Request(authorizationParameters, client.getClientId(),
-                Sets.newHashSet(new SimpleGrantedAuthority("ROLE_CLIENT")), true,
+                Sets.newHashSet(new SimpleGrantedAuthority(OIDCConstants.ROLE_CLIENT)), true,
                 scope, null, null, null, null);
         final OAuth2Authentication authentication = new OAuth2Authentication(clientAuth, null);
 
