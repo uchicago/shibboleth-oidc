@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 
 public class OIDCAuthorizationRequestContext extends BaseContext {
 
+    private boolean forceAuthentication;
+
     @Nonnull
     private AuthorizationRequest authorizationRequest;
 
@@ -52,5 +54,13 @@ public class OIDCAuthorizationRequestContext extends BaseContext {
 
     public String getState() {
         return this.authorizationRequest.getState();
+    }
+
+    public boolean isForceAuthentication() {
+        return forceAuthentication;
+    }
+
+    public void setForceAuthentication(final boolean forceAuthentication) {
+        this.forceAuthentication = forceAuthentication;
     }
 }

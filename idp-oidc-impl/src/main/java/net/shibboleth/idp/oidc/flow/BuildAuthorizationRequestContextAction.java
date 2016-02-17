@@ -9,7 +9,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.mitre.openid.connect.request.ConnectRequestParameters;
-import org.mitre.openid.connect.web.AuthenticationTimeStamper;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -100,10 +98,6 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         if (prompt != null) {
             log.debug("Authorization request contains prompt {}", prompt);
             pairEvent = checkForPrompts(prompt, request, client, authZContext);
-        } else if (authorizationRequest.getExtensions().get(ConnectRequestParameters.MAX_AGE) != null ||
-                client.getDefaultMaxAge() != null) {
-            log.debug("Authorization request or client configuration contains max age");
-            checkForMaxAge(request, client, authZContext);
         }
 
         return produceFinalEvent(profileRequestContext, response, authZContext, pairEvent);
@@ -167,44 +161,6 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         log.debug("Constructing authorization request");
         final Map<String, String> requestParameters = createRequestMap(request.getParameterMap());
         return authRequestFactory.createAuthorizationRequest(requestParameters);
-    }
-
-    /**
-     * Check for max age. Determines max-age either from client configuration
-     * or from the authorization request. Tries to figure out if an existing
-     * authentication session bound to spring security is too old, and if so,
-     * it will clear it out.
-     *
-     * @param request     the request
-     * @param client      the client
-     * @param authRequest the auth request
-     */
-    private void checkForMaxAge(final HttpServletRequest request,
-                                final ClientDetailsEntity client,
-                                final OIDCAuthorizationRequestContext authRequest) {
-
-        Integer max = client != null ? client.getDefaultMaxAge() : null;
-        log.debug("Client configuration set to max age {}", max);
-
-        final String maxAge = authRequest.getMaxAge();
-        log.debug("Authorization request contains max age {}", maxAge);
-        if (maxAge != null) {
-            max = Integer.parseInt(maxAge);
-        }
-
-        if (max != null) {
-            log.debug("Evaluated max age to use as {}", max);
-            final Date authTime = (Date) OIDCUtils.getSessionAttribute(request, AuthenticationTimeStamper.AUTH_TIMESTAMP);
-            log.debug("Authentication time set to {}", authTime);
-            final Date now = new Date();
-            if (authTime != null) {
-                final long seconds = (now.getTime() - authTime.getTime()) / 1000;
-                if (seconds > max) {
-                    log.debug("Authentication is too old: {}. Clearing authentication context", authTime);
-                    SecurityContextHolder.getContext().setAuthentication(null);
-                }
-            }
-        }
     }
 
     /**

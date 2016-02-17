@@ -7,9 +7,11 @@ import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.oidc.config.OIDCConstants;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -31,6 +33,9 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
     private List<AuthenticationFlowDescriptor> availableAuthenticationFlows;
 
     private Map<AuthnContextClassRefPrincipal, Integer> authenticationPrincipalWeightMap;
+
+    @Autowired
+    private ClientDetailsEntityService clientService;
 
     /**
      * Instantiates a new authentication context action.
@@ -54,6 +59,7 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         log.debug("{} Building authentication context", getLogPrefix());
         final AuthenticationContext ac = new AuthenticationContext();
 
+
         final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
@@ -65,6 +71,8 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
             log.warn("Authorization request could not be loaded from session");
             return Events.Failure.event(this);
         }
+
+        ac.setForceAuthn(authZContext.isForceAuthentication());
 
         final List<Principal> principals = new ArrayList<>();
         if (authorizationRequest.getExtensions().containsKey(OIDCConstants.ACR_VALUES)) {
@@ -97,6 +105,7 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         profileRequestContext.setBrowserProfile(true);
         return Events.Success.event(this);
     }
+
 
     /**
      * A {@link Comparator} that compares the mapped weights of the two operands, using a weight of zero
