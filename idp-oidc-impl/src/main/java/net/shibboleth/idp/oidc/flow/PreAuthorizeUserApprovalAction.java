@@ -48,9 +48,6 @@ import java.util.Set;
  * Prepares the webflow response for the approval/consent view.
  */
 public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
-
-
-
     private final Logger log = LoggerFactory.getLogger(PreAuthorizeUserApprovalAction.class);
 
     @Autowired
@@ -120,7 +117,6 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         }
         */
 
-        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         final Authentication authentication = SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
         securityContext.setAuthentication(authentication);
@@ -152,14 +148,19 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         response.setClient(client);
         response.setRedirectUri(authRequest.getRedirectUri());
 
+        log.debug("Built initial response for client {} and redirect uri {}", client, authRequest.getRedirectUri());
+
         // pre-process the scopes
         final Set<SystemScope> scopes = scopeService.fromStrings(authRequest.getScope());
+        log.debug("System scopes retrieved based on the authorization request scope {} are {}", authRequest.getScope(), scopes);
 
         final Set<SystemScope> sortedScopes = getSystemScopes(scopes);
         response.setScopes(sortedScopes);
+        log.debug("Response will contain the following scopes", sortedScopes);
 
         final Map<String, Map<String, String>> claimsForScopes = getUserInfoClaimsForScopes(sortedScopes);
         response.setClaims(claimsForScopes);
+        log.debug("Response will contain the following claims for scopes", claimsForScopes.keySet());
 
         // client stats
         final Integer count = statsService.getCountForClientId(client.getId());
@@ -189,20 +190,26 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         final SubjectContext context = (SubjectContext) authentication.getPrincipal();
 
         final UserInfo user = userInfoService.getByUsername(context.getPrincipalName());
+        log.debug("Located UserInfo object from principal name {}", context.getPrincipalName());
+
         final Map<String, Map<String, String>> claimsForScopes = new HashMap<>();
         if (user != null) {
             final JsonObject userJson = user.toJson();
+            log.debug("UserInfo translated to JSON is:\n{}", userJson);
 
             for (final SystemScope systemScope : sortedScopes) {
                 final Map<String, String> claimValues = new HashMap<>();
 
                 final Set<String> claims = scopeClaimTranslationService.getClaimsForScope(systemScope.getValue());
+                log.debug("Processing system scope {} for the following claims: {}", systemScope.getValue(), claims);
                 for (final String claim : claims) {
                     final JsonElement element = userJson.get(claim);
                     if (userJson.has(claim) && element.isJsonPrimitive()) {
                         claimValues.put(claim, element.getAsString());
+                        log.debug("Added claim {} with value {}", claim, element.getAsString());
                     }
                 }
+                log.debug("Final claims for system scope {} are", systemScope.getValue(), claimValues);
                 claimsForScopes.put(systemScope.getValue(), claimValues);
             }
         }
@@ -252,19 +259,19 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
             uriBuilder.addParameter("error", "interaction_required");
             if (!Strings.isNullOrEmpty(authRequest.getState())) {
                 uriBuilder.addParameter("state", authRequest.getState());
+                log.debug("Added state value {}", authRequest.getState());
             }
 
             final OidcResponse response = new OidcResponse();
 
             log.debug("Resolved redirect url {}", uriBuilder.toString());
             response.setRedirectUri(uriBuilder.toString());
-
             response.setAuthorizationRequest(authRequest);
             response.setClient(client);
+            log.debug("Built initial response for client {} and redirect uri {}", client, authRequest.getRedirectUri());
 
             OidcUtils.setResponse(springRequestContext, response);
-            OidcUtils.setAuthorizationRequest(request, authRequest,
-                    OidcUtils.getAuthorizationRequestParameters(request));
+            OidcUtils.setAuthorizationRequest(request, authRequest, OidcUtils.getAuthorizationRequestParameters(request));
             return Events.Redirect.event(this);
 
         } catch (final URISyntaxException e) {

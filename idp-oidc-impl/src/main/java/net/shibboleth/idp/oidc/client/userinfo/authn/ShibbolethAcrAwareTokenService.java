@@ -48,7 +48,7 @@ import java.util.UUID;
 @Primary
 @Component("shibbolethAcrAwareTokenService")
 public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
-    private static final Logger logger = LoggerFactory.getLogger(ShibbolethAcrAwareTokenService.class);
+    private static final Logger log = LoggerFactory.getLogger(ShibbolethAcrAwareTokenService.class);
 
     @Autowired
     private JWTSigningAndValidationService jwtService;
@@ -82,7 +82,7 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         final JWTClaimsSet.Builder idClaims = new JWTClaimsSet.Builder();
 
         if (request.getExtensions().containsKey("max_age")
-                || (request.getExtensions().containsKey("idtoken"))
+                || request.getExtensions().containsKey("idtoken")
                 || (client.getRequireAuthTime() != null && client.getRequireAuthTime())) {
 
             if (request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP) != null) {
@@ -93,7 +93,7 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
                 }
             } else {
                 // we couldn't find the timestamp!
-                logger.warn("Unable to find authentication timestamp! There is likely something wrong with the configuration.");
+                log.warn("Unable to find authentication timestamp! There is likely something wrong with the configuration.");
             }
         }
 
@@ -102,13 +102,16 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         final OAuth2Authentication authN = accessToken.getAuthenticationHolder().getAuthentication();
         final Collection<GrantedAuthority> authorities = authN.getAuthorities();
         for (final GrantedAuthority authority : authorities) {
+            log.debug("Evaluating authority {} of the authentication", authority);
             final AuthenticationClassRefAuthority acr = AuthenticationClassRefAuthority.getAuthenticationClassRefAuthority(authority);
             if (acr != null) {
                 idClaims.claim("acr", acr.getAuthority());
+                log.debug("Added acr claim as", acr.getAuthority());
             }
             final AuthenticationMethodRefAuthority amr = AuthenticationMethodRefAuthority.getAuthenticationClassRefAuthority(authority);
             if (amr != null) {
                 idClaims.claim("amr", amr.getAuthority());
+                log.debug("Added amr claim as", amr.getAuthority());
             }
         }
 
@@ -116,17 +119,27 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
             final Date expiration = new Date(System.currentTimeMillis() + (client.getIdTokenValiditySeconds() * 1000L));
             idClaims.expirationTime(expiration);
             idTokenEntity.setExpiration(expiration);
+            log.debug("Claim expiration is set to {}", expiration);
         }
 
         idClaims.issuer(configBean.getIssuer());
+        log.debug("issuer is set to {}", configBean.getIssuer());
+
         idClaims.subject(sub);
+        log.debug("sub is set to {}", sub);
+
         idClaims.audience(Lists.newArrayList(client.getClientId()));
-        idClaims.jwtID(UUID.randomUUID().toString()); // set a random NONCE in the middle of it
+        log.debug("audience is set to {}", client.getClientId());
+
+        final String jwtId = UUID.randomUUID().toString();
+        idClaims.jwtID(jwtId); // set a random NONCE in the middle of it
+        log.debug("JWT id is set to {}", jwtId);
 
 
         final String nonce = (String) request.getExtensions().get("nonce");
         if (!Strings.isNullOrEmpty(nonce)) {
             idClaims.claim("nonce", nonce);
+            log.debug("nonce is set to {}", nonce);
         }
 
         final Set<String> responseTypes = request.getResponseTypes();
@@ -135,31 +148,40 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
             // calculate the token hash
             final Base64URL at_hash = IdTokenHashUtils.getAccessTokenHash(signingAlg, accessToken);
             idClaims.claim("at_hash", at_hash);
+
+            log.debug("at_hash is set to {}", at_hash);
         }
 
         if (client.getIdTokenEncryptedResponseAlg() != null && !client.getIdTokenEncryptedResponseAlg().equals(Algorithm.NONE)
                 && client.getIdTokenEncryptedResponseEnc() != null && !client.getIdTokenEncryptedResponseEnc().equals(Algorithm.NONE)
                 && (!Strings.isNullOrEmpty(client.getJwksUri()) || client.getJwks() != null)) {
 
+            log.debug("Locating encrypter service for client {}", client.getClientId());
             final JWTEncryptionAndDecryptionService encrypter = encrypters.getEncrypter(client);
 
             if (encrypter != null) {
 
+                log.debug("Found encrypter service for client {}.", client.getClientId());
+                final JWTClaimsSet claims = idClaims.build();
                 final EncryptedJWT idToken = new EncryptedJWT(new JWEHeader(client.getIdTokenEncryptedResponseAlg(),
-                        client.getIdTokenEncryptedResponseEnc()), idClaims.build());
+                        client.getIdTokenEncryptedResponseEnc()), claims);
 
+                log.debug("Encrypting idToken with response alg {} and response encoding {} and claims {}",
+                        client.getIdTokenEncryptedResponseAlg(), client.getIdTokenEncryptedResponseEnc(), claims.getClaims().keySet());
                 encrypter.encryptJwt(idToken);
                 idTokenEntity.setJwt(idToken);
             } else {
-                logger.error("Couldn't find encrypter for client: " + client.getClientId());
+                log.error("Couldn't find encrypter for client: {} ", client.getClientId());
             }
         } else {
+
+            log.debug("Client {} is configured to ignore encryption", client.getClientId());
 
             final JWT idToken;
             if (signingAlg.equals(Algorithm.NONE)) {
                 // unsigned ID token
                 idToken = new PlainJWT(idClaims.build());
-
+                log.debug("Client {} is configured to use an unsigned idToken", client.getClientId());
             } else {
 
                 // signed ID token
@@ -168,6 +190,7 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
                         || signingAlg.equals(JWSAlgorithm.HS384)
                         || signingAlg.equals(JWSAlgorithm.HS512)) {
 
+                    log.debug("Client {} required a signed idToken with signing alg of {}", client.getClientId(), signingAlg);
                     final JWSHeader header = new JWSHeader(signingAlg, null, null, null, null, null, null, null, null, null,
                             jwtService.getDefaultSignerKeyId(),
                             null, null);
@@ -178,13 +201,19 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
                     // sign it with the client's secret
                     signer.signJwt((SignedJWT) idToken);
                 } else {
+
                     idClaims.claim("kid", jwtService.getDefaultSignerKeyId());
+                    log.debug("Client {} required a signed idToken with signing alg of {} and kid {}",
+                            client.getClientId(), signingAlg, jwtService.getDefaultSignerKeyId());
 
                     final JWSHeader header = new JWSHeader(signingAlg, null, null, null, null, null, null, null, null, null,
                             jwtService.getDefaultSignerKeyId(),
                             null, null);
 
                     idToken = new SignedJWT(header, idClaims.build());
+
+                    log.debug("Using the default signer service to sign the idToken. Default signing alg is {}",
+                            jwtService.getDefaultSigningAlgorithm());
 
                     // sign it with the server's key
                     jwtService.signJwt((SignedJWT) idToken);
@@ -195,11 +224,13 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
             idTokenEntity.setJwt(idToken);
         }
 
+        log.debug("Mapping the idToken to the authentication of client {}", accessToken.getAuthenticationHolder().getClientId());
         idTokenEntity.setAuthenticationHolder(accessToken.getAuthenticationHolder());
 
         // create a scope set with just the special "id-token" scope
         final Set<String> idScopes = Sets.newHashSet(SystemScopeService.ID_TOKEN_SCOPE);
         idTokenEntity.setScope(idScopes);
+        log.debug("Configured scopes for the idToken scope {} are {}", SystemScopeService.ID_TOKEN_SCOPE, idScopes);
 
         idTokenEntity.setClient(accessToken.getClient());
 
