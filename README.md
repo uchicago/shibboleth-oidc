@@ -37,9 +37,10 @@ The following may be considered in future versions:
 * Web UIs that facilitate managing tokens, whitelisted/blacklisted RPs, etc. 
 
 ### Toolkit
+- Apache Maven v3.3+
+- JDK 7+
 - [MITREid Connect](https://github.com/mitreid-connect/) handles the OIDC implementation.
 - [Shibboleth Identity Provider v3.2.1](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
-- JDK 7
 - [Modified test client application from MITREid Connect](https://github.com/mmoayyed/simple-web-app)
 
 ## Design
@@ -136,6 +137,61 @@ This extension supports the `max_age` and `auth_time` claims. If `max_age` is pr
 Since MITREid Connect's support for these claims is stricyly tied to an authentication that is very much handled by Spring Security, a custom service is provided by this extension to handle the production of `max_age` and `auth_time`. 
 
 ## Default IdP Configuration 
+Follow the below steps if you wish to enable this extension inside a vanilla IdP v3 deployment. 
+
+### Build
+
+```bash
+git clone git@github.com:uchicago/shibboleth-oidc.git
+```
+
+Or download [a zip distribution](https://github.com/uchicago/shibboleth-oidc/archive/master.zip).
+
+Build the codebase via:
+
+```bash
+./mvnw clean install -P new
+```
+
+### Cross Examine Changes
+
+Unzip the `target/idp.war` artifact into an `idp-temp`. This will be used as a reference to copy configuration into your IdP deployment.
+
+- Cross examine the `idp-temp/WEB-INF.xml` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/login.vm` and `idp-temp/idp/intercept/attribute-release.vm` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/system/conf/global-system.xml` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/system/conf/webflow-config.xml` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/system/conf/mvc-beans.xml` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/conf/idp.properties` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/conf/attribute-resolver.xml` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/conf/attribute-filter.xml` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/conf/relying-party.xml` with your IdP and apply all differences. 
+
+### Copy Configuration
+
+- Copy `idp-temp/idp/conf/oidc.properties`, `idp-temp/idp/conf/oidc-protocol.xml` and `idp-temp/idp/conf/schema.sql` into `$IDP_HOME/conf`
+- Copy `idp-temp/idp/credentials/keystore.jwks` into `$IDP_HOME/credentials`
+- Copy `idp-temp/idp/system/conf/oidc-protocol-*.xml` into `$IDP_HOME/system/conf`
+- Copy `idp-temp/idp/system/flows/oidc` into `$IDP_HOME/system/flows`
+- Copy `idp-temp/idp/system/views/oidc` into `$IDP_HOME/system/views`
+
+### Copy JARs
+Cross examine the `idp-temp/WEB-INF/lib` directory with your IdP and copy all JARs that are not present. 
+
+### Logging
+
+The following packages may be used for log configuration:
+
+```xml
+<logger name="org.mitre" level="WARN" />
+<logger name="org.hibernate" level="WARN" />
+
+<logger name="org.springframework.web" level="WARN" />
+<logger name="org.springframework.webflow" level="WARN" />
+<logger name="org.springframework.security" level="WARN" />
+<logger name="org.springframework.security.oauth2" level="WARN" />
+<logger name="net.shibboleth.idp.oidc" level="WARN" />
+```
 
 ## Overlay IdP Configuration
 The project itself follows an overlay-module where the IdP is configured to embed all of its configuration inside the final war artifact. In doing so, the following changes are then overlaid into the IdP context and need to be accounted for during IdP upgrades. 
