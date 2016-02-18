@@ -16,9 +16,11 @@
     <AttributeFilterPolicy id="default">
         <PolicyRequirementRule xsi:type="Requester" value="client" />
 
+        <!--
         <AttributeRule attributeID="sub">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
+        -->
 
         <AttributeRule attributeID="name">
             <PermitValueRule xsi:type="ANY" />

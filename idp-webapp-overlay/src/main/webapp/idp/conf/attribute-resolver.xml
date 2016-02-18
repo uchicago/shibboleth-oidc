@@ -33,11 +33,13 @@
     <!-- ========================================== -->
 
     <!--Subject - Identifier for the End-User at the Issuer.-->
+    <!--
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="sub" sourceAttributeID="sub">
         <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:sub" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="sub" encodeType="false" />
     </resolver:AttributeDefinition>
+    -->
 
     <!--
     End-User's full name in displayable form including all name parts,
@@ -176,9 +178,12 @@
     <!-- ========================================== -->
 
     <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
+        <!--
+        Uses the IdP's subject to configure sub, but can be overriden here.
         <dc:Attribute id="sub">
             <dc:Value>90342.ASDFJWFA</dc:Value>
         </dc:Attribute>
+        -->
         <dc:Attribute id="name">
             <dc:Value>Admin</dc:Value>
         </dc:Attribute>

@@ -1,5 +1,6 @@
 package net.shibboleth.idp.oidc.client.userinfo;
 
+import com.google.common.base.Strings;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -51,7 +52,12 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
             throw new InsufficientAuthenticationException("No SubjectContext found in the profile request context");
         }
         final DefaultUserInfo userInfo = new DefaultUserInfo();
+        log.debug("Set userinfo preferred username to {}", principal.getPrincipalName());
         userInfo.setPreferredUsername(principal.getPrincipalName());
+
+        log.debug("Set userinfo sub claim to {}", principal.getPrincipalName());
+        userInfo.setSub(principal.getPrincipalName());
+
         log.debug("Setting preferred username to {}", principal.getPrincipalName());
 
         if (getAttributeReleaseContext() != null) {
@@ -70,6 +76,7 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
 
                     switch (attribute.getId()) {
                         case "sub":
+                            log.debug("Overriding existing sub claim {} to attribute value {}", principal.getPrincipalName());
                             userInfo.setSub(getAttributeValue(attribute).getValue().toString());
                             break;
                         case "name":
@@ -138,6 +145,10 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
             }
         }
 
+        if (Strings.isNullOrEmpty(userInfo.getSub())) {
+            log.warn("userinfo sub claim cannot be null/empty. Reset claim value to {}", principal.getPrincipalName());
+            userInfo.setSub(principal.getPrincipalName());
+        }
         log.debug("Final userinfo object constructed from attributes is\n {}", userInfo.toJson());
         return userInfo;
     }
