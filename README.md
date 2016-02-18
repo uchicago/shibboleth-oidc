@@ -44,7 +44,7 @@ The following may be considered in future versions:
 - [Modified test client application from MITREid Connect](https://github.com/mmoayyed/simple-web-app)
 
 ## Design
-The OIDC support is provided via the [MITREid Connect](https://github.com/mitreid-connect/) project. It is itself based on Spring Security OAuth which itself in turn is based on Spring Security. So, a design of this extension is adapt the above frameworks to what the Shibboleth IdP provides in terms of authentication and attribute resolution. Also note that that MITREid Connect is entirely Spring annotations-based when it comes to wiring up the components. Spring Security OAuth also uses various annotations to respond to endpoint requests. Such changes also need to be accounted for in the IdP as it does not presently have a native model for annotation-based configuration of components. 
+The OIDC support is provided via the [MITREid Connect](https://github.com/mitreid-connect/) project. It is itself based on Spring Security OAuth which itself in turn is based on Spring Security. So, the design principal of this extension is to mostly adapt the above frameworks to what the Shibboleth IdP framework provides in terms of authentication and attribute resolution. Also note that that MITREid Connect is entirely Spring annotations-based when it comes to wiring up the components. Spring Security OAuth also uses various annotations to respond to endpoint requests. Such changes also need to be accounted for in the IdP as it does not presently use a native model for annotation-based configuration of components. 
 
 ### Endpoints
 
@@ -56,7 +56,7 @@ The following endpoints are exposed by this extension:
 - `/idp/profile/oidc/userinfo`
 - `/idp/.well-known`
 
-Each of these endpoints is protected via Spring Security, and configured in `oidc-protocol-endpoints.xml`. Spring Security OAuth itself presents various components that respond to framework endpoints and handles most of the OAuth functionality. In this extension, these endpoints are merely registered to note the new URL endpoint within the IdP framework. 
+Each of these endpoints is protected via Spring Security, and configured in `oidc-protocol-endpoints.xml`. Spring Security OAuth itself presents various components that respond to framework endpoints and handles the OAuth functionality. In this extension, these endpoints are merely registered to note the new URL endpoint within the IdP framework. 
 
 ### Storage
 MITREid Connect ships with a JPA implementation already that is responsible for managing the persistence of various tokens and the configuration of available/supported scopes, clients, etc. This extension leverages that functionality and configures a by-default inmemory database instance inside `oidc-protocol-storage.xml`. The database choice and driver are controllable via IdP settings inside `oidc.properties`. 
@@ -77,7 +77,6 @@ Systems scopes are directly provided in the IdP configuration inside the `oidc-p
 #### Clients
 Registration of clients is now directly provided in the IdP configuration inside the `oidc-protocol.xml`. 
 
-
 ### Issuer
 The OIDC issuer is controlled via the `oidc.properties` file:
 
@@ -87,12 +86,11 @@ oidc.issuer=
 
 This is used directly in the IdP configuration inside the `oidc-protocol.xml`. 
 
-### Global, Encryption, Signing
+### System
 
-#### System
 There are various other authentication manager/provider components registered in `oidc-protocol-system.xml` that handle backchannel authentication requests for tokens and userinfo data. These are primarily based on Spring Security and MITREid Connect extensions of Spring Security. Additionally, auto-registration of MITREid Connect annotation-aware components  as well as all other components registered in this extension is handled here. 
 
-#### Encrytion/Signing
+### Encrytion/Signing
 This extension ships with a default encryption/signing components defined in the `oidc-protocol-system.xml`. A default JWKS is also provided which can be controlled via `oidc.properties` at:
 
 ```properties
@@ -105,7 +103,7 @@ Note that every client registered in the IdP is also able to specify an endpoint
 
 ### Claims
 Claims can be configured as normal attribute definitions in the IdP. All standard claims that are present in the specification 
-are supported. Here is an example of an attribute definition:
+are supported. Here is an example of a claim:
 
 ```xml
 <resolver:AttributeDefinition xsi:type="ad:Simple" id="family_name" sourceAttributeID="family_name">
@@ -114,7 +112,7 @@ are supported. Here is an example of an attribute definition:
 </resolver:AttributeDefinition>
 ```
 
-Attributes can be filtered in turn by the IdP itself via the normal attribute filtering policy. Here is an example:
+Note that attribute encoders are not needed since the JSON transformation is handled directly via the underlying frameworks. Also, claims can be filtered in turn by the IdP itself via the normal attribute filtering policy. Here is an example:
 
 ```xml
 <AttributeFilterPolicy id="default">
@@ -127,6 +125,8 @@ Attributes can be filtered in turn by the IdP itself via the normal attribute fi
 ```
 
 The requester (i.e. EntityID) is always the `clientId` of the client registered in the IdP.
+
+Note that each client is able to specify which scopes it supports. This allows a second level of granularity where an adopter may choose to support only specific claims within a system scope. 
 
 ### Flows
 
@@ -162,7 +162,7 @@ This extension supports the `max_age` and `auth_time` claims. If `max_age` is pr
 Since MITREid Connect's support for these claims is stricyly tied to an authentication that is very much handled by Spring Security, a custom service is provided by this extension to handle the production of `max_age` and `auth_time`. 
 
 ## Default IdP Configuration 
-Follow the below steps if you wish to enable this extension inside a vanilla IdP v3 deployment. 
+Follow the below steps if you wish to enable this extension inside a vanilla IdP v3 deployment. Note that synchronization of changes, as we make progress here, is entirely manual at this point.
 
 ### Build
 
@@ -175,7 +175,7 @@ Or download [a zip distribution](https://github.com/uchicago/shibboleth-oidc/arc
 Build the codebase via:
 
 ```bash
-./mvnw clean install -P new
+./mvn[w] clean install -P new
 ```
 
 ### Cross Examine Changes
@@ -239,7 +239,7 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 #### Initial installs
 
 ```bash
-./mvnw clean install -P new
+./mvn[w] clean install -P new
 ```
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
@@ -247,7 +247,7 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 #### Subsequent installs
 
 ```bash
-./mvnw clean package
+./mvn[w] clean package
 ```
 
 ### Run
@@ -263,7 +263,7 @@ A sample keystore is provided under the `idp-webapp-overlay/etc/jetty` directory
 From the root directory, run the following command:
 
 ```bash
-./mvnw clean package verify -Dhost=jetty
+./mvn[w] clean package verify -Dhost=jetty
 ```
 
 This will spin up an embedded Jetty server to load the IdP context. Remote debugging is available under port 5000 from your IDE.
@@ -271,7 +271,7 @@ This will spin up an embedded Jetty server to load the IdP context. Remote debug
 If you want a somewhat faster build, run:
 
 ```bash
-./mvnw clean package verify -Dhost=jetty --projects idp-oidc-impl,idp-webapp-overlay
+./mvn[w] clean package verify -Dhost=jetty --projects idp-oidc-impl,idp-webapp-overlay
 ```
 
 
