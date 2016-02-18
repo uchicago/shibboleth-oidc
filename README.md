@@ -1,4 +1,4 @@
-# shibboleth-oidc [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/uchicago/shibboleth-oidc/blob/master/LICENSE) 
+# OpenId Connect for Shibboleth Identity Provider v3 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/uchicago/shibboleth-oidc/blob/master/LICENSE) 
 [![](https://heroku-badge.herokuapp.com/?app=shibboleth-oidc)](https://shibboleth-oidc.herokuapp.com/idp)
 OpenIDConnect support for the Shibboleth Identity Provider version 3
 
@@ -80,12 +80,12 @@ oidc.issuer=
 
 This is used directly in the IdP configuration inside the `oidc-protocol.xml`. 
 
-## Global, Encryption, Signing
+### Global, Encryption, Signing
 
-### System
+#### System
 There are various other authentication manager/provider components registered in `oidc-protocol-system.xml` that handle backchannel authentication requests for tokens and userinfo data. These are primarily based on Spring Security and MITREid Connect extensions of Spring Security. Additionally, auto-registration of MITREid Connect annotation-aware components  as well as all other components registered in this extension is handled here. 
 
-### Encrytion/Signing
+#### Encrytion/Signing
 This extension ships with a default encryption/signing components defined in the `oidc-protocol-system.xml`. A default JWKS is also provided which can be controlled via `oidc.properties` at:
 
 ```properties
@@ -96,9 +96,9 @@ This file is presently not reloaded on changes, and its associated context is al
 
 Note that every client registered in the IdP is also able to specify an endpoing for its JWKS. 
 
-## Flows
+### Flows
 
-### Authorization Code Flow
+#### Authorization Code Flow
 This extension registered an authentication flow for OIDC inside `oidc/login/login-flow.xml` whose beans are configured inside `oidc/login/login-beans.xml`. A typical walkthrough of the authentication flow is as such:
 
 - The client makes a request to `/idp/.well-known` to discover endpoints for OIDC conversation.
@@ -119,19 +119,19 @@ This extension registered an authentication flow for OIDC inside `oidc/login/log
 
 There are many many other permutations of this flow, and many additional extension parameters that could be passed. To learn about all that is possible in this flow, Study [the basics of the specification](http://openid.net/specs/openid-connect-basic-1_0.html).
 
-## Authentication Context/Method Ref
+### Authentication Context/Method Ref
 This extension supports the `acr/amr` claims. If the client requests a specific `acr_value` in the original request, the IdP attempts to calculate whether that value is indeed supported by any of the authentication flows. If none is deemed viable, the authentication context weight map of the IdP is consulted to figure out the appropriate `acr`. The result is passed onto the IdP for authentication. 
 
 Since MITREid Connect at this point does not natively support `acr/amr` claims, an implemnentation of a claim service is provided by this extension to handle `acr/amr` claims for the client. 
 
-## Max-Age, AuthN Time
+#### Max-Age, AuthN Time
 This extension supports the `max_age` and `auth_time` claims. If `max_age` is provided in the original request, the IdP attempts to calculate the authentication creation instant and may simulate a `forcedAuthN` so the end-user is actively reauthenticated. 
 
 Since MITREid Connect's support for these claims is stricyly tied to an authentication that is very much handled by Spring Security, a custom service is provided by this extension to handle the production of `max_age` and `auth_time`. 
 
-## IdP Configuration 
+## Default IdP Configuration 
 
-## Overlay Changes
+## Overlay IdP Configuration
 The project itself follows an overlay-module where the IdP is configured to embed all of its configuration inside the final war artifact. In doing so, the following changes are then overlaid into the IdP context and need to be accounted for during IdP upgrades. 
 
 * `login.vm` and `attribute-release.vm` are overlaid to account for CSRF changes
@@ -145,11 +145,11 @@ The project itself follows an overlay-module where the IdP is configured to embe
 the IdP via `idp.properties`. 
 * `web.xml` is modified to register the `.well-known` endpoint.
 
-## Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
+### Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,
 and adjust the values of hostname, entityId, passwords, etc. Then from the command prompt, execute:
 
-### Initial installs
+#### Initial installs
 
 ```bash
 ./mvnw clean install -P new
@@ -157,7 +157,7 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
 
-### Subsequent installs
+#### Subsequent installs
 
 ```bash
 ./mvnw clean package
@@ -165,14 +165,14 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 
 ### Run
 
-### Prepare HTTPS
+#### Prepare HTTPS
 
 You will also need to set up a keystore under `/etc/jetty` and name it `thekeystore`. The keystore password and the 
 key password should both be `changeit`.
  
 A sample keystore is provided under the `idp-webapp-overlay/etc/jetty` directory that is empty, and can be used to set up the environment. 
 
-### Run Jetty
+#### Run Jetty
 From the root directory, run the following command:
 
 ```bash
