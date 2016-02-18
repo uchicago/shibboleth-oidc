@@ -14,17 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.shibboleth.idp.oidc.endpoints;
 
 /**
- * This is {@link DynamicRegistrationEndpoint}.
+ * OIDC support for Shibboleth IdP.
  */
-public final class DynamicRegistrationEndpoint {
-    /** URL endpoint for issuing tokens used to map requests. */
-    public static final String URL = "/oidc/register";
-
-    /**
-     * Instantiates a new token endpoint.
-     */
-    private DynamicRegistrationEndpoint() {}
-}
+package net.shibboleth.idp.oidc.flow;

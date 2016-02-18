@@ -1,3 +1,19 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.shibboleth.idp.oidc.flow;
 
 
@@ -21,15 +37,29 @@ import javax.annotation.Nonnull;
  * Creates the {@link RelyingPartyContext} as a child of the {@link ProfileRequestContext}.
  */
 public class BuildRelyingPartyContextAction extends AbstractProfileAction {
+    /**
+     * The Log.
+     */
     private final Logger log = LoggerFactory.getLogger(BuildRelyingPartyContextAction.class);
 
+    /**
+     * The Profile configuration.
+     */
     private ProfileConfiguration profileConfiguration;
 
+    /**
+     * The Client service.
+     */
     @Autowired
     private ClientDetailsEntityService clientService;
 
-    public void setProfileConfiguration(final ProfileConfiguration profileConfiguration) {
-        this.profileConfiguration = profileConfiguration;
+    /**
+     * Sets profile configuration.
+     *
+     * @param config the config
+     */
+    public void setProfileConfiguration(final ProfileConfiguration config) {
+        this.profileConfiguration = config;
     }
 
     @Nonnull
@@ -37,7 +67,8 @@ public class BuildRelyingPartyContextAction extends AbstractProfileAction {
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
+        final OIDCAuthorizationRequestContext authZContext = 
+                profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);

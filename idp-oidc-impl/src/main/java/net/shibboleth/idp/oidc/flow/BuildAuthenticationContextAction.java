@@ -1,3 +1,19 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.Strings;
@@ -28,12 +44,24 @@ import java.util.Map;
  * Builds an authentication context message from an incoming request.
  */
 public class BuildAuthenticationContextAction extends AbstractProfileAction {
+    /**
+     * The Log.
+     */
     private final Logger log = LoggerFactory.getLogger(BuildAuthenticationContextAction.class);
 
+    /**
+     * The Available authentication flows.
+     */
     private List<AuthenticationFlowDescriptor> availableAuthenticationFlows;
 
+    /**
+     * The Authentication principal weight map.
+     */
     private Map<AuthnContextClassRefPrincipal, Integer> authenticationPrincipalWeightMap;
 
+    /**
+     * The Client service.
+     */
     @Autowired
     private ClientDetailsEntityService clientService;
 
@@ -43,12 +71,22 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
     public BuildAuthenticationContextAction() {
     }
 
-    public void setAvailableAuthenticationFlows(final List<AuthenticationFlowDescriptor> availableAuthenticationFlows) {
-        this.availableAuthenticationFlows = availableAuthenticationFlows;
+    /**
+     * Sets available authentication flows.
+     *
+     * @param flows the flows
+     */
+    public void setAvailableAuthenticationFlows(final List<AuthenticationFlowDescriptor> flows) {
+        this.availableAuthenticationFlows = flows;
     }
 
-    public void setAuthenticationPrincipalWeightMap(final Map<AuthnContextClassRefPrincipal, Integer> authenticationPrincipalWeightMap) {
-        this.authenticationPrincipalWeightMap = authenticationPrincipalWeightMap;
+    /**
+     * Sets authentication principal weight map.
+     *
+     * @param map the map
+     */
+    public void setAuthenticationPrincipalWeightMap(final Map<AuthnContextClassRefPrincipal, Integer> map) {
+        this.authenticationPrincipalWeightMap = map;
     }
 
 
@@ -60,7 +98,8 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         final AuthenticationContext ac = new AuthenticationContext();
 
 
-        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
+        final OIDCAuthorizationRequestContext authZContext =
+                profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);
@@ -76,11 +115,14 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
 
         final List<Principal> principals = new ArrayList<>();
         if (authorizationRequest.getExtensions().containsKey(OIDCConstants.ACR_VALUES)) {
-            final String[] acrValues = authorizationRequest.getExtensions().get(OIDCConstants.ACR_VALUES).toString().split(" ");
+            final String[] acrValues = authorizationRequest.getExtensions()
+                    .get(OIDCConstants.ACR_VALUES).toString().split(" ");
             for (final String acrValue : acrValues) {
-                final AuthnContextClassRefPrincipal requestedPrincipal = new AuthnContextClassRefPrincipal(acrValue.trim());
+                final AuthnContextClassRefPrincipal requestedPrincipal =
+                        new AuthnContextClassRefPrincipal(acrValue.trim());
                 for (final AuthenticationFlowDescriptor flow : this.availableAuthenticationFlows) {
-                    if (!principals.contains(requestedPrincipal) && flow.getSupportedPrincipals().contains(requestedPrincipal)) {
+                    if (!principals.contains(requestedPrincipal) 
+                            && flow.getSupportedPrincipals().contains(requestedPrincipal)) {
                         principals.add(requestedPrincipal);
                     }
                 }
@@ -115,8 +157,10 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
 
         @Override
         public int compare(final Object o1, final Object o2) {
-            final int weight1 = authenticationPrincipalWeightMap.containsKey(o1) ? authenticationPrincipalWeightMap.get(o1) : 0;
-            final int weight2 = authenticationPrincipalWeightMap.containsKey(o2) ? authenticationPrincipalWeightMap.get(o2) : 0;
+            final int weight1 =
+                    authenticationPrincipalWeightMap.containsKey(o1) ? authenticationPrincipalWeightMap.get(o1) : 0;
+            final int weight2 =
+                    authenticationPrincipalWeightMap.containsKey(o2) ? authenticationPrincipalWeightMap.get(o2) : 0;
             if (weight1 < weight2) {
                 return -1;
             } else if (weight1 > weight2) {

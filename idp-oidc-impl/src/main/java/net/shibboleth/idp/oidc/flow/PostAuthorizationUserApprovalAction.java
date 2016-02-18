@@ -1,3 +1,19 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.shibboleth.idp.oidc.flow;
 
 import net.shibboleth.idp.oidc.OIDCException;
@@ -18,6 +34,9 @@ import java.util.Map;
  * An action to handle the user approval/consent post authorization.
  */
 public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
+    /**
+     * The Log.
+     */
     private final Logger log = LoggerFactory.getLogger(PostAuthorizationUserApprovalAction.class);
 
     @Nonnull
@@ -29,13 +48,15 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
             throw new OIDCException("HttpServletRequest cannot be null");
         }
 
-        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
+        final OIDCAuthorizationRequestContext authZContext =
+                profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);
         }
 
-        final OIDCAuthorizationResponseContext responseCtx = profileRequestContext.getSubcontext(OIDCAuthorizationResponseContext.class);
+        final OIDCAuthorizationResponseContext responseCtx =
+                profileRequestContext.getSubcontext(OIDCAuthorizationResponseContext.class);
         if (responseCtx == null) {
             log.warn("No response context could be located in the profile request context");
             return Events.Failure.event(this);

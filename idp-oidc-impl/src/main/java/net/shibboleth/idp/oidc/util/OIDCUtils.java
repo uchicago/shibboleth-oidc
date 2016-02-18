@@ -1,3 +1,19 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.shibboleth.idp.oidc.util;
 
 import net.shibboleth.idp.oidc.endpoints.AuthorizeEndpoint;
@@ -40,6 +56,13 @@ public final class OIDCUtils {
         session.removeAttribute(parameter);
     }
 
+    /**
+     * Put session attribute.
+     *
+     * @param request   the request
+     * @param parameter the parameter
+     * @param value     the value
+     */
     public static void putSessionAttribute(final HttpServletRequest request,
                                            final String parameter,
                                            final Object value) {
@@ -47,6 +70,13 @@ public final class OIDCUtils {
         session.setAttribute(parameter, value);
     }
 
+    /**
+     * Gets session attribute.
+     *
+     * @param request   the request
+     * @param parameter the parameter
+     * @return the session attribute
+     */
     public static Object getSessionAttribute(final HttpServletRequest request,
                                              final String parameter) {
         final HttpSession session = request.getSession();
@@ -61,9 +91,9 @@ public final class OIDCUtils {
      */
     public static HttpServletResponse getHttpServletResponse(final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
-                "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
-        return (HttpServletResponse) context.getExternalContext()
-                .getNativeResponse();
+                "Cannot obtain HttpServletResponse from event of type: " 
+                        + context.getExternalContext().getClass().getName());
+        return (HttpServletResponse) context.getExternalContext().getNativeResponse();
     }
 
     /**
@@ -74,11 +104,18 @@ public final class OIDCUtils {
      */
     public static HttpServletRequest getHttpServletRequest(final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
-                "Cannot obtain HttpServletRequest from event of type: " + context.getExternalContext().getClass().getName());
+                "Cannot obtain HttpServletRequest from event of type: " 
+                        + context.getExternalContext().getClass().getName());
 
         return (HttpServletRequest) context.getExternalContext().getNativeRequest();
     }
 
+    /**
+     * Build oidc server configuration model for discovery map.
+     *
+     * @param model the model
+     * @return the map
+     */
     public static Map<String, Object> buildOidcServerConfigurationModelForDiscovery(final Model model) {
         final Map<String, Object> m = Map.class.cast(model.asMap().get("entity"));
         final String baseUrl = m.get("issuer").toString();

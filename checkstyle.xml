@@ -81,7 +81,7 @@
         <module name="ThrowsCount">
             <property name="max" value="3"/>
         </module>
-        <module name="CyclomaticComplexity"/>
+        <module name="CyclomaticComplexity" />
         <module name="TrailingComment"/>
         <module name="EqualsAvoidNull"/>
         <module name="ModifiedControlVariable"/>
@@ -95,8 +95,9 @@
     <module name="FileLength">
         <property name="max" value="1000"/>
     </module>
+
     <module name="Header">
-        <property name="header" value="/*\n * Licensed to the University Corporation for Advanced Internet Development, \n * Inc. (UCAID) under one or more contributor license agreements. See the \n * NOTICE file distributed with this work for additional information regarding\n * copyright ownership. The UCAID licenses this file to You under the Apache \n * License, Version 2.0 (the "License"); you may not use this file except in \n * compliance with the License. You may obtain a copy of the License at\n *\n * http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an "AS IS" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */"/>
+        <property name="header" value="/*\n * Licensed to the University Corporation for Advanced Internet Development, \n * Inc. (UCAID) under one or more contributor license agreements. See the \n * NOTICE file distributed with this work for additional information regarding\n * copyright ownership. The UCAID licenses this file to You under the Apache \n * License, Version 2.0 (the &quot;License&quot;); you may not use this file except in \n * compliance with the License. You may obtain a copy of the License at\n *\n * http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */" />
     </module>
     <module name="JavadocPackage"/>
 </module>

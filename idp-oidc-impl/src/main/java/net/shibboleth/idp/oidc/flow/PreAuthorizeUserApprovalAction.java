@@ -1,3 +1,19 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.Strings;
@@ -45,24 +61,45 @@ import java.util.Set;
  * Prepares the webflow response for the approval/consent view.
  */
 public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
+    /**
+     * The Log.
+     */
     private final Logger log = LoggerFactory.getLogger(PreAuthorizeUserApprovalAction.class);
 
+    /**
+     * The Client service.
+     */
     @Autowired
     private ClientDetailsEntityService clientService;
 
+    /**
+     * The Scope service.
+     */
     @Autowired
     private SystemScopeService scopeService;
 
+    /**
+     * The Scope claim translation service.
+     */
     @Autowired
     private ScopeClaimTranslationService scopeClaimTranslationService;
 
+    /**
+     * The User info service.
+     */
     @Autowired
     @Qualifier("openIdConnectUserInfoService")
     private ShibbolethUserInfoService userInfoService;
 
+    /**
+     * The Stats service.
+     */
     @Autowired
     private StatsService statsService;
 
+    /**
+     * The Redirect resolver.
+     */
     @Autowired
     private RedirectResolver redirectResolver;
 
@@ -79,7 +116,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
         this.userInfoService.initialize(profileRequestContext);
 
-        final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
+        final OIDCAuthorizationRequestContext authZContext =
+                profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);
@@ -117,7 +155,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         }
         */
 
-        final Authentication authentication = SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
+        final Authentication authentication =
+                SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
         storeSpringSecurityAuthenticationContext(profileRequestContext, springRequestContext, authentication);
         storeAuthenticationTimeIntoAuthorizationRequest(authentication, authRequest);
         final OIDCResponse response = buildOpenIdConnectResponse(authRequest, client);
@@ -127,14 +166,28 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         return Events.Proceed.event(this);
     }
 
+    /**
+     * Store authentication time into authorization request.
+     *
+     * @param authentication the authentication
+     * @param authRequest    the auth request
+     */
     private static void storeAuthenticationTimeIntoAuthorizationRequest(final Authentication authentication,
                                                                  final AuthorizationRequest authRequest) {
         authRequest.getExtensions().put(OIDCConstants.AUTH_TIME,
                 ((SpringSecurityAuthenticationToken) authentication).getAuthenticationDateTime().getMillis());
     }
 
+    /**
+     * Store spring security authentication context.
+     *
+     * @param profileRequestContext the profile request context
+     * @param springRequestContext  the spring request context
+     * @param authentication        the authentication
+     */
     private void storeSpringSecurityAuthenticationContext(@Nonnull final ProfileRequestContext profileRequestContext,
-                                                          final RequestContext springRequestContext, final Authentication authentication) {
+                                                          final RequestContext springRequestContext, 
+                                                          final Authentication authentication) {
         final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
             throw new OIDCException("HttpServletRequest cannot be null");
@@ -145,7 +198,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         SecurityContextHolder.setContext(securityContext);
         final HttpSession session = request.getSession();
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-        log.debug("Stored authentication [{}] into Spring security context", SecurityContextHolder.getContext().getAuthentication());
+        log.debug("Stored authentication [{}] into Spring security context", 
+                SecurityContextHolder.getContext().getAuthentication());
     }
 
     /**
@@ -162,11 +216,13 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         response.setClient(client);
         response.setRedirectUri(authRequest.getRedirectUri());
 
-        log.debug("Built initial response for client {} and redirect uri {}", client, authRequest.getRedirectUri());
+        log.debug("Built initial response for client {} and redirect uri {}",
+                client, authRequest.getRedirectUri());
 
         // pre-process the scopes
         final Set<SystemScope> scopes = scopeService.fromStrings(authRequest.getScope());
-        log.debug("System scopes retrieved based on the authorization request scope {} are {}", authRequest.getScope(), scopes);
+        log.debug("System scopes retrieved based on the authorization request scope {} are {}",
+                authRequest.getScope(), scopes);
 
         final Set<SystemScope> sortedScopes = getSystemScopes(scopes);
         response.setScopes(sortedScopes);

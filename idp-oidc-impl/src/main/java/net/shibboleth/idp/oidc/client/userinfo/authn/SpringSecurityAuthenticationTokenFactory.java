@@ -1,3 +1,19 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.shibboleth.idp.oidc.client.userinfo.authn;
 
 
@@ -9,7 +25,6 @@ import net.shibboleth.idp.oidc.config.OIDCConstants;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,9 +35,26 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * The type Spring security authentication token factory.
+ */
 public final class SpringSecurityAuthenticationTokenFactory {
-    private static final Logger log = LoggerFactory.getLogger(SpringSecurityAuthenticationTokenFactory.class);
+    /**
+     * The constant LOG.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SpringSecurityAuthenticationTokenFactory.class);
 
+    /**
+     * Instantiates a new Spring security authentication token factory.
+     */
+    private SpringSecurityAuthenticationTokenFactory() {}
+
+    /**
+     * Build authentication authentication.
+     *
+     * @param profileRequestContext the profile request context
+     * @return the authentication
+     */
     public static Authentication buildAuthentication(final ProfileRequestContext profileRequestContext) {
         final SubjectContext principal = profileRequestContext.getSubcontext(SubjectContext.class);
 
@@ -43,23 +75,23 @@ public final class SpringSecurityAuthenticationTokenFactory {
         
         final AuthenticationContext authCtx = profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (authCtx != null) {
-            log.debug("Found an authentication context in the profile request context");
+            LOG.debug("Found an authentication context in the profile request context");
 
             final RequestedPrincipalContext principalContext = authCtx.getSubcontext(RequestedPrincipalContext.class);
             if (principalContext != null && principalContext.getMatchingPrincipal() != null) {
-                log.debug("Found an requested principal context context in the profile request context with matching principal {}",
+                LOG.debug("Found requested principal context context with matching principal {}",
                         principalContext.getMatchingPrincipal().getName());
 
                 final AuthenticationClassRefAuthority authority = new AuthenticationClassRefAuthority(
                         principalContext.getMatchingPrincipal().getName());
 
-                log.debug("Adding authority {}", authority.getAuthority());
+                LOG.debug("Adding authority {}", authority.getAuthority());
                 authorities.add(new SimpleGrantedAuthority(authority.toString()));
             }
             if (authCtx.getAuthenticationResult() != null) {
                 final AuthenticationMethodRefAuthority authority = new AuthenticationMethodRefAuthority(
                         authCtx.getAuthenticationResult().getAuthenticationFlowId());
-                log.debug("Adding authority {}", authority.getAuthority());
+                LOG.debug("Adding authority {}", authority.getAuthority());
                 authorities.add(new SimpleGrantedAuthority(authority.toString()));
             }
         }
@@ -71,11 +103,11 @@ public final class SpringSecurityAuthenticationTokenFactory {
         final User user = new User(principal.getPrincipalName(), UUID.randomUUID().toString(),
                 Collections.singleton(new SimpleGrantedAuthority(OIDCConstants.ROLE_USER)));
 
-        log.debug("Created user details object for {} with authorities {}", user.getUsername(), user.getAuthorities());
+        LOG.debug("Created user details object for {} with authorities {}", user.getUsername(), user.getAuthorities());
 
         final SpringSecurityAuthenticationToken authenticationToken =
                 new SpringSecurityAuthenticationToken(profileRequestContext, authorities);
-        log.debug("Final authentication token authorities are {}", authorities);
+        LOG.debug("Final authentication token authorities are {}", authorities);
 
         authenticationToken.setAuthenticated(true);
         authenticationToken.setDetails(user);
