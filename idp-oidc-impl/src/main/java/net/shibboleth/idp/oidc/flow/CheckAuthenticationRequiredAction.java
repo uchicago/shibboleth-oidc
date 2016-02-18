@@ -17,7 +17,6 @@
 package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.Function;
-import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.config.OIDCConstants;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
@@ -25,7 +24,6 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import org.joda.time.DateTime;
 import org.mitre.oauth2.model.ClientDetailsEntity;
-import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -36,7 +34,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
-import java.util.Date;
 
 /**
  * Determines whether authentication is required by examining both SSO session state.
@@ -58,9 +55,6 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
      */
     private final Function<ProfileRequestContext, SessionContext> sessionContextFunction =
             new ChildContextLookup(SessionContext.class, false);
-
-    @Autowired
-    private ClientDetailsEntityService clientService;
 
     /**
      * The Client service.

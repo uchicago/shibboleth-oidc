@@ -59,9 +59,6 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
      */
     private Map<AuthnContextClassRefPrincipal, Integer> authenticationPrincipalWeightMap;
 
-    @Autowired
-    private ClientDetailsEntityService clientService;
-
     /**
      * The Client service.
      */
