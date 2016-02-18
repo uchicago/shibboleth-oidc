@@ -175,7 +175,7 @@ Or download [a zip distribution](https://github.com/uchicago/shibboleth-oidc/arc
 Build the codebase via:
 
 ```bash
-./mvn[w] clean install -P new
+./mvn[w] clean package -P new
 ```
 
 ### Cross Examine Changes
@@ -239,7 +239,7 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 #### Initial installs
 
 ```bash
-./mvn[w] clean install -P new
+./mvn[w] clean package -P new
 ```
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
