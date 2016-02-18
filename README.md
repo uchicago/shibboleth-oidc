@@ -43,7 +43,7 @@ The following may be considered in future versions:
 - [Modified test client application from MITREid Connect](https://github.com/mmoayyed/simple-web-app)
 
 ## Design
-The OIDC support is provided via the [MITREid Connect](https://github.com/mitreid-connect/) project. It is itself based on Spring Security OAuth which itself in turn is based on Spring Security. So, a design of this extension is adapt the above frameworks to what the Shibboleth IdP provides in terms of authentication and attribute resolution. Also note that that MITREid Connect is entirely Spring annotations-based when it comes to wiring up the components. Spring Security OAuth also uses variuous annotations to respond to endpoint requests. Such changes also need to be accounted for in the IdP as it does not presently have a native model for annotation-based configuration of components. 
+The OIDC support is provided via the [MITREid Connect](https://github.com/mitreid-connect/) project. It is itself based on Spring Security OAuth which itself in turn is based on Spring Security. So, a design of this extension is adapt the above frameworks to what the Shibboleth IdP provides in terms of authentication and attribute resolution. Also note that that MITREid Connect is entirely Spring annotations-based when it comes to wiring up the components. Spring Security OAuth also uses various annotations to respond to endpoint requests. Such changes also need to be accounted for in the IdP as it does not presently have a native model for annotation-based configuration of components. 
 
 ### Endpoints
 
@@ -100,7 +100,7 @@ oidc.jwtset.keystore=%{idp.home}/credentials/keystore.jwks
 
 This file is presently not reloaded on changes, and its associated context is also not yet reloadable. Key rotations for the default keystore must happen manually, and require a restart for the time being. 
 
-Note that every client registered in the IdP is also able to specify an endpoing for its JWKS. 
+Note that every client registered in the IdP is also able to specify an endpoint for its JWKS. 
 
 ### Flows
 
@@ -116,8 +116,8 @@ This extension registered an authentication flow for OIDC inside `oidc/login/log
 - The Idp has configured Spring Security for form-based authentication, which allows the request to be routed to a `login` endpoint for authentication.
 - The `login` endpoing invokes Spring Webflow to recall the OIDC login flow to start the flow.
 - The `login` flow eventually reaches the authentication state allowing for end-user login.
-- Once the authentication is successful, the result is then POSTed back to Spring Security to resume the `/idp/profile/oidc/authorize` endpoint functionality.
-- The `/idp/profile/oidc/authorize` will proceed to issue a `code` for the given request does a POST back to the client.
+- Once the authentication is successful, the result is then `POST`ed back to Spring Security to resume the `/idp/profile/oidc/authorize` endpoint functionality.
+- The `/idp/profile/oidc/authorize` will proceed to issue a `code` for the given request does a `POST` back to the client.
 - The client asks the `/idp/profile/oidc/token` endpoint for an access token, via the `code` received.
 - Spring Security OAuth, having recognized an existing authentication session issues an access token back along with an `idToken` in a JWT format. 
 - The client validates the access token and the idToken, optionally invoking the `/idp/profile/oidc/jwk` endpoint to verify the `idToken`.
@@ -128,7 +128,7 @@ There are many many other permutations of this flow, and many additional extensi
 #### Authentication Context/Method Ref
 This extension supports the `acr/amr` claims. If the client requests a specific `acr_value` in the original request, the IdP attempts to calculate whether that value is indeed supported by any of the authentication flows. If none is deemed viable, the authentication context weight map of the IdP is consulted to figure out the appropriate `acr`. The result is passed onto the IdP for authentication. 
 
-Since MITREid Connect at this point does not natively support `acr/amr` claims, an implemnentation of a claim service is provided by this extension to handle `acr/amr` claims for the client. 
+Since MITREid Connect at this point does not natively support `acr/amr` claims, an implementation of a claim service is provided by this extension to handle `acr/amr` claims for the client. 
 
 #### Max-Age, AuthN Time
 This extension supports the `max_age` and `auth_time` claims. If `max_age` is provided in the original request, the IdP attempts to calculate the authentication creation instant and may simulate a `forcedAuthN` so the end-user is actively reauthenticated. 
