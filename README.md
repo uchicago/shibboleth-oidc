@@ -103,6 +103,31 @@ This file is presently not reloaded on changes, and its associated context is al
 
 Note that every client registered in the IdP is also able to specify an endpoint for its JWKS. 
 
+### Claims
+Claims can be configured as normal attribute definitions in the IdP. All standard claims that are present in the specification 
+are supported. Here is an example of an attribute definition:
+
+```xml
+<resolver:AttributeDefinition xsi:type="ad:Simple" id="family_name" sourceAttributeID="family_name">
+    <resolver:Dependency ref="staticAttributes" />
+    <resolver:DisplayName>Family Name</resolver:DisplayName>
+</resolver:AttributeDefinition>
+```
+
+Attributes can be filtered in turn by the IdP itself via the normal attribute filtering policy. Here is an example:
+
+```xml
+<AttributeFilterPolicy id="default">
+    <PolicyRequirementRule xsi:type="Requester" value="client" />
+    
+    <AttributeRule attributeID="family_name">
+        <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+</AttributeFilterPolicy>
+```
+
+The requester (i.e. EntityID) is always the `clientId` of the client registered in the IdP.
+
 ### Flows
 
 #### Authorization Code Flow
