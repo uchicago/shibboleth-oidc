@@ -111,11 +111,11 @@ This extension registered an authentication flow for OIDC inside `oidc/login/log
 - The client makes a request to `/idp/.well-known` to discover endpoints for OIDC conversation.
 - The IdP's `/idp/.well-known` endpoint presents a JSON envelope that contains everything the client needs to know for dynamic discovery.
 - The client makes a request to `/idp/profile/oidc/authorize` endpoint which is first handled by Spring Security OAuth. 
-- Since the request required an existing authentication to succeed, Spring Security OAuth throws a `InsufficientAuthenticationException` noting that exact requirement. 
-- The IdP is configured to ignore the throwing of this exception so that downstream Spring Security components/filters can process it later. This is done via `mvc-beans.xml`. 
-- Later on, an `ExceptionTranslationFilter` of Spring Security kicks in, and attempts to handle the request. The request is then routed to Spring Security for authentication.
+- Since the request requires an existing authentication to succeed, Spring Security OAuth throws a `InsufficientAuthenticationException`.
+- The IdP is configured to ignore the this exception so that downstream Spring Security components/filters can process it later. This is done via `mvc-beans.xml`. 
+- `ExceptionTranslationFilter` of Spring Security kicks in, and attempts to handle the request. The request is then routed to Spring Security for authentication.
 - The Idp has configured Spring Security for form-based authentication, which allows the request to be routed to a `login` endpoint for authentication.
-- The `login` endpoing invokes Spring Webflow to recall the OIDC login flow to start the flow.
+- The `login` endpoints invokes Spring Webflow to recall the OIDC login flow to start the flow.
 - The `login` flow eventually reaches the authentication state allowing for end-user login.
 - Once the authentication is successful, the result is then `POST`ed back to Spring Security to resume the `/idp/profile/oidc/authorize` endpoint functionality.
 - The `/idp/profile/oidc/authorize` will proceed to issue a `code` for the given request does a `POST` back to the client.
