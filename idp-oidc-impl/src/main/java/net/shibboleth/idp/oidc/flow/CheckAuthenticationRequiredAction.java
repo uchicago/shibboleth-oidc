@@ -75,7 +75,7 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
         if (sessionContext != null && sessionContext.getIdPSession() != null) {
             return sessionContext.getIdPSession();
         }
-        throw new OIDCException("Cannot locate IdP session");
+        throw new IllegalStateException("Session not found");
     }
 
     @Override
@@ -87,42 +87,41 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
             final IdPSession idpSession = getIdPSession(profileRequestContext);
             this.log.debug("Found IdP session ID {}", idpSession.getId());
 
-            try {
-                log.debug("Checking for session timeouts with creation instant {} and last activity instant {}",
-                        idpSession.getCreationInstant(), idpSession.getLastActivityInstant());
+            log.debug("Checking for session timeouts with creation instant {} and last activity instant {}",
+                    idpSession.getCreationInstant(), idpSession.getLastActivityInstant());
 
-                if (idpSession.checkTimeout()) {
-                    log.debug("IdP session ID {} is still valid. Checking for {}",
-                            idpSession.getId(), OIDCConstants.MAX_AGE);
+            if (idpSession.checkTimeout()) {
+                log.debug("IdP session ID {} is still valid. Checking for {}",
+                        idpSession.getId(), OIDCConstants.MAX_AGE);
 
-                    final OIDCAuthorizationRequestContext authZContext =
-                            profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
-                    if (authZContext == null) {
-                        log.warn("No authorization request could be located in the profile request context");
-                        return Events.Failure.event(this);
-                    }
-
-                    final ClientDetailsEntity client = clientService.loadClientByClientId(
-                            authZContext.getAuthorizationRequest().getClientId());
-                    if (client == null) {
-                        log.warn("No client could be located based on the authorization request");
-                        return Events.Failure.event(this);
-                    }
-
-                    if (authZContext.getMaxAge() != null || client.getDefaultMaxAge() != null) {
-                        log.debug("Authorization request or client configuration contains {}", OIDCConstants.MAX_AGE);
-                        if (isAuthenticationTooOldForRequiredMaxAge(client, authZContext, idpSession)) {
-                            log.debug("Forcing the IdP to ignore the existing session");
-
-                            authZContext.setForceAuthentication(true);
-                            return Events.SessionNotFound.event(this);
-                        }
-                    }
-                    return Events.SessionFound.event(this);
+                final OIDCAuthorizationRequestContext authZContext =
+                        profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
+                if (authZContext == null) {
+                    log.warn("No authorization request could be located in the profile request context");
+                    return Events.Failure.event(this);
                 }
-            } catch (final SessionException ex) {
-                log.debug("Error performing session timeout check. Assuming session has expired.", ex);
+
+                final ClientDetailsEntity client = clientService.loadClientByClientId(
+                        authZContext.getAuthorizationRequest().getClientId());
+                if (client == null) {
+                    log.warn("No client could be located based on the authorization request");
+                    return Events.Failure.event(this);
+                }
+
+                if (authZContext.getMaxAge() != null || client.getDefaultMaxAge() != null) {
+                    log.debug("Authorization request or client configuration contains {}", OIDCConstants.MAX_AGE);
+                    if (isAuthenticationTooOldForRequiredMaxAge(client, authZContext, idpSession)) {
+                        log.debug("Forcing the IdP to ignore the existing session");
+
+                        authZContext.setForceAuthentication(true);
+                        return Events.SessionNotFound.event(this);
+                    }
+                }
+                return Events.SessionFound.event(this);
             }
+        } catch (final SessionException ex) {
+            log.debug("Error performing session timeout check. Assuming session has expired.", ex);
+        
         } catch (final IllegalStateException ex) {
             log.debug("IdP session not found");
         }
