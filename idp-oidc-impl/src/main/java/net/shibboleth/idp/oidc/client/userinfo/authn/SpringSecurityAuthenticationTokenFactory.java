@@ -4,6 +4,7 @@ package net.shibboleth.idp.oidc.client.userinfo.authn;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.config.OIDCConstants;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public final class SpringSecurityAuthenticationTokenFactory {
         final SubjectContext principal = profileRequestContext.getSubcontext(SubjectContext.class);
 
         if (principal == null || principal.getPrincipalName() == null) {
-            throw new InsufficientAuthenticationException("No SubjectContext found in the profile request context");
+            throw new OIDCException("No SubjectContext found in the profile request context");
         }
 
         /**

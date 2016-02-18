@@ -2,6 +2,7 @@ package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -59,17 +60,17 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                               @Nonnull final ProfileRequestContext profileRequestContext) {
         final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+            throw new OIDCException("HttpServletRequest cannot be null");
         }
 
         final HttpServletResponse response = OIDCUtils.getHttpServletResponse(springRequestContext);
         if (response == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+            throw new OIDCException("HttpServletRequest cannot be null");
         }
 
         final AuthorizationRequest authorizationRequest = createAuthorizationRequest(request);
         if (Strings.isNullOrEmpty(authorizationRequest.getClientId())) {
-            throw new RuntimeException("No client id is specified in the authorization request");
+            throw new OIDCException("No client id is specified in the authorization request");
         }
 
         final OIDCAuthorizationRequestContext authZContext = new OIDCAuthorizationRequestContext();
@@ -84,7 +85,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                 found = it.next().equals(authorizationRequest.getRedirectUri());
             }
             if (!found) {
-                throw new InvalidClientException("Redirect uri in the authorization request " +
+                throw new OIDCException("Redirect uri in the authorization request " +
                         authorizationRequest.getRedirectUri() + " is not registered for client " + client.getClientId());
             }
         }
@@ -124,7 +125,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                         log.debug("Authorization request indicated a redirect event to {}", pairEvent.getSecond());
                         response.sendRedirect(pairEvent.getSecond().toString());
                     } else {
-                        throw new IllegalStateException("No redirect url could be found based on the request");
+                        throw new OIDCException("No redirect url could be found based on the request");
                     }
                 case Success:
                     log.debug("Proceeding with building the authorization context based on the request");
@@ -136,7 +137,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
             return ev;
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw new OIDCException(e);
         }
     }
 

@@ -8,6 +8,7 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.impl.ConsentContext;
 import net.shibboleth.idp.consent.impl.Consent;
+import net.shibboleth.idp.oidc.OIDCException;
 import org.mitre.openid.connect.model.DefaultAddress;
 import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.mitre.openid.connect.model.UserInfo;
@@ -49,7 +50,7 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
         final SubjectContext principal = getSubjectContext();
 
         if (principal == null || principal.getPrincipalName() == null) {
-            throw new InsufficientAuthenticationException("No SubjectContext found in the profile request context");
+            throw new OIDCException("No SubjectContext found in the profile request context");
         }
         final DefaultUserInfo userInfo = new DefaultUserInfo();
         log.debug("Set userinfo preferred username to {}", principal.getPrincipalName());
@@ -168,6 +169,6 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
 
     @Override
     public UserInfo getByEmailAddress(final String s) {
-        throw new IllegalArgumentException("Operation is not supported");
+        throw new OIDCException("Operation is not supported");
     }
 }

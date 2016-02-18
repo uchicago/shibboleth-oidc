@@ -1,5 +1,6 @@
 package net.shibboleth.idp.oidc.client.metadata;
 
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceMultiMap;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
@@ -57,7 +58,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setEntityID(final String id) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -67,7 +68,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setID(final String newID) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -77,7 +78,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setExtensions(final Extensions extensions) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -127,7 +128,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setAffiliationDescriptor(final AffiliationDescriptor descriptor) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -137,7 +138,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setOrganization(final Organization organization) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -163,7 +164,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setCacheDuration(final Long duration) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -185,7 +186,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setSignature(@Nullable final Signature newSignature) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -200,7 +201,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setValidUntil(final DateTime validUntil) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -303,22 +304,22 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setDOM(@Nullable final Element dom) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
     public void setNoNamespaceSchemaLocation(@Nullable final String location) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
     public void setParent(@Nullable final XMLObject parent) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
     public void setSchemaLocation(@Nullable final String location) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -335,12 +336,12 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setNil(@Nullable final Boolean newNil) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
     public void setNil(@Nullable final XSBooleanValue newNil) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override

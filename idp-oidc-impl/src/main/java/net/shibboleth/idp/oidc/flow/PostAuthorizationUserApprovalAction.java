@@ -1,5 +1,6 @@
 package net.shibboleth.idp.oidc.flow;
 
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -25,7 +26,7 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
                               @Nonnull final ProfileRequestContext profileRequestContext) {
         final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+            throw new OIDCException("HttpServletRequest cannot be null");
         }
 
         final OIDCAuthorizationRequestContext authZContext = profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);

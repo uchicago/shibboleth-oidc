@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.client.userinfo.ShibbolethUserInfoService;
 import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationToken;
 import net.shibboleth.idp.oidc.client.userinfo.authn.SpringSecurityAuthenticationTokenFactory;
@@ -136,7 +137,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                                                           final RequestContext springRequestContext, final Authentication authentication) {
         final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+            throw new OIDCException("HttpServletRequest cannot be null");
         }
 
         final SecurityContext securityContext = SecurityContextHolder.getContext();

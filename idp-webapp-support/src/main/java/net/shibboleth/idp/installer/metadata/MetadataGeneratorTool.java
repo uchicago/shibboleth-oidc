@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.BaseConverter;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import org.opensaml.saml.common.SAMLRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +146,7 @@ public final class MetadataGeneratorTool {
 
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw new SAMLRuntimeException(e);
         }
     }
 

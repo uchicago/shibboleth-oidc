@@ -1,5 +1,6 @@
 package net.shibboleth.idp.oidc.flow;
 
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.client.metadata.ClientEntityDescriptor;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -32,7 +33,7 @@ public class BuildMetadataContextAction extends AbstractProfileAction {
                               @Nonnull final ProfileRequestContext profileRequestContext) {
         final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
         if (rpCtx == null || rpCtx.getRelyingPartyId() == null) {
-            throw new IllegalArgumentException("RelyingPartyContext not found in the profile request, or relying party id is blank");
+            throw new OIDCException("RelyingPartyContext not found in the profile request, or relying party id is blank");
         }
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
 

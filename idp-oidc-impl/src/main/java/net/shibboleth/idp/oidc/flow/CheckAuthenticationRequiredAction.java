@@ -1,6 +1,7 @@
 package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.Function;
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.config.OIDCConstants;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
@@ -51,7 +52,7 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
         if (sessionContext != null && sessionContext.getIdPSession() != null) {
             return sessionContext.getIdPSession();
         }
-        throw new IllegalStateException("Cannot locate IdP session");
+        throw new OIDCException("Cannot locate IdP session");
     }
 
     @Override

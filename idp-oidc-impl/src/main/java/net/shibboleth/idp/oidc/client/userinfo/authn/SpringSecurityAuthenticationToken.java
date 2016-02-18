@@ -3,6 +3,7 @@ package net.shibboleth.idp.oidc.client.userinfo.authn;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.session.context.SessionContext;
 import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -60,7 +61,7 @@ public final class SpringSecurityAuthenticationToken extends AbstractAuthenticat
         if (ctxSession != null && ctxSession.getIdPSession() != null) {
             return new DateTime(ctxSession.getIdPSession().getCreationInstant());
         }
-        throw new RuntimeException("Could not determine authentication time based on authentication or session context");
+        throw new OIDCException("Could not determine authentication time based on authentication or session context");
     }
 
 }

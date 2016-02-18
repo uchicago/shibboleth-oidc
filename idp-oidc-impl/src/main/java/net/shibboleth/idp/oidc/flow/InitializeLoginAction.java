@@ -1,5 +1,6 @@
 package net.shibboleth.idp.oidc.flow;
 
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
@@ -32,12 +33,12 @@ public class InitializeLoginAction extends AbstractProfileAction {
         log.debug("{} Initializing login action", getLogPrefix());
         final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+            throw new OIDCException("HttpServletRequest cannot be null");
         }
 
         final HttpServletResponse response = OIDCUtils.getHttpServletResponse(springRequestContext);
         if (response == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+            throw new OIDCException("HttpServletRequest cannot be null");
         }
         HttpServletRequestResponseContext.loadCurrent(request, response);
         return Events.Success.event(this);
