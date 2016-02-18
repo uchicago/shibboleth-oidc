@@ -14,11 +14,13 @@
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
     <AttributeFilterPolicy id="default">
-        <PolicyRequirementRule xsi:type="ANY" />
+        <PolicyRequirementRule xsi:type="Requester" value="client" />
 
+        <!--
         <AttributeRule attributeID="sub">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
+        -->
 
         <AttributeRule attributeID="name">
             <PermitValueRule xsi:type="ANY" />
@@ -48,23 +50,11 @@
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
 
-        <AttributeRule attributeID="picture">
-            <PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-        <AttributeRule attributeID="website">
-            <PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
         <AttributeRule attributeID="email">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
 
         <AttributeRule attributeID="email_verified">
-            <PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-        <AttributeRule attributeID="gender">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
 
@@ -84,9 +74,6 @@
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
 
-        <AttributeRule attributeID="phone_number_verified">
-            <PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
 
         <AttributeRule attributeID="address">
             <PermitValueRule xsi:type="ANY" />

@@ -1,7 +1,25 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.idp.oidc.util.OIDCUtils;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -15,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.endpoint.RedirectResolver;
@@ -25,7 +42,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,14 +52,26 @@ import java.util.Map;
  * Builds an oidc authZ context message from an incoming request.
  */
 public class BuildAuthorizationRequestContextAction extends AbstractProfileAction {
+    /**
+     * The Log.
+     */
     private final Logger log = LoggerFactory.getLogger(BuildAuthorizationRequestContextAction.class);
 
+    /**
+     * The Auth request factory.
+     */
     @Autowired
     private OAuth2RequestFactory authRequestFactory;
 
+    /**
+     * The Client service.
+     */
     @Autowired
     private ClientDetailsEntityService clientService;
 
+    /**
+     * The Redirect resolver.
+     */
     @Autowired
     private RedirectResolver redirectResolver;
 
@@ -59,17 +87,17 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                               @Nonnull final ProfileRequestContext profileRequestContext) {
         final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+            throw new OIDCException("HttpServletRequest cannot be null");
         }
 
         final HttpServletResponse response = OIDCUtils.getHttpServletResponse(springRequestContext);
         if (response == null) {
-            throw new RuntimeException("HttpServletRequest cannot be null");
+            throw new OIDCException("HttpServletRequest cannot be null");
         }
 
         final AuthorizationRequest authorizationRequest = createAuthorizationRequest(request);
         if (Strings.isNullOrEmpty(authorizationRequest.getClientId())) {
-            throw new RuntimeException("No client id is specified in the authorization request");
+            throw new OIDCException("No client id is specified in the authorization request");
         }
 
         final OIDCAuthorizationRequestContext authZContext = new OIDCAuthorizationRequestContext();
@@ -84,8 +112,9 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                 found = it.next().equals(authorizationRequest.getRedirectUri());
             }
             if (!found) {
-                throw new InvalidClientException("Redirect uri in the authorization request " +
-                        authorizationRequest.getRedirectUri() + " is not registered for client " + client.getClientId());
+                throw new OIDCException("Redirect uri in the authorization request " +
+                        authorizationRequest.getRedirectUri()
+                        + " is not registered for client " + client.getClientId());
             }
         }
         log.debug("Found client {}.", client.getClientId());
@@ -103,6 +132,15 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         return produceFinalEvent(profileRequestContext, response, authZContext, pairEvent);
     }
 
+    /**
+     * Produce final event event.
+     *
+     * @param profileRequestContext the profile request context
+     * @param response              the response
+     * @param authorizationRequest  the authorization request
+     * @param pairEvent             the pair event
+     * @return the event
+     */
     private Event produceFinalEvent(final ProfileRequestContext profileRequestContext,
                                     final HttpServletResponse response,
                                     final OIDCAuthorizationRequestContext authorizationRequest,
@@ -124,27 +162,42 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                         log.debug("Authorization request indicated a redirect event to {}", pairEvent.getSecond());
                         response.sendRedirect(pairEvent.getSecond().toString());
                     } else {
-                        throw new IllegalStateException("No redirect url could be found based on the request");
+                        throw new OIDCException("No redirect url could be found based on the request");
                     }
+                    break;
                 case Success:
-                    log.debug("Proceeding with building the authorization context based on the request");
+                    log.debug("Success. Proceeding with building the authorization context based on the request");
                     profileRequestContext.addSubcontext(authorizationRequest, true);
                     break;
+                default:
+                    log.debug("Proceeding to final event");
             }
             final Event ev = pairEvent.getFirst().event(this);
             log.debug("Returning final event {}", ev.getId());
             return ev;
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw new OIDCException(e);
         }
     }
 
+    /**
+     * Load client object client details entity.
+     *
+     * @param authorizationRequest the authorization request
+     * @return the client details entity
+     */
     private ClientDetailsEntity loadClientObject(final OIDCAuthorizationRequestContext authorizationRequest) {
         log.debug("Loading client by id {}", authorizationRequest.getClientId());
         return clientService.loadClientByClientId(authorizationRequest.getClientId());
     }
 
+    /**
+     * Process login hint parameter if needed.
+     *
+     * @param request              the request
+     * @param authorizationRequest the authorization request
+     */
     private void processLoginHintParameterIfNeeded(final HttpServletRequest request,
                                                    final OIDCAuthorizationRequestContext authorizationRequest) {
         final Object loginHint = authorizationRequest.getLoginHint();
@@ -157,6 +210,12 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         }
     }
 
+    /**
+     * Create authorization request authorization request.
+     *
+     * @param request the request
+     * @return the authorization request
+     */
     private AuthorizationRequest createAuthorizationRequest(final HttpServletRequest request) {
         log.debug("Constructing authorization request");
         final Map<String, String> requestParameters = createRequestMap(request.getParameterMap());
@@ -169,10 +228,12 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
      * or authentication cleared forcing the user
      * to authenticate again.
      *
-     * @param prompt  the prompt
-     * @param request the request
+     * @param prompt      the prompt
+     * @param request     the request
+     * @param client      the client
+     * @param authRequest the auth request
      * @return the event
-     * @throws IOException the IO exception
+     * @throws java.io.IOException the IO exception
      */
     private Pair<Events, ? extends Object> checkForPrompts(final String prompt,
                                                            final HttpServletRequest request,
@@ -193,13 +254,21 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         return new Pair<>(Events.Success, null);
     }
 
+    /**
+     * Check for none prompt pair.
+     *
+     * @param client      the client
+     * @param authRequest the auth request
+     * @return the pair
+     */
     private Pair<Events, ? extends Object> checkForNonePrompt(final ClientDetailsEntity client,
                                                               final OIDCAuthorizationRequestContext authRequest) {
         log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_NONE);
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null) {
-            log.debug("Authentication context is found for {}. Already logged in; continue without prompt", auth.getPrincipal());
+            log.debug("Authentication context is found for {}. Already logged in; continue without prompt",
+                    auth.getPrincipal());
             return new Pair(Events.Success, auth);
         }
 
@@ -228,6 +297,11 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         return new Pair(Events.Failure, null);
     }
 
+    /**
+     * Check for login prompt.
+     *
+     * @param request the request
+     */
     private void checkForLoginPrompt(final HttpServletRequest request) {
         log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
 

@@ -1,5 +1,22 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.shibboleth.idp.oidc.client.metadata;
 
+import net.shibboleth.idp.oidc.OIDCException;
 import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceMultiMap;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
@@ -35,8 +52,14 @@ import java.util.Set;
  * Adapts OIDC protocol service metadata onto SAML metadata.
  */
 public class ClientEntityDescriptor implements EntityDescriptor {
+    /**
+     * The Client id.
+     */
     private String clientId;
 
+    /**
+     * The Object metadata.
+     */
     @Nonnull
     private LockableClassToInstanceMultiMap<Object> objectMetadata;
 
@@ -57,7 +80,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setEntityID(final String id) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -67,7 +90,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setID(final String newID) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -77,7 +100,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setExtensions(final Extensions extensions) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -127,7 +150,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setAffiliationDescriptor(final AffiliationDescriptor descriptor) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -137,7 +160,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setOrganization(final Organization organization) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -163,7 +186,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setCacheDuration(final Long duration) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -185,7 +208,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setSignature(@Nullable final Signature newSignature) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -200,7 +223,7 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setValidUntil(final DateTime validUntil) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -303,22 +326,22 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setDOM(@Nullable final Element dom) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
     public void setNoNamespaceSchemaLocation(@Nullable final String location) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
     public void setParent(@Nullable final XMLObject parent) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
     public void setSchemaLocation(@Nullable final String location) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
@@ -335,12 +358,12 @@ public class ClientEntityDescriptor implements EntityDescriptor {
 
     @Override
     public void setNil(@Nullable final Boolean newNil) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
     public void setNil(@Nullable final XSBooleanValue newNil) {
-        throw new UnsupportedOperationException();
+        throw new OIDCException();
     }
 
     @Override
