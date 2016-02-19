@@ -96,8 +96,7 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
                               @Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Building authentication context", getLogPrefix());
         final AuthenticationContext ac = new AuthenticationContext();
-
-
+        
         final OIDCAuthorizationRequestContext authZContext =
                 profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
@@ -112,6 +111,13 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         }
 
         ac.setForceAuthn(authZContext.isForceAuthentication());
+        if (ac.isForceAuthn()) {
+            log.debug("Authentication context requires force authN for {}",
+                    authorizationRequest.getClientId());
+        } else {
+            log.debug("Authentication context does not require force authN for {}",
+                    authorizationRequest.getClientId());
+        }
 
         final List<Principal> principals = new ArrayList<>();
         if (authorizationRequest.getExtensions().containsKey(OIDCConstants.ACR_VALUES)) {
@@ -121,7 +127,7 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
                 final AuthnContextClassRefPrincipal requestedPrincipal =
                         new AuthnContextClassRefPrincipal(acrValue.trim());
                 for (final AuthenticationFlowDescriptor flow : this.availableAuthenticationFlows) {
-                    if (!principals.contains(requestedPrincipal) 
+                    if (!principals.contains(requestedPrincipal)
                             && flow.getSupportedPrincipals().contains(requestedPrincipal)) {
                         principals.add(requestedPrincipal);
                     }
@@ -147,7 +153,6 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         profileRequestContext.setBrowserProfile(true);
         return Events.Success.event(this);
     }
-
 
 
     /**

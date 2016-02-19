@@ -247,7 +247,9 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         }
 
         if (prompts.contains(ConnectRequestParameters.PROMPT_LOGIN)) {
-            checkForLoginPrompt(request, authRequest);
+            log.debug("Prompt contains {} which will require forced authN", ConnectRequestParameters.PROMPT_LOGIN);
+            SecurityContextHolder.clearContext();
+            authRequest.setForceAuthentication(true);
         } else {
             log.debug("Prompt {} is not supported", prompt);
         }
@@ -296,19 +298,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         }
         return new Pair(Events.Failure, null);
     }
-
-    /**
-     * Check for login prompt.
-     *
-     * @param request     the request
-     * @param authRequest the auth request
-     */
-    private void checkForLoginPrompt(final HttpServletRequest request, final OIDCAuthorizationRequestContext authRequest) {
-        log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
-        SecurityContextHolder.clearContext();
-        authRequest.setForceAuthentication(true);
-    }
-
+    
     /**
      * Creates a map of request parameters. Uses the first parameter value
      * in case multi-valued parameters are found

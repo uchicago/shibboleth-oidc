@@ -111,10 +111,13 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
                     log.debug("Authorization request or client configuration contains {}", OIDCConstants.MAX_AGE);
                     if (isAuthenticationTooOldForRequiredMaxAge(client, authZContext, idpSession)) {
                         log.debug("Forcing the IdP to ignore the existing session");
-
                         authZContext.setForceAuthentication(true);
-                        return Events.SessionNotFound.event(this);
                     }
+                }
+                
+                if (authZContext.isForceAuthentication()) {
+                    log.debug("Authentication is required since force authentication is enabled");
+                    return Events.SessionNotFound.event(this);
                 }
                 return Events.SessionFound.event(this);
             }
