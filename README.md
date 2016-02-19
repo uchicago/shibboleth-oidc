@@ -1,12 +1,13 @@
 # OpenId Connect for Shibboleth Identity Provider v3 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/uchicago/shibboleth-oidc/blob/master/LICENSE) 
-[![](https://heroku-badge.herokuapp.com/?app=shibboleth-oidc)](https://shibboleth-oidc.herokuapp.com/idp)
-OpenIDConnect support for the Shibboleth Identity Provider version 3
 
 ## Contents
 - [Scope](#scope)
 - [Design](#design)
 - [Default IdP Configuration](#default-idp-configuration)
 - [Overlay IdP Configuration](#overlay-idp-configuration)
+
+## Heroku [![](https://heroku-badge.herokuapp.com/?app=shibboleth-oidc)](https://shibboleth-oidc.herokuapp.com/idp)
+An instance of this codebase is presently running on [Heroku](https://shibboleth-oidc.herokuapp.com/idp). You may need to refresh the page twice to wake up the instance as idle timeouts may cause it to go down.
 
 ## Scope
 We are working on adding support for the OpenID Connect protocol to the Shibboleth Identity Provider v3. Realistically, these
@@ -150,6 +151,9 @@ This extension registered an authentication flow for OIDC inside `oidc/login/log
 - The client will use the access token to issue a request to `/idp/profile/oidc/userinfo` to grab claims. 
 
 There are many many other permutations of this flow, and many additional extension parameters that could be passed. To learn about all that is possible in this flow, Study [the basics of the specification](http://openid.net/specs/openid-connect-basic-1_0.html).
+
+#### Hybrid Flow
+The hybrid flow is virtually identical to the authorication code flow, except that upon authorization requests the `response_type` parameter must be set to `id_token token`. 
 
 #### Authentication Context/Method Ref
 This extension supports the `acr/amr` claims. If the client requests a specific `acr_value` in the original request, the IdP attempts to calculate whether that value is indeed supported by any of the authentication flows. If none is deemed viable, the authentication context weight map of the IdP is consulted to figure out the appropriate `acr`. The result is passed onto the IdP for authentication. 
