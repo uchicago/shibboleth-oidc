@@ -153,7 +153,7 @@ This extension registered an authentication flow for OIDC inside `oidc/login/log
 There are many many other permutations of this flow, and many additional extension parameters that could be passed. To learn about all that is possible in this flow, Study [the basics of the specification](http://openid.net/specs/openid-connect-basic-1_0.html).
 
 #### Hybrid Flow
-The hybrid flow is virtually identical to the authorication code flow, except that upon authorization requests the `response_type` parameter must be set to `idtoken token`. 
+The hybrid flow is virtually identical to the authorication code flow, except that upon authorization requests the `response_type` parameter must be set to `id_token token`. 
 
 #### Authentication Context/Method Ref
 This extension supports the `acr/amr` claims. If the client requests a specific `acr_value` in the original request, the IdP attempts to calculate whether that value is indeed supported by any of the authentication flows. If none is deemed viable, the authentication context weight map of the IdP is consulted to figure out the appropriate `acr`. The result is passed onto the IdP for authentication. 

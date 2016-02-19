@@ -99,7 +99,13 @@
 
             <property name="redirectUris">
                 <set>
+                	<!-- OpenID Test instance for Code Profile -->
                     <value>https://op.certification.openid.net:60233/authz_cb</value>
+
+                    <!-- OpenID Test instance for Implicit Profile -->
+                    <value>https://op.certification.openid.net:60160/authz_cb</value>
+
+                    <!-- MitreID Connect Client -->
                     <value>http://localhost:8081/simple-web-app/openid_connect_login</value>
                 </set>
             </property>
