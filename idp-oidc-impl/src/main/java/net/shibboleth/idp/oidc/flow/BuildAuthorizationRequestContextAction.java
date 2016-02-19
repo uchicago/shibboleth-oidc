@@ -247,10 +247,10 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         }
 
         if (prompts.contains(ConnectRequestParameters.PROMPT_LOGIN)) {
-            checkForLoginPrompt(request);
+            checkForLoginPrompt(request, authRequest);
+        } else {
+            log.debug("Prompt {} is not supported", prompt);
         }
-
-        log.debug("Prompt {} is not supported", prompt);
         return new Pair<>(Events.Success, null);
     }
 
@@ -300,23 +300,13 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
     /**
      * Check for login prompt.
      *
-     * @param request the request
+     * @param request     the request
+     * @param authRequest the auth request
      */
-    private void checkForLoginPrompt(final HttpServletRequest request) {
+    private void checkForLoginPrompt(final HttpServletRequest request, final OIDCAuthorizationRequestContext authRequest) {
         log.debug("Prompt contains {}", ConnectRequestParameters.PROMPT_LOGIN);
-
-        if (OIDCUtils.getSessionAttribute(request, "PROMPT_FILTER_PROMPTED") != null) {
-            OIDCUtils.putSessionAttribute(request, "PROMPT_FILTER_REQUESTED", Boolean.TRUE);
-            final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null) {
-                SecurityContextHolder.clearContext();
-                log.debug("Cleared authentication {} from context. Proceeding with filter chain", auth.getName());
-            } else {
-                log.debug("Authentication is not found in the context. Proceeding with filter chain");
-            }
-        } else {
-            OIDCUtils.removeSessionAttribute(request, "PROMPT_FILTER_REQUESTED");
-        }
+        SecurityContextHolder.clearContext();
+        authRequest.setForceAuthentication(true);
     }
 
     /**

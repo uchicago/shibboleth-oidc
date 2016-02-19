@@ -83,7 +83,20 @@
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
 
-
+        
+        <AttributeRule attributeID="picture">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="website">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="gender">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="phone_number_verified">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+                
     </AttributeFilterPolicy>
 
 </AttributeFilterPolicyGroup>
