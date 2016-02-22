@@ -25,22 +25,12 @@ public interface OIDCConstants {
      * The constant ACR_VALUES.
      */
     String ACR_VALUES = "acr_values";
-
-    /**
-     * The constant MAX_AGE.
-     */
-    String MAX_AGE = "max_age";
-
+    
     /**
      * The constant ID_TOKEN.
      */
     String ID_TOKEN = "idtoken";
-
-    /**
-     * The constant NONCE.
-     */
-    String NONCE = "nonce";
-
+    
     /**
      * The constant AUTH_TIME.
      */

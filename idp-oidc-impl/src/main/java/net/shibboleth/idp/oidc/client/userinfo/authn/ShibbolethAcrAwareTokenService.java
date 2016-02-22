@@ -43,6 +43,7 @@ import org.mitre.oauth2.repository.AuthenticationHolderRepository;
 import org.mitre.oauth2.service.OAuth2TokenEntityService;
 import org.mitre.oauth2.service.SystemScopeService;
 import org.mitre.openid.connect.config.ConfigurationPropertiesBean;
+import org.mitre.openid.connect.request.ConnectRequestParameters;
 import org.mitre.openid.connect.service.OIDCTokenService;
 import org.mitre.openid.connect.util.IdTokenHashUtils;
 import org.slf4j.Logger;
@@ -122,8 +123,8 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         final OAuth2AccessTokenEntity idTokenEntity = new OAuth2AccessTokenEntity();
         final JWTClaimsSet.Builder idClaims = new JWTClaimsSet.Builder();
 
-        log.debug("Request {} extension {}", OIDCConstants.MAX_AGE,
-                request.getExtensions().get(OIDCConstants.MAX_AGE));
+        log.debug("Request {} extension {}", ConnectRequestParameters.MAX_AGE,
+                request.getExtensions().get(ConnectRequestParameters.MAX_AGE));
         log.debug("Request {} extension {}", OIDCConstants.ID_TOKEN,
                 request.getExtensions().get(OIDCConstants.ID_TOKEN));
         log.debug("Client require authN time {}", client.getRequireAuthTime());
@@ -294,10 +295,10 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
      * @param idClaims the id claims
      */
     private void calculateNonceClaim(final OAuth2Request request, final JWTClaimsSet.Builder idClaims) {
-        final String nonce = (String) request.getExtensions().get(OIDCConstants.NONCE);
+        final String nonce = (String) request.getExtensions().get(ConnectRequestParameters.NONCE);
         if (!Strings.isNullOrEmpty(nonce)) {
-            idClaims.claim(OIDCConstants.NONCE, nonce);
-            log.debug("{} is set to {}", OIDCConstants.NONCE, nonce);
+            idClaims.claim(ConnectRequestParameters.NONCE, nonce);
+            log.debug("{} is set to {}", ConnectRequestParameters.NONCE, nonce);
         }
     }
 
@@ -311,7 +312,7 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
         final long authTime = Long.parseLong(
                 request.getExtensions().get(OIDCConstants.AUTH_TIME).toString()) / 1000;
         log.debug("Request contains {} extension. {} set to {}",
-                OIDCConstants.MAX_AGE, OIDCConstants.AUTH_TIME, authTime);
+                ConnectRequestParameters.MAX_AGE, OIDCConstants.AUTH_TIME, authTime);
         idClaims.claim(OIDCConstants.AUTH_TIME, authTime);
     }
 
@@ -326,8 +327,8 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
                                           final OAuth2AccessTokenEntity idTokenEntity,
                                           final JWTClaimsSet.Builder idClaims) {
         if (client.getIdTokenValiditySeconds() != null) {
-            final Date expiration = new Date(System.currentTimeMillis()
-                    + (client.getIdTokenValiditySeconds() * 1000L));
+            final long exp = client.getIdTokenValiditySeconds() * 1000L;
+            final Date expiration = new Date(System.currentTimeMillis() + exp);
             idClaims.expirationTime(expiration);
             idTokenEntity.setExpiration(expiration);
             log.debug("Claim expiration is set to {}", expiration);

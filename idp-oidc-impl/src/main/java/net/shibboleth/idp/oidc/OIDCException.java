@@ -16,17 +16,21 @@
  */
 package net.shibboleth.idp.oidc;
 
+import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
+
 /**
  * The type Oidc exception.
  */
-public class OIDCException extends RuntimeException {
+public class OIDCException extends InvalidRequestException {
+
 
     /**
      * Instantiates a new Oidc exception.
      */
     public OIDCException() {
+        super("Invalid request");
     }
-
+    
     /**
      * Instantiates a new Oidc exception.
      *
@@ -49,22 +53,9 @@ public class OIDCException extends RuntimeException {
     /**
      * Instantiates a new Oidc exception.
      *
-     * @param cause the cause
+     * @param cause   the cause
      */
     public OIDCException(final Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Instantiates a new Oidc exception.
-     *
-     * @param message            the message
-     * @param cause              the cause
-     * @param enableSuppression  the enable suppression
-     * @param writableStackTrace the writable stack trace
-     */
-    public OIDCException(final String message, final Throwable cause, final boolean enableSuppression,
-                         final boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        this(cause.getMessage(), cause);
     }
 }

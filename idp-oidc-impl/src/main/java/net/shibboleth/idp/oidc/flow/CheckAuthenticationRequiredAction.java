@@ -25,6 +25,7 @@ import net.shibboleth.idp.session.context.SessionContext;
 import org.joda.time.DateTime;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
+import org.mitre.openid.connect.request.ConnectRequestParameters;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -91,7 +92,7 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
 
             if (idpSession.checkTimeout()) {
                 log.debug("IdP session ID {} is still valid. Checking for {}",
-                        idpSession.getId(), OIDCConstants.MAX_AGE);
+                        idpSession.getId(), ConnectRequestParameters.MAX_AGE);
 
                 final OIDCAuthorizationRequestContext authZContext =
                         profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
@@ -108,7 +109,7 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
                 }
 
                 if (authZContext.getMaxAge() != null || client.getDefaultMaxAge() != null) {
-                    log.debug("Authorization request or client configuration contains {}", OIDCConstants.MAX_AGE);
+                    log.debug("Authorization request or client configuration contains {}", ConnectRequestParameters.MAX_AGE);
                     if (isAuthenticationTooOldForRequiredMaxAge(client, authZContext, idpSession)) {
                         log.debug("Forcing the IdP to ignore the existing session");
                         authZContext.setForceAuthentication(true);

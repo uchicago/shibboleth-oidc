@@ -17,6 +17,7 @@
 package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.MoreObjects;
+import net.shibboleth.idp.oidc.config.OIDCConstants;
 import org.mitre.openid.connect.request.ConnectRequestParameters;
 import org.opensaml.messaging.context.BaseContext;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
@@ -89,6 +90,16 @@ public class OIDCAuthorizationRequestContext extends BaseContext {
     }
 
     /**
+     * Gets nonce.
+     *
+     * @return the nonce
+     */
+    public String getNonce() {
+        return (String) authorizationRequest.getExtensions().get(ConnectRequestParameters.NONCE);
+    }
+
+
+    /**
      * Gets max age.
      *
      * @return the max age
@@ -131,5 +142,10 @@ public class OIDCAuthorizationRequestContext extends BaseContext {
      */
     public void setForceAuthentication(final boolean force) {
         this.forceAuthentication = force;
+    }
+    
+    
+    public boolean isImplicitResponseType() {
+        return authorizationRequest.getResponseTypes().contains(OIDCConstants.TOKEN);
     }
 }

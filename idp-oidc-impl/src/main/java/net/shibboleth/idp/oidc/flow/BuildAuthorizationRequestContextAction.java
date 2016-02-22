@@ -100,9 +100,15 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
             throw new OIDCException("No client id is specified in the authorization request");
         }
 
+
         final OIDCAuthorizationRequestContext authZContext = new OIDCAuthorizationRequestContext();
         authZContext.setAuthorizationRequest(authorizationRequest);
 
+        if (authZContext.isImplicitResponseType() && Strings.isNullOrEmpty(authZContext.getNonce())) {
+            log.error("{} is required since the requesting flow is implicit");
+            throw new OIDCException("{} is required when handling implicit response type");  
+        }
+        
         final ClientDetailsEntity client = loadClientObject(authZContext);
         if (!Strings.isNullOrEmpty(authorizationRequest.getRedirectUri())) {
             boolean found = false;
@@ -118,8 +124,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
             }
         }
         log.debug("Found client {}.", client.getClientId());
-
-
+        
         processLoginHintParameterIfNeeded(request, authZContext);
 
         Pair<Events, ? extends Object> pairEvent = new Pair<>(Events.Success, null);
