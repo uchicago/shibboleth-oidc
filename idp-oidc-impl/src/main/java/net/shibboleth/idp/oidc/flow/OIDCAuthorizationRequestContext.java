@@ -143,8 +143,13 @@ public class OIDCAuthorizationRequestContext extends BaseContext {
     public void setForceAuthentication(final boolean force) {
         this.forceAuthentication = force;
     }
-    
-    
+
+
+    /**
+     * Is implicit response type boolean.
+     *
+     * @return the boolean
+     */
     public boolean isImplicitResponseType() {
         return authorizationRequest.getResponseTypes().contains(OIDCConstants.TOKEN);
     }

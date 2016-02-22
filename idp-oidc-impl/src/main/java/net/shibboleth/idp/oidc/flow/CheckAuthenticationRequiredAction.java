@@ -17,7 +17,6 @@
 package net.shibboleth.idp.oidc.flow;
 
 import com.google.common.base.Function;
-import net.shibboleth.idp.oidc.config.OIDCConstants;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
@@ -109,7 +108,8 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction {
                 }
 
                 if (authZContext.getMaxAge() != null || client.getDefaultMaxAge() != null) {
-                    log.debug("Authorization request or client configuration contains {}", ConnectRequestParameters.MAX_AGE);
+                    log.debug("Authorization request or client configuration contains {}", 
+                            ConnectRequestParameters.MAX_AGE);
                     if (isAuthenticationTooOldForRequiredMaxAge(client, authZContext, idpSession)) {
                         log.debug("Forcing the IdP to ignore the existing session");
                         authZContext.setForceAuthentication(true);
