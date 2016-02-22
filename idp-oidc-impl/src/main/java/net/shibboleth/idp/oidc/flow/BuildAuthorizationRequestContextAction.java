@@ -110,6 +110,30 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         }
         
         final ClientDetailsEntity client = loadClientObject(authZContext);
+        ensureRedirectUriIsAuthorized(authorizationRequest, client);
+        
+        log.debug("Found client {}.", client.getClientId());
+        
+        processLoginHintParameterIfNeeded(request, authZContext);
+
+        Pair<Events, ? extends Object> pairEvent = new Pair<>(Events.Success, null);
+        final String prompt = (String) authorizationRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
+        if (prompt != null) {
+            log.debug("Authorization request contains prompt {}", prompt);
+            pairEvent = checkForPrompts(prompt, request, client, authZContext);
+        }
+
+        return produceFinalEvent(profileRequestContext, response, authZContext, pairEvent);
+    }
+
+    /**
+     * Ensure redirect uri is authorized.
+     *
+     * @param authorizationRequest the authorization request
+     * @param client               the client
+     */
+    private void ensureRedirectUriIsAuthorized(final AuthorizationRequest authorizationRequest, 
+                                               final ClientDetailsEntity client) {
         if (!Strings.isNullOrEmpty(authorizationRequest.getRedirectUri())) {
             boolean found = false;
             final Iterator<String> it = client.getRedirectUris().iterator();
@@ -123,18 +147,6 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                         + " is not registered for client " + client.getClientId());
             }
         }
-        log.debug("Found client {}.", client.getClientId());
-        
-        processLoginHintParameterIfNeeded(request, authZContext);
-
-        Pair<Events, ? extends Object> pairEvent = new Pair<>(Events.Success, null);
-        final String prompt = (String) authorizationRequest.getExtensions().get(ConnectRequestParameters.PROMPT);
-        if (prompt != null) {
-            log.debug("Authorization request contains prompt {}", prompt);
-            pairEvent = checkForPrompts(prompt, request, client, authZContext);
-        }
-
-        return produceFinalEvent(profileRequestContext, response, authZContext, pairEvent);
     }
 
     /**

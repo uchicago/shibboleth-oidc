@@ -120,6 +120,51 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
         }
 
         final List<Principal> principals = new ArrayList<>();
+        processRequestedAcrValuesIfAny(authorizationRequest, principals);
+        processAcrValuesBasedOnPrincipalWeightMap(principals);
+        addRequestedPrincipalIntoContext(ac, principals);
+        
+        profileRequestContext.addSubcontext(ac, true);
+        profileRequestContext.setBrowserProfile(true);
+        return Events.Success.event(this);
+    }
+
+    /**
+     * Add requested principal into context.
+     *
+     * @param ac         the ac
+     * @param principals the principals
+     */
+    private void addRequestedPrincipalIntoContext(final AuthenticationContext ac, final List<Principal> principals) {
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
+        ac.addSubcontext(rpc, true);
+    }
+
+    /**
+     * Process acr values based on principal weight map.
+     *
+     * @param principals the principals
+     */
+    private void processAcrValuesBasedOnPrincipalWeightMap(final List<Principal> principals) {
+        if (principals.isEmpty()) {
+            final AuthnContextClassRefPrincipal[] principalArray =
+                    this.authenticationPrincipalWeightMap.keySet()
+                            .toArray(new AuthnContextClassRefPrincipal[]{});
+            Arrays.sort(principalArray, new WeightedComparator());
+            principals.add(principalArray[principalArray.length - 1]);
+        }
+    }
+
+    /**
+     * Process requested acr values if any.
+     *
+     * @param authorizationRequest the authorization request
+     * @param principals           the principals
+     */
+    private void processRequestedAcrValuesIfAny(final AuthorizationRequest authorizationRequest, 
+                                                final List<Principal> principals) {
         if (authorizationRequest.getExtensions().containsKey(OIDCConstants.ACR_VALUES)) {
             final String[] acrValues = authorizationRequest.getExtensions()
                     .get(OIDCConstants.ACR_VALUES).toString().split(" ");
@@ -135,23 +180,6 @@ public class BuildAuthenticationContextAction extends AbstractProfileAction {
             }
 
         }
-
-        if (principals.isEmpty()) {
-            final AuthnContextClassRefPrincipal[] principalArray =
-                    this.authenticationPrincipalWeightMap.keySet().toArray(new AuthnContextClassRefPrincipal[]{});
-            Arrays.sort(principalArray, new WeightedComparator());
-            principals.add(principalArray[principalArray.length - 1]);
-        }
-
-        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
-        rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(principals);
-        ac.addSubcontext(rpc, true);
-
-
-        profileRequestContext.addSubcontext(ac, true);
-        profileRequestContext.setBrowserProfile(true);
-        return Events.Success.event(this);
     }
 
 
