@@ -298,10 +298,27 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                 log.debug("Initial redirect url resolved for client {} is {}", client.getClientName(), url);
 
                 final URIBuilder uriBuilder = new URIBuilder(url);
-                uriBuilder.addParameter(ConnectRequestParameters.ERROR,
-                        ConnectRequestParameters.LOGIN_REQUIRED);
-                if (!Strings.isNullOrEmpty(authRequest.getState())) {
-                    uriBuilder.addParameter(ConnectRequestParameters.STATE, authRequest.getState());
+                
+                if (authRequest.isImplicitResponseType()) {
+                    log.debug("Request is asking for implicit grant type. Encoding parameters as fragments");
+                    final StringBuilder builder = new StringBuilder();
+                    builder.append(ConnectRequestParameters.ERROR)
+                           .append('=')
+                           .append(ConnectRequestParameters.LOGIN_REQUIRED);
+
+                    if (!Strings.isNullOrEmpty(authRequest.getState())) {
+                        builder.append(ConnectRequestParameters.STATE)
+                               .append('=')
+                               .append(authRequest.getState());
+                    }
+                    uriBuilder.setFragment(builder.toString());
+                } else {
+                    log.debug("Request is asking for code grant type. Encoding parameters as url parameters");
+                    uriBuilder.addParameter(ConnectRequestParameters.ERROR,
+                            ConnectRequestParameters.LOGIN_REQUIRED);
+                    if (!Strings.isNullOrEmpty(authRequest.getState())) {
+                        uriBuilder.addParameter(ConnectRequestParameters.STATE, authRequest.getState());
+                    }
                 }
                 log.debug("Resolved redirect url {}", uriBuilder.toString());
                 return new Pair<>(Events.Redirect, uriBuilder.toString());
