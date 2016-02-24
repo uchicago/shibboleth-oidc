@@ -137,7 +137,7 @@ public final class OIDCUtils {
 
 
     /**
-     * Put post authorization attributes into view scope.
+     * Put post authorization attributes into scope.
      *
      * @param attributes the attributes
      * @param context    the context
@@ -147,7 +147,7 @@ public final class OIDCUtils {
     }
 
     /**
-     * Put authorization request into view scope.
+     * Put authorization request into scope.
      *
      * @param authorizationRequest the authorization request
      * @param context              the context
@@ -158,7 +158,7 @@ public final class OIDCUtils {
     }
 
     /**
-     * Put oidc response into view scope.
+     * Put oidc response into scope.
      *
      * @param response the response
      * @param context  the context
@@ -168,7 +168,7 @@ public final class OIDCUtils {
     }
 
     /**
-     * Put csrf into view scope.
+     * Put csrf into scope.
      *
      * @param csrf    the csrf
      * @param context the context
