@@ -75,6 +75,9 @@
                 #springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")
               </div>
 
+            #set ($csrfToken = $request.getAttribute("_csrf"))
+              <input type="hidden" name="$csrfToken.getParameterName()" value="$csrfToken.getToken()"/>
+
             #if ($passwordEnabled)
               <div class="form-element-wrapper">
                 <button class="form-element form-button" type="submit" name="_eventId_proceed"
