@@ -186,7 +186,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                         oidcResponse.setAuthorizationRequest(authorizationRequest.getAuthorizationRequest());
                         oidcResponse.setRedirectUri(pairEvent.getSecond().toString());
                         oidcResponse.setClient(client);
-                        OIDCUtils.putOIDCResponseIntoViewScope(oidcResponse, springRequestContext);
+                        OIDCUtils.putOIDCResponseIntoScope(oidcResponse, springRequestContext.getFlowScope());
                     } else {
                         throw new OIDCException("No redirect url could be found based on the request");
                     }

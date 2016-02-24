@@ -28,6 +28,7 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -141,8 +142,8 @@ public final class OIDCUtils {
      * @param attributes the attributes
      * @param context    the context
      */
-    public static void putPostAuthorizationAttributesIntoViewScope(final Map attributes, final RequestContext context) {
-        context.getViewScope().put("postAuthorizationAttributes", attributes);
+    public static void putPostAuthorizationAttributesIntoScope(final Map attributes, final MutableAttributeMap context) {
+        context.put("postAuthorizationAttributes", attributes);
     }
 
     /**
@@ -151,9 +152,9 @@ public final class OIDCUtils {
      * @param authorizationRequest the authorization request
      * @param context              the context
      */
-    public static void putAuthorizationRequestIntoViewScope(final AuthorizationRequest authorizationRequest,
-                                                            final RequestContext context) {
-        context.getViewScope().put("authorizationRequest", authorizationRequest);
+    public static void putAuthorizationRequestIntoScope(final AuthorizationRequest authorizationRequest,
+                                                        final MutableAttributeMap context) {
+        context.put("authorizationRequest", authorizationRequest);
     }
 
     /**
@@ -162,8 +163,8 @@ public final class OIDCUtils {
      * @param response the response
      * @param context  the context
      */
-    public static void putOIDCResponseIntoViewScope(final OIDCResponse response, final RequestContext context) {
-        context.getViewScope().put("oidcResponse", response);
+    public static void putOIDCResponseIntoScope(final OIDCResponse response, final MutableAttributeMap context) {
+        context.put("oidcResponse", response);
     }
 
     /**
@@ -172,7 +173,7 @@ public final class OIDCUtils {
      * @param csrf    the csrf
      * @param context the context
      */
-    public static void putCsrfIntoViewScope(final Object csrf, final RequestContext context) {
-        context.getViewScope().put("csrf", csrf);
+    public static void putCsrfIntoScope(final Object csrf, final MutableAttributeMap context) {
+        context.put("csrf", csrf);
     }
 }

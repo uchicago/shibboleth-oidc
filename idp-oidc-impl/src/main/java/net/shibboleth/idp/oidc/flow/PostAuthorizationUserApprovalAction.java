@@ -69,10 +69,10 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
 
         final Map map = new HashMap<>();
         map.put("_csrf", csrf);
-        OIDCUtils.putAuthorizationRequestIntoViewScope(authZContext.getAuthorizationRequest(), springRequestContext);
-        OIDCUtils.putOIDCResponseIntoViewScope(responseCtx.getOidcResponse(), springRequestContext);
-        OIDCUtils.putPostAuthorizationAttributesIntoViewScope(map, springRequestContext);
-        OIDCUtils.putCsrfIntoViewScope(csrf, springRequestContext);
+        OIDCUtils.putAuthorizationRequestIntoScope(authZContext.getAuthorizationRequest(), springRequestContext.getViewScope());
+        OIDCUtils.putOIDCResponseIntoScope(responseCtx.getOidcResponse(), springRequestContext.getViewScope());
+        OIDCUtils.putPostAuthorizationAttributesIntoScope(map, springRequestContext.getViewScope());
+        OIDCUtils.putCsrfIntoScope(csrf, springRequestContext.getViewScope());
 
 
         /**
