@@ -123,7 +123,8 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
             pairEvent = checkForPrompts(prompt, request, client, authZContext);
         }
 
-        return produceFinalEvent(profileRequestContext, response, authZContext, pairEvent);
+        return produceFinalEvent(profileRequestContext, response, authZContext, 
+                pairEvent, springRequestContext, client);
     }
 
     /**
@@ -132,7 +133,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
      * @param authorizationRequest the authorization request
      * @param client               the client
      */
-    private void ensureRedirectUriIsAuthorized(final AuthorizationRequest authorizationRequest, 
+    private static void ensureRedirectUriIsAuthorized(final AuthorizationRequest authorizationRequest, 
                                                final ClientDetailsEntity client) {
         if (!Strings.isNullOrEmpty(authorizationRequest.getRedirectUri())) {
             boolean found = false;
@@ -156,12 +157,16 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
      * @param response              the response
      * @param authorizationRequest  the authorization request
      * @param pairEvent             the pair event
+     * @param springRequestContext  the spring request context
+     * @param client   the client details entity
      * @return the event
      */
     private Event produceFinalEvent(final ProfileRequestContext profileRequestContext,
                                     final HttpServletResponse response,
                                     final OIDCAuthorizationRequestContext authorizationRequest,
-                                    final Pair<Events, ? extends Object> pairEvent) {
+                                    final Pair<Events, ? extends Object> pairEvent,
+                                    final RequestContext springRequestContext, 
+                                    final ClientDetailsEntity client) {
 
         try {
             if (pairEvent.getFirst() == null) {
@@ -177,11 +182,15 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                 case Redirect:
                     if (pairEvent.getSecond() != null) {
                         log.debug("Authorization request indicated a redirect event to {}", pairEvent.getSecond());
-                        response.sendRedirect(pairEvent.getSecond().toString());
+                        final OIDCResponse oidcResponse = new OIDCResponse();
+                        oidcResponse.setAuthorizationRequest(authorizationRequest.getAuthorizationRequest());
+                        oidcResponse.setRedirectUri(pairEvent.getSecond().toString());
+                        oidcResponse.setClient(client);
+                        OIDCUtils.putOIDCResponseIntoViewScope(oidcResponse, springRequestContext);
                     } else {
                         throw new OIDCException("No redirect url could be found based on the request");
                     }
-                    return Events.Done.event(this);
+                    break;
                 case Success:
                     log.debug("Success. Proceeding with building the authorization context based on the request");
                     profileRequestContext.addSubcontext(authorizationRequest, true);

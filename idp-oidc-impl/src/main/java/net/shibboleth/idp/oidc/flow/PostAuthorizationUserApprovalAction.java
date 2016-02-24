@@ -69,10 +69,11 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
 
         final Map map = new HashMap<>();
         map.put("_csrf", csrf);
-        springRequestContext.getViewScope().put("postAuthorizationAttributes", map);
-        springRequestContext.getViewScope().put("authorizationRequest", authZContext.getAuthorizationRequest());
-        springRequestContext.getViewScope().put("oidcResponse", responseCtx.getOidcResponse());
-        springRequestContext.getViewScope().put("csrf", csrf);
+        OIDCUtils.putAuthorizationRequestIntoViewScope(authZContext.getAuthorizationRequest(), springRequestContext);
+        OIDCUtils.putOIDCResponseIntoViewScope(responseCtx.getOidcResponse(), springRequestContext);
+        OIDCUtils.putPostAuthorizationAttributesIntoViewScope(map, springRequestContext);
+        OIDCUtils.putCsrfIntoViewScope(csrf, springRequestContext);
+
 
         /**
          * This is required for the authorization endpoint of Spring Security, as it needs

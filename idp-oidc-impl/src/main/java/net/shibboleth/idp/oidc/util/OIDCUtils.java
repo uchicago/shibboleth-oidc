@@ -23,6 +23,8 @@ import net.shibboleth.idp.oidc.endpoints.JWKPublishingEndpoint;
 import net.shibboleth.idp.oidc.endpoints.RevocationEndpoint;
 import net.shibboleth.idp.oidc.endpoints.TokenEndpoint;
 import net.shibboleth.idp.oidc.endpoints.UserInfoEndpoint;
+import net.shibboleth.idp.oidc.flow.OIDCResponse;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -130,5 +132,47 @@ public final class OIDCUtils {
         m.remove("op_policy_uri");
         m.remove("op_tos_uri");
         return m;
+    }
+
+
+    /**
+     * Put post authorization attributes into view scope.
+     *
+     * @param attributes the attributes
+     * @param context    the context
+     */
+    public static void putPostAuthorizationAttributesIntoViewScope(final Map attributes, final RequestContext context) {
+        context.getViewScope().put("postAuthorizationAttributes", attributes);
+    }
+
+    /**
+     * Put authorization request into view scope.
+     *
+     * @param authorizationRequest the authorization request
+     * @param context              the context
+     */
+    public static void putAuthorizationRequestIntoViewScope(final AuthorizationRequest authorizationRequest,
+                                                            final RequestContext context) {
+        context.getViewScope().put("authorizationRequest", authorizationRequest);
+    }
+
+    /**
+     * Put oidc response into view scope.
+     *
+     * @param response the response
+     * @param context  the context
+     */
+    public static void putOIDCResponseIntoViewScope(final OIDCResponse response, final RequestContext context) {
+        context.getViewScope().put("oidcResponse", response);
+    }
+
+    /**
+     * Put csrf into view scope.
+     *
+     * @param csrf    the csrf
+     * @param context the context
+     */
+    public static void putCsrfIntoViewScope(final Object csrf, final RequestContext context) {
+        context.getViewScope().put("csrf", csrf);
     }
 }
