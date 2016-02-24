@@ -60,8 +60,13 @@ public enum Events {
     /**
      * The Proceed event.
      */
-    Proceed;
+    Proceed,
 
+    /**
+     * The Done event.
+     */
+    Done;
+    
     /**
      * Returns the id of the enum off of its name.
      *

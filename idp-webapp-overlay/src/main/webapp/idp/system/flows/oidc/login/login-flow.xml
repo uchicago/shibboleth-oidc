@@ -30,6 +30,7 @@
         <evaluate expression="selectProfileConfiguration" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="checkAuthenticationRequired" />
+        <transition on="done" to="done" />
     </action-state>
 
     <action-state id="checkAuthenticationRequired">

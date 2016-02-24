@@ -181,7 +181,7 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                     } else {
                         throw new OIDCException("No redirect url could be found based on the request");
                     }
-                    break;
+                    return Events.Done.event(this);
                 case Success:
                     log.debug("Success. Proceeding with building the authorization context based on the request");
                     profileRequestContext.addSubcontext(authorizationRequest, true);
@@ -307,7 +307,8 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
                            .append(ConnectRequestParameters.LOGIN_REQUIRED);
 
                     if (!Strings.isNullOrEmpty(authRequest.getState())) {
-                        builder.append(ConnectRequestParameters.STATE)
+                        builder.append('&')
+                               .append(ConnectRequestParameters.STATE)
                                .append('=')
                                .append(authRequest.getState());
                     }
