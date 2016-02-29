@@ -63,7 +63,7 @@ Each of these endpoints is protected via Spring Security, and configured in `oid
 MITREid Connect ships with a JPA implementation already that is responsible for managing the persistence of various tokens and the configuration of available/supported scopes, clients, etc. This extension leverages that functionality and configures a by-default inmemory database instance inside `oidc-protocol-storage.xml`. The database choice and driver are controllable via IdP settings inside `oidc.properties`. 
 
 ```properties
-oidc.db.schema=%{idp.home}/conf/schema.sql
+oidc.db.schema=%{idp.home}/conf/schema/hsqldb-schema.sql
 oidc.db.driver=org.hsqldb.jdbcDriver
 oidc.db.url=jdbc:hsqldb:mem:oic;sql.syntax_mys=true
 oidc.db.uid=sa
@@ -71,7 +71,13 @@ oidc.db.psw=
 ```
 
 #### Schema 
-Note that the default schema provided by this extension assumes a HSQLDB database. If you wish to use a different database, you will need to provide an different schema. Additional schemas are provieded in the `conf` directory for various databases. 
+Note that the default schema provided by this extension assumes a HSQLDB database. If you wish to use a different database, you will need 
+to provide an different schema. Additional schemas are provieded in the `conf` directory for various databases. The following databases
+are supported:
+ 
+ 1. HSQL
+ 2. Postgres
+ 3. MySQL
 
 The following differences are to be noted:
 
@@ -201,7 +207,8 @@ Unzip the `target/idp.war` artifact into an `idp-temp`. This will be used as a r
 
 ### Copy Configuration
 
-- Copy `idp-temp/idp/conf/oidc.properties`, `idp-temp/idp/conf/oidc-protocol.xml` and `idp-temp/idp/conf/schema.sql` into `$IDP_HOME/conf`
+- Copy `idp-temp/idp/conf/oidc.properties`, `idp-temp/idp/conf/oidc-protocol.xml` and `idp-temp/idp/conf/schema-hsqldb-schema.sql` into 
+`$IDP_HOME/conf`
 - Copy `idp-temp/idp/credentials/keystore.jwks` into `$IDP_HOME/credentials`
 - Copy `idp-temp/idp/system/conf/oidc-protocol-*.xml` into `$IDP_HOME/system/conf`
 - Copy `idp-temp/idp/system/flows/oidc` into `$IDP_HOME/system/flows`
