@@ -163,7 +163,7 @@ Since MITREid Connect at this point does not natively support `acr/amr` claims, 
 #### Max-Age, AuthN Time
 This extension supports the `max_age` and `auth_time` claims. If `max_age` is provided in the original request, the IdP attempts to calculate the authentication creation instant and may simulate a `forcedAuthN` so the end-user is actively reauthenticated. 
 
-Since MITREid Connect's support for these claims is stricyly tied to an authentication that is very much handled by Spring Security, a custom service is provided by this extension to handle the production of `max_age` and `auth_time`. 
+Since MITREid Connect's support for these claims is strictly tied to an authentication that is very much handled by Spring Security ( as a requirement for Spring Security OAuth), a custom service is provided by this extension to handle the production of `max_age` and `auth_time`. 
 
 ## Default IdP Configuration 
 Follow the below steps if you wish to enable this extension inside a vanilla IdP v3 deployment. Note that synchronization of changes, as we make progress here, is entirely manual at this point.
