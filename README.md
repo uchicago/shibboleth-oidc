@@ -70,6 +70,9 @@ oidc.db.uid=sa
 oidc.db.psw=
 ```
 
+#### Schema 
+Note that the default schema provided by this extension assumes a HSQLDB database. If you wish to use a different database, you will need to provide an different schema. Additional schemas are provieded in the `conf` directory for various databases. 
+
 The following differences are to be noted:
 
 #### System Scopes
