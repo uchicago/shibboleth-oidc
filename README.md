@@ -91,7 +91,7 @@ This is used directly in the IdP configuration inside the `oidc-protocol.xml`.
 
 There are various other authentication manager/provider components registered in `oidc-protocol-system.xml` that handle backchannel authentication requests for tokens and userinfo data. These are primarily based on Spring Security and MITREid Connect extensions of Spring Security. Additionally, auto-registration of MITREid Connect annotation-aware components  as well as all other components registered in this extension is handled here. 
 
-### Encrytion/Signing
+### Encryption/Signing
 This extension ships with a default encryption/signing components defined in the `oidc-protocol-system.xml`. A default JWKS is also provided which can be controlled via `oidc.properties` at:
 
 ```properties
