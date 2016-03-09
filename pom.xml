@@ -161,7 +161,7 @@
         <bcprov.jdk15on.version>1.53</bcprov.jdk15on.version>
         <c3p0.version>0.9.2.1</c3p0.version>
         <commons.codec.version>1.10</commons.codec.version>
-        <commons.collections.version>3.2.1</commons.collections.version>
+        <commons.collections.version>3.2.2</commons.collections.version>
         <commons.compiler.version>2.7.8</commons.compiler.version>
         <commons.lang.version>2.4</commons.lang.version>
         <cryptacular.version>1.0</cryptacular.version>
