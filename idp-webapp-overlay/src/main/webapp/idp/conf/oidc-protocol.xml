@@ -11,9 +11,9 @@
        default-destroy-method="destroy">
 
     <bean id="configBean" class="org.mitre.openid.connect.config.ConfigurationPropertiesBean">
-        <property name="issuer" value="%{oidc.issuer}" />
-        <property name="regTokenLifeTime" value="%{oidc.token.lifetime:172800}" />
-        <property name="forceHttps" value="%{oidc.force.https:true}" />
+        <property name="issuer" value="%{oidc.issuer}"/>
+        <property name="regTokenLifeTime" value="%{oidc.token.lifetime:172800}"/>
+        <property name="forceHttps" value="%{oidc.force.https:true}"/>
     </bean>
 
     <util:set id="supportedSystemScopes">
@@ -100,14 +100,14 @@
 
             <property name="redirectUris">
                 <set>
-                	<!-- OpenID Test instance for Code Profile -->
+                    <!-- OpenID Test instance for Code Profile -->
                     <value>https://op.certification.openid.net:60233/authz_cb</value>
 
                     <!-- OpenID Test instance for Implicit Profile -->
                     <value>https://op.certification.openid.net:60160/authz_cb</value>
 
                     <!-- MitreID Connect Client -->
-                    <value>http://localhost:8081/simple-web-app/openid_connect_login</value>
+                    <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
                 </set>
             </property>
         </bean>

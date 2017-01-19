@@ -264,7 +264,7 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 ./mvn[w] clean package
 ```
 
-### Run
+### Run IdP
 
 #### Prepare HTTPS
 
@@ -274,6 +274,7 @@ key password should both be `changeit`.
 A sample keystore is provided under the `idp-webapp-overlay/etc/jetty` directory that is empty, and can be used to set up the environment. 
 
 #### Run Jetty
+
 From the root directory, run the following command:
 
 ```bash
@@ -288,4 +289,17 @@ If you want a somewhat faster build, run:
 ./mvn[w] clean package verify -Dhost=jetty --projects idp-oidc-impl,idp-webapp-overlay
 ```
 
+Scripted as:
 
+```bash
+./runidp.sh
+```
+
+### Run Client Application
+
+```bash
+./runclient.sh
+```
+
+The client is automatically and by default pre=registered with IdP under `https://mmoayyed.unicon.net:9443/simple-web-app`.
+It runs inside a Jetty instance that is configured to use port `9443` and the same keystore the IdP uses for simplicity. 
