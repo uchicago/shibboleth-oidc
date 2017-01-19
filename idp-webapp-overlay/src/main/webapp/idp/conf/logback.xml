@@ -4,10 +4,9 @@
     <!-- Logs IdP, but not OpenSAML, messages -->
     <logger name="net.shibboleth.idp" level="DEBUG"/>
 
-    <logger name="org.mitre" level="DEBUG"/>
+    <logger name="org.mitre" level="INFO"/>
 
-    <logger name="org.bouncycastle" level="WARN"/>
-
+    <!-- Logs OpenSAML, but not IdP, messages -->
     <logger name="org.opensaml.saml" level="INFO"/>
 
     <!-- Logs LDAP related messages -->
@@ -24,55 +23,17 @@
     -->
 
     <!-- Logs standard system properties during startup at DEBUG level -->
-    <!--
+    <!-- 
     <logger name="net.shibboleth.idp.log.LogbackLoggingService" level="DEBUG" />
     -->
 
-    <logger name="org.mitre" level="DEBUG">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
-    <logger name="org.hibernate" level="WARN">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
-    <logger name="org.springframework.web" level="WARN">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-    <logger name="org.springframework.webflow" level="WARN">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
-    <logger name="org.springframework.security" level="WARN">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
-    <logger name="org.springframework.security.oauth2" level="WARN">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
-
-    <logger name="net.shibboleth.idp.oidc" level="DEBUG">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
-    <logger name="net.shibboleth.idp" level="DEBUG">
-        <appender-ref ref="IDP_CONSOLE" />
-        <appender-ref ref="IDP_PROCESS"/>
-    </logger>
-
     <!-- Especially chatty. -->
-    <logger name="net.shibboleth.idp.saml.attribute.mapping" level="WARN" />
-    <logger name="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" level="WARN" />
+    <logger name="net.shibboleth.idp.saml.attribute.mapping" level="INFO" />
+    <logger name="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" level="INFO" />
 
     <logger name="org.apache.xml.security" level="INFO" />
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="org.springframework.webflow" level="WARN"/>
     <logger name="org.apache.catalina" level="ERROR"/>
     <logger name="org.eclipse.jetty" level="ERROR"/>
 
@@ -108,7 +69,7 @@
 
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
-            <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex</Pattern>
+            <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
         </encoder>
     </appender>
 
@@ -124,14 +85,6 @@
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <Pattern>%msg%n</Pattern>
-        </encoder>
-    </appender>
-
-    <appender name="IDP_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-        <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger - %msg %n</pattern>
         </encoder>
     </appender>
 
@@ -158,10 +111,9 @@
         <appender-ref ref="IDP_CONSENT_AUDIT"/>
     </logger>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="IDP_PROCESS"/>
         <appender-ref ref="IDP_WARN" />
-        <appender-ref ref="IDP_CONSOLE" />
     </root>
 
 </configuration>

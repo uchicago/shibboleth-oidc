@@ -47,162 +47,239 @@
     the End-User's locale and preferences.
     -->
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="name" sourceAttributeID="name">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Name</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="given_name" sourceAttributeID="given_name">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Given Name</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="family_name" sourceAttributeID="family_name">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Family Name</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="middle_name" sourceAttributeID="middle_name">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Middle Name</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="nickname" sourceAttributeID="nickname">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Nickname</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="preferred_username" sourceAttributeID="preferred_username">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="profile" sourceAttributeID="profile">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Profile</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="picture" sourceAttributeID="picture">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Picture</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="website" sourceAttributeID="website">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Website</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="email" sourceAttributeID="email">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Email</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="email_verified" sourceAttributeID="email_verified">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="gender" sourceAttributeID="gender">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Gender</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="birthdate" sourceAttributeID="birthdate">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Birth Date</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="zoneinfo" sourceAttributeID="zoneinfo">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="locale" sourceAttributeID="locale">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="phone_number" sourceAttributeID="phone_number">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Phone Number</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="phone_number_verified" sourceAttributeID="phone_number_verified">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="address" sourceAttributeID="address">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
         <resolver:DisplayName>Address</resolver:DisplayName>
     </resolver:AttributeDefinition>
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="updated_at" sourceAttributeID="updated_at">
-        <resolver:Dependency ref="staticAttributes" />
+        <resolver:Dependency ref="staticAttributes"/>
     </resolver:AttributeDefinition>
 
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
 
-    <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
-        <!--
-        Uses the IdP's subject to configure sub, but can be overriden here.
-        <dc:Attribute id="sub">
-            <dc:Value>90342.ASDFJWFA</dc:Value>
-        </dc:Attribute>
-        -->
-        <dc:Attribute id="name">
-            <dc:Value>Admin</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="given_name">
-            <dc:Value>James</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="family_name">
-            <dc:Value>Hicks</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="middle_name">
-            <dc:Value>Ken</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="nickname">
-            <dc:Value>TheAdmin</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="preferred_username">
-            <dc:Value>jsmith</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="profile">
-            <dc:Value>https://example.com/profile</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="picture">
-            <dc:Value>https://example.com/prifile/image.jpg</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="website">
-            <dc:Value>https://example.com</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="email">
-            <dc:Value>admin@admin.com</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="email_verified">
-            <dc:Value>true</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="gender">
-            <dc:Value>Male</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="birthdate">
-            <dc:Value>1980-07-16</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="zoneinfo">
-            <dc:Value>America/Los_Angeles</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="locale">
-            <dc:Value>en_US</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="phone_number">
-            <dc:Value>+1 (425) 555-1212</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="phone_number_verified">
-            <dc:Value>true</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="address">
-            <dc:Value>201 Street Name, Gilbert AZ 85258</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="updated_at">
-            <dc:Value>2800012</dc:Value>
-        </dc:Attribute>
+    <resolver:DataConnector id="staticAttributes" xsi:type="dc:Script">
+        <dc:Script><![CDATA[
+
+IdPAttribute = Java.type("net.shibboleth.idp.attribute.IdPAttribute");
+StringAttributeValue = Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
+HashSet = Java.type("java.util.HashSet");
+Integer = Java.type("java.lang.Integer");
+  
+logger = org.slf4j.LoggerFactory.getLogger("net.shibboleth.idp.attribute");
+
+logger.info("**********************************************************");
+logger.info("Resolving attributes for {}", resolutionContext.principal);
+ 
+attr = new IdPAttribute("name");
+set = new HashSet();
+set.add(new StringAttributeValue("Admin"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("given_name");
+set = new HashSet();
+if (resolutionContext.principal.equals("casuser")) {
+    set.add(new StringAttributeValue("James"));
+} else {
+    set.add(new StringAttributeValue("Jim"));
+}
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("family_name");
+set = new HashSet();
+if (resolutionContext.principal.equals("casuser")) {
+    set.add(new StringAttributeValue("Hicks"));
+} else {
+    set.add(new StringAttributeValue("Hickster"));
+}
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("preferred_username");
+set = new HashSet();
+set.add(new StringAttributeValue("jsmith"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("email");
+set = new HashSet();
+set.add(new StringAttributeValue("jsmith@somewhere.org"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("middle_name");
+set = new HashSet();
+set.add(new StringAttributeValue("Ken"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("nickname");
+set = new HashSet();
+set.add(new StringAttributeValue("TheAdmin"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("preferred_username");
+set = new HashSet();
+set.add(new StringAttributeValue("MrSmith"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("profile");
+set = new HashSet();
+set.add(new StringAttributeValue("https://example.com/profile"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("picture");
+set = new HashSet();
+set.add(new StringAttributeValue("https://example.com/profile/image.jpg"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("website");
+set = new HashSet();
+set.add(new StringAttributeValue("https://example.com"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("email_verified");
+set = new HashSet();
+set.add(new StringAttributeValue("true"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("gender");
+set = new HashSet();
+set.add(new StringAttributeValue("Male"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("birthdate");
+set = new HashSet();
+set.add(new StringAttributeValue("1980-07-16"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("zoneinfo");
+set = new HashSet();
+set.add(new StringAttributeValue("America/Los_Angeles"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("locale");
+set = new HashSet();
+set.add(new StringAttributeValue("en_US"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("phone_number");
+set = new HashSet();
+set.add(new StringAttributeValue("+14255551212"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("phone_number_verified");
+set = new HashSet();
+set.add(new StringAttributeValue("true"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("address");
+set = new HashSet();
+set.add(new StringAttributeValue("201 Street Name, Gilbert AZ 85258"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("updated_at");
+set = new HashSet();
+set.add(new StringAttributeValue("2800012"));
+attr.setValues(set);
+connectorResults.add(attr);
+    ]]></dc:Script>
     </resolver:DataConnector>
 
 </resolver:AttributeResolver>

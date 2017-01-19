@@ -108,8 +108,7 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
         if (getAttributeReleaseContext() != null) {
             log.debug("Found attribute release context. Locating consentable attributes...");
 
-            final Map<String, IdPAttribute> consentableAttributes = 
-                    getAttributeReleaseContext().getConsentableAttributes();
+            final Map<String, IdPAttribute> consentableAttributes = getAttributeReleaseContext().getConsentableAttributes();
             log.debug("Consentable attributes are {}", consentableAttributes.keySet());
 
             for (final String attributeKey : consentableAttributes.keySet()) {
