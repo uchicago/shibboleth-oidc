@@ -65,6 +65,12 @@
     <!-- ============== Low Level Details or Changes =============== -->
     <!-- =========================================================== -->
 
+    <appender name="IDP_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
+        </encoder>
+    </appender>
+    
     <!-- Process log. -->
     <appender name="IDP_PROCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${idp.logfiles}/idp-process.log</File>
@@ -179,6 +185,7 @@
     </logger>
 
     <root level="${idp.loglevel.root:-INFO}">
+        <appender-ref ref="IDP_STDOUT" />
         <appender-ref ref="${idp.process.appender:-IDP_PROCESS}"/>
         <appender-ref ref="${idp.warn.appender:-IDP_WARN}" />
     </root>

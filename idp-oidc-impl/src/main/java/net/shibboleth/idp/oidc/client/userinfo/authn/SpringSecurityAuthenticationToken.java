@@ -58,7 +58,7 @@ public final class SpringSecurityAuthenticationToken extends AbstractAuthenticat
     @Override
     public Object getCredentials() {
         final AuthenticationContext ctx = profileRequestContext.getSubcontext(AuthenticationContext.class);
-        if (ctx != null) {
+        if (ctx != null && ctx.containsSubcontext(UsernamePasswordContext.class)) {
             return ctx.getSubcontext(UsernamePasswordContext.class).getUsername();
         }
         final SubjectContext sub = profileRequestContext.getSubcontext(SubjectContext.class);

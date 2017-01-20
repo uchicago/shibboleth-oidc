@@ -182,7 +182,7 @@ configured inside `oidc/login/login-beans.xml`. A typical walkthrough of the aut
 - The client makes a request to `/idp/profile/oidc/authorize` endpoint which is first handled by Spring Security OAuth. 
 - Since the request requires an existing authentication to succeed, Spring Security OAuth throws a `InsufficientAuthenticationException`.
 - The IdP is configured to ignore the this exception so that downstream Spring Security components/filters can process it later. This is done via `mvc-beans.xml`. 
-- `ExceptionTranslationFilter` of Spring Security kicks in, and attempts to handle the request. The request is then routed to Spring Security for authentication.
+- `ExceptionTranslationFilter` of Spring Security kicks in and attempts to handle the request. The request is then routed to Spring Security for authentication.
 - The Idp has configured Spring Security for form-based authentication, which allows the request to be routed to a `login` endpoint for authentication.
 - The `login` endpoints invokes Spring Webflow to recall the OIDC login flow to start the flow.
 - The `login` flow eventually reaches the authentication state allowing for end-user login.
@@ -296,7 +296,7 @@ need to be accounted for during IdP upgrades.
 * A custom JAR is dropped into the overlay's `WEB-INF/lib` that mocks authentication. This is configured via the `jaas.config` file.
 * `oidc.properties` controls the OIDC module configuration. This is appended to the list of property files loaded by 
 the IdP via `idp.properties`. 
-* `web.xml` is modified to register the `.well-known` endpoint.
+* `web.xml` is modified to register the `.well-known` endpoint and also registers the spring security filters.
 
 ### Build [![Build Status](https://travis-ci.org/uchicago/shibboleth-oidc.svg?branch=master)](https://travis-ci.org/uchicago/shibboleth-oidc)
 In order to run the overlay build, examine the `/conf/idp.properties` inside the `idp-webapp-overlay` module,

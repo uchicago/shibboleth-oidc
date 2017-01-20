@@ -31,13 +31,13 @@
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
         <module name="LineLength">
-            <property name="max" value="120"/>
+            <property name="max" value="160"/>
         </module>
         <module name="MethodLength">
             <property name="max" value="70"/>
         </module>
         <module name="ParameterNumber">
-            <property name="max" value="5"/>
+            <property name="max" value="10"/>
         </module>
         <module name="EmptyForIteratorPad"/>
         <module name="MethodParamPad"/>

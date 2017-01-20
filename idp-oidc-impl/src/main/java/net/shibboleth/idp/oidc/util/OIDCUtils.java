@@ -142,7 +142,8 @@ public final class OIDCUtils {
      * @param attributes the attributes
      * @param context    the context
      */
-    public static void putPostAuthorizationAttributesIntoScope(final Map attributes, final MutableAttributeMap context) {
+    public static void putPostAuthorizationAttributesIntoScope(final Map attributes, 
+                                                               final MutableAttributeMap context) {
         context.put("postAuthorizationAttributes", attributes);
     }
 

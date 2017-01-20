@@ -33,6 +33,26 @@
             <optional>true</optional>
             <exclusions>
                 <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                    <artifactId>jackson-datatype-joda</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.shibboleth.ext</groupId>
+                    <artifactId>spring-extensions</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>joda-time</groupId>
+                    <artifactId>joda-time</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
@@ -134,7 +154,7 @@
         <aopalliance.version>1.0</aopalliance.version>
         <activation.version>1.1</activation.version>
         <antlr.version>2.7.7</antlr.version>
-        <bcprov.jdk15on.version>1.54</bcprov.jdk15on.version>
+        <bcprov.jdk15on.version>1.56</bcprov.jdk15on.version>
         <c3p0.version>0.9.2.1</c3p0.version>
         <commons.codec.version>1.10</commons.codec.version>
         <commons.collections.version>3.2.2</commons.collections.version>
