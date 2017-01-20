@@ -14,7 +14,22 @@
     <!-- HandlerMappings: Prefer first the WebFlow one, then the standard Spring MVC default ones.
          Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
     
-    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" p:order="0" p:flowRegistry-ref="flowRegistry" />
+    <bean id="shibboleth.DefaultRESTFlows" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>admin/metrics</value>
+                <value>admin/storage</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" p:order="0"
+            p:flowRegistry-ref="flowRegistry">
+        <property name="flowUrlHandler">
+            <bean class="net.shibboleth.idp.profile.support.PathInfoSupportingFlowUrlHandler"
+                p:supportedFlows="#{getObject('shibboleth.RESTFlows') ?: getObject('shibboleth.DefaultRESTFlows')}" />
+        </property>
+    </bean>
 
     <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" p:order="1" />
 
@@ -26,14 +41,20 @@
         <property name="mappings">
             <props>
                 <prop key="%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}/**">shibboleth.SPNEGOAuthnController</prop>
+                <prop key="/RaiseError">shibboleth.RaiseErrorController</prop>
             </props>
         </property>
     </bean>
 
-    <!-- HandlerAdapters: These aren't ordered. Add the WebFlow one, then the standard Spring MVC default ones. 
+    <!-- HandlerAdapters: These aren't ordered. Add our WebFlow one, then the standard Spring MVC default ones. 
          Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
     
-    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter" p:flowExecutor-ref="flowExecutor" />
+    <bean class="net.shibboleth.idp.profile.support.RethrowingFlowHandlerAdapter"
+            p:flowExecutor-ref="flowExecutor">
+        <property name="supportedMethods">
+            <null/>
+        </property>
+    </bean>
     
     <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter" />
     
@@ -44,6 +65,7 @@
     <!-- Additional MVC controllers -->
     
     <bean id="shibboleth.SPNEGOAuthnController" class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAuthnController" />
+    <bean id="shibboleth.RaiseErrorController" class="net.shibboleth.ext.spring.error.ErrorRaisingController" />
 
     <!-- Exception handling -->
     

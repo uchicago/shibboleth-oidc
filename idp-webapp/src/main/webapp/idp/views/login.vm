@@ -28,12 +28,13 @@
 ##
 <!DOCTYPE html>
 <html>
-  	<head>
-    	<meta charset="utf-8">
-    	<title>#springMessageText("idp.title", "Web Login Service")</title>
-    	<link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-  	</head>
-  	<body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>#springMessageText("idp.title", "Web Login Service")</title>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+    </head>
+    <body>
     <div class="wrapper">
       <div class="container">
         <header>
@@ -66,13 +67,14 @@
               </div>
 
               <div class="form-element-wrapper">
-                <input type="checkbox" name="donotcache" value="1"> #springMessageText("idp.login.donotcache", "Don't Remember Login")
-              </div>
+                <input type="checkbox" name="donotcache" value="1" id="donotcache">
+                <label for="donotcache">#springMessageText("idp.login.donotcache", "Don't Remember Login")</label>
+               </div>
             #end
 
               <div class="form-element-wrapper">
                 <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true">
-                #springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")
+                <label for="_shib_idp_revokeConsent">#springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")</label>
               </div>
 
             #if ($passwordEnabled)

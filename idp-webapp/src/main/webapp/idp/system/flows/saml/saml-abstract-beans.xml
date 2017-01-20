@@ -15,18 +15,20 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- These are beans that are common to most or all SAML profile flows, regardless of version. -->
+
+    <bean id="PopulateMetricContext"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
 
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
     <import resource="../../conf/audit-system.xml" />
 
-    <bean id="PostDecodePopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="PostDecodePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostDecodeAuditExtractors') ?: getObject('shibboleth.DefaultPostDecodeAuditExtractors')}" />
 
     <bean id="CheckMessageVersion"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
@@ -65,7 +67,7 @@
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
                 <property name="roleDescriptorResolver">
-                    <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+                    <bean class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
                         c:mdResolver-ref="shibboleth.MetadataResolver" />
                 </property>
             </bean>
@@ -87,10 +89,8 @@
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
     
-    <bean id="PostLookupPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="PostLookupPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostLookupAuditExtractors') ?: getObject('shibboleth.DefaultPostLookupAuditExtractors')}" />
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
@@ -206,13 +206,16 @@
         </property>
     </bean>
 
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.SAMLSubjectCanonicalizationFlows" />
+
     <bean id="FinalizeSAMLSubjectCanonicalization"
         class="net.shibboleth.idp.saml.profile.impl.FinalizeSAMLSubjectCanonicalization" scope="prototype" />
 
     <bean id="PopulateClientStorageLoadContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />
@@ -220,9 +223,6 @@
     <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
         <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
     </bean>
-
-    <bean id="InitializeRequestedPrincipalContext"
-        class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext" scope="prototype" />
 
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService"
@@ -286,20 +286,15 @@
         </property>
     </bean>
 
-    <bean id="PostAssertionPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="PostAssertionPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostAssertionAuditExtractors') ?: getObject('shibboleth.DefaultPostAssertionAuditExtractors')}" />
 
-    <bean id="PostResponsePopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
 
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="PopulateOutboundInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
@@ -328,7 +323,8 @@
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
 
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         
     <bean id="WriteFTICKSLog" class="net.shibboleth.idp.saml.audit.impl.WriteFTICKSLog" scope="prototype"
         p:activationCondition="#{'%{idp.fticks.federation:null}' != 'null'}"
@@ -343,7 +339,8 @@
         </property>
     </bean>
 
-    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype">
+    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype"
+            p:suppressedEvents="#{getObject('shibboleth.SuppressedEvents') ?: getObject('shibboleth.DefaultSuppressedEvents')}">
         <property name="eventContextLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
         </property>
@@ -354,9 +351,11 @@
         p:defaultView-ref="shibboleth.DefaultErrorView"
         p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
     
-    <bean id="ErrorViewPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
-    
+    <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
+
+    <bean id="PopulateUserAgentContext"
+        class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
 </beans>

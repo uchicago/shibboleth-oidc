@@ -90,6 +90,48 @@
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="true" />
 
+        <bean id="authn/Duo" parent="shibboleth.AuthenticationFlow"
+                p:forcedAuthenticationSupported="true"
+                p:nonBrowserSupported="false">
+            <!--
+            The list below should be changed to reflect whatever locally- or
+            community-defined values are appropriate to represent MFA. It is
+            strongly advised that the value not be specific to Duo or any
+            particular technology.
+            -->
+            <property name="supportedPrincipals">
+                <list>
+                    <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                        c:classRef="http://example.org/ac/classes/mfa" />
+                    <bean parent="shibboleth.SAML1AuthenticationMethod"
+                        c:method="http://example.org/ac/classes/mfa" />
+                </list>
+            </property>
+        </bean>
+
+        <bean id="authn/MFA" parent="shibboleth.AuthenticationFlow"
+                p:passiveAuthenticationSupported="true"
+                p:forcedAuthenticationSupported="true">
+            <!--
+            The list below almost certainly requires changes, and should generally be the
+            union of any of the separate factors you combine in your particular MFA flow
+            rules. The example corresponds to the example in mfa-authn-config.xml that
+            combines IPAddress with Password.
+            -->
+            <property name="supportedPrincipals">
+                <list>
+                    <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" />
+                    <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
+                    <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
+                    <bean parent="shibboleth.SAML1AuthenticationMethod"
+                        c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
+                </list>
+            </property>
+        </bean>
+
     </util:list>
 
     <!--

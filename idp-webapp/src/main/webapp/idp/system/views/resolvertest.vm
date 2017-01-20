@@ -1,5 +1,5 @@
 ##
-## Velocity Template for Status Reporting flow
+## Velocity Template for aacli/resolvertest Utility Output
 ##
 ## Velocity context will contain the following properties
 ## flowRequestContext - the Spring Web Flow RequestContext

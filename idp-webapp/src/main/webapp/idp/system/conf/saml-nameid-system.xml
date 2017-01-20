@@ -49,17 +49,19 @@
     actually selected for use.
     -->
     
-    <bean id="shibboleth.StoredTransientIdGenerator"
+    <bean id="shibboleth.StoredTransientIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy"
         p:idStore-ref="shibboleth.StorageService" />
 
-    <bean id="shibboleth.CryptoTransientIdGenerator"
+    <bean id="shibboleth.CryptoTransientIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy"
         p:dataSealer-ref="shibboleth.DataSealer" />
 
     <bean id="shibboleth.ComputedPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy"
-        p:salt="%{idp.persistentId.salt:}" p:algorithm="%{idp.persistentId.algorithm:SHA}" />
+        p:salt="%{idp.persistentId.salt:}"
+        p:encodedSalt="%{idp.persistentId.encodedSalt:}"
+        p:algorithm="%{idp.persistentId.algorithm:SHA}" />
 
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"

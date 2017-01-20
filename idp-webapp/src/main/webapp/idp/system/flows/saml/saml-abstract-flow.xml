@@ -8,8 +8,8 @@
     <!-- Decode / Configuration Lookup / Request Checking -->
 
     <action-state id="DecodeMessage">
+        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="DecodeMessage" />
-
         <evaluate expression="PostDecodePopulateAuditContext" />
 
         <evaluate expression="CheckMessageVersion" />
@@ -28,12 +28,13 @@
         <evaluate expression="PopulateSignatureValidationParameters" />
         <evaluate expression="PopulateClientTLSValidationParameters" />
         
-        <evaluate expression="PopulateInboundInterceptContext" />        
+        <evaluate expression="PopulateInboundInterceptContext" />
+        <evaluate expression="PopulateUserAgentContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CheckInboundInterceptContext" />
     </action-state>
-    
+
     <decision-state id="CheckInboundInterceptContext">
         <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
             then="OutboundContextsAndSecurityParameters" else="DoInboundInterceptSubflow" />
@@ -63,6 +64,7 @@
     <action-state id="ExtractSubject">
         <evaluate expression="DecryptNameIDs" />
         <evaluate expression="ExtractSubjectFromRequest" />
+        <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />
         
         <!-- No subject to operate on, so just skip to the profile. -->
@@ -71,7 +73,7 @@
         <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
 
-    <subflow-state id="CallSubjectCanonicalization" subflow="c14n/saml">
+    <subflow-state id="CallSubjectCanonicalization" subflow="c14n">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="FinalizeSAMLSubjectCanonicalization" />
     </subflow-state>

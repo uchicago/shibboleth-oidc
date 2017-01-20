@@ -16,8 +16,11 @@
     <bean id="shibboleth.authn.External.externalAuthnPath" class="java.lang.String"
         c:_0="contextRelative:Authn/External" />
 
-    <!-- Populate RP UI info from metadata? -->
-    <util:constant id="shibboleth.authn.External.populateUIInfo" static-field="java.lang.Boolean.FALSE" />
+    <!--
+    Default is to always use the path in the bean above. If you want to determine it
+    dynamically, define a bean called "shibboleth.authn.External.externalAuthnPathStrategy"
+    of type Function<ProfileRequestContext,String> that returns the path to use.
+    -->
 
     <!--
     Add authentication flow descriptor's supportedPrincipals collection to the resulting Subject?
@@ -25,6 +28,11 @@
     external authentication source.
     -->
     <util:constant id="shibboleth.authn.External.addDefaultPrincipals" static-field="java.lang.Boolean.TRUE" />
+
+    <!--
+    <bean id="shibboleth.authn.External.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
+        c:_0="^(.+)@example\.edu]$" />
+    -->
 
     <!--
     Define entries here to map error messages returned by external modules and classify them as particular

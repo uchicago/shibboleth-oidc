@@ -11,9 +11,6 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
     default-init-method="initialize"
     default-destroy-method="destroy">
-
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     
     <util:constant id="shibboleth.MetadataLookup.Protocol"
         static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />

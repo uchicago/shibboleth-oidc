@@ -62,7 +62,7 @@
             depends-on="shibboleth.OpenSAMLConfig"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
             p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-            p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows:}'.trim() + ')']}"
+            p:authenticationFlowDescriptors-ref="shibboleth.AvailableAuthenticationFlows"
             p:cookieManager-ref="shibboleth.CookieManager"
             p:storageService-ref="#{'%{idp.session.StorageService:shibboleth.ClientSessionStorageService}'.trim()}"
             p:consistentAddress="%{idp.session.consistentAddress:true}"

@@ -27,6 +27,7 @@
     <end-state id="NoPotentialFlow" />
     <end-state id="RequestUnsupported" />
     <end-state id="ReselectFlow" />
+    <end-state id="RestartAuthentication" />
     <end-state id="RuntimeException" />
     <end-state id="SubjectCanonicalizationError" />
 

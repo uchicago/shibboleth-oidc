@@ -18,86 +18,15 @@
         <entry key="Shibboleth-Audit" value="%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i|" />
     </util:map>
 
+    <!-- Override the format of date/time fields in the log and/or convert to default time zone. -->
+    <!--
+    <bean id="shibboleth.AuditDateTimeFormat" class="java.lang.String" c:_0="YYYY-MM-dd'T'HH:mm:ss.SSSZZ" />
+    <util:constant id="shibboleth.AuditDefaultTimeZone" static-field="java.lang.Boolean.TRUE" />
+    -->
+
     <!-- Allows auditing to be disabled selectively for particular profiles/flows. -->
     <util:list id="shibboleth.AuditSuppressedProfiles">
         <value>http://shibboleth.net/ns/profiles/status</value>
     </util:list>
 
-    <!--
-    The beans below need to be defined, even if left empty. They can be ignored in most cases.
-    
-    If you write your own function to extract a new piece of data for auditing, you can install it into one or more
-    of the maps below to add it to the auditing framework, keyed by an audit field label to be used in formatting.
-    -->
-
-    <bean id="shibboleth.PostDecodeAuditExtractors" parent="shibboleth.DefaultPostDecodeAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-
-    <bean id="shibboleth.PostLookupAuditExtractors" parent="shibboleth.DefaultPostLookupAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-
-    <bean id="shibboleth.PostAssertionAuditExtractors" parent="shibboleth.DefaultPostAssertionAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-
-    <bean id="shibboleth.PostResponseAuditExtractors" parent="shibboleth.DefaultPostResponseAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-
-    <bean id="shibboleth.LogoutRequestAuditExtractors" parent="shibboleth.DefaultLogoutRequestAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-    
-    <bean id="shibboleth.LogoutAuditExtractors" parent="shibboleth.DefaultLogoutAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-
-    <bean id="shibboleth.ErrorViewAuditExtractors" parent="shibboleth.DefaultErrorViewAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-
-    <bean id="shibboleth.CASLoginAuditExtractors" parent="shibboleth.DefaultCASLoginAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-
-    <bean id="shibboleth.CASValidationAuditExtractors" parent="shibboleth.DefaultCASValidationAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-
-    <bean id="shibboleth.CASProxyAuditExtractors" parent="shibboleth.DefaultCASProxyAuditExtractors" lazy-init="true">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-    
 </beans>

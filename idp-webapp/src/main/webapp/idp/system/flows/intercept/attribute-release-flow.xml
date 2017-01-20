@@ -19,7 +19,6 @@
         <evaluate expression="InitializeAttributeConsentContext" />
         <evaluate expression="PopulateAttributeConsentContext" />
         <evaluate expression="PopulatePreConsentAuditContext" />
-        <evaluate expression="SetRPUIInformation" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="TestForRevokeConsent" />
     </action-state>
@@ -116,12 +115,20 @@
                                                                                                result="viewScope.attributeDisplayDescriptionFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.impl.ConsentContext))" result="viewScope.consentContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.impl.AttributeReleaseContext))" result="viewScope.attributeReleaseContext" />
-            <evaluate expression="SetRPUIInformation.getRPUIContextCreateStrategy().apply(opensamlProfileRequestContext)" result="viewScope.rpUIContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), true).getSubcontext(T(net.shibboleth.idp.ui.context.RelyingPartyUIContext))" result="viewScope.rpUIContext" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
+        <transition on="AttributeReleaseRejected" to="WriteAttributeReleaseConsentAuditLog" />
         <transition on="proceed" to="TestForGlobalConsent" />
     </view-state>
 
+
+    <!-- If consent was rejected by user, write to consent audit log and propagate the error event. -->
+
+    <action-state id="WriteAttributeReleaseConsentAuditLog">
+        <evaluate expression="WriteAttributeReleaseConsentAuditLog" />
+        <evaluate expression="'AttributeReleaseRejected'" />
+    </action-state>
 
     <!-- If global consent was given by user, create appropriate storage result and end flow. -->
 

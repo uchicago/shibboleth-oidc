@@ -15,24 +15,22 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
         
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-
     <import resource="common-beans.xml" />
 
     <util:constant id="shibboleth.EndpointType"
         static-field="org.opensaml.saml.saml2.metadata.SingleLogoutService.DEFAULT_ELEMENT_NAME" />
 
-    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+    <bean id="InitializeProfileRequestContext"
+        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration).PROFILE_ID}"
-        p:loggingId="%{idp.service.logging.saml2slo:Logout}"
-        p:browserProfile="true" />
+        p:loggingId="%{idp.service.logging.saml2slo:Logout}" />
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
             <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype"
                 p:parserPool-ref="shibboleth.ParserPool"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:bindingDescriptor-ref="shibboleth.Binding.SAML2SOAP" />
         </constructor-arg>
     </bean>
 
@@ -48,10 +46,8 @@
         p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
-    <bean id="LogoutPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.LogoutAuditExtractors') ?: getObject('shibboleth.DefaultLogoutAuditExtractors')}" />
     
     <!--
     TODO: will be used when logout propagation is enabled

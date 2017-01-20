@@ -15,8 +15,8 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="FilterFlowsByNonBrowserSupport"
         class="net.shibboleth.idp.profile.interceptor.impl.FilterFlowsByNonBrowserSupport" scope="prototype" />

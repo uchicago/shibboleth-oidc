@@ -12,9 +12,6 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-    
     <util:constant id="shibboleth.MetadataLookup.Protocol"
         static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
 

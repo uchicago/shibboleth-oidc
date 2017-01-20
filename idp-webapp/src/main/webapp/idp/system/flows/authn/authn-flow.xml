@@ -13,6 +13,7 @@
     <action-state id="AuthenticationSetup">
         <evaluate expression="PopulateAuthenticationContext" />
         <evaluate expression="PopulateSessionContext" />
+        <evaluate expression="SetRPUIInformation" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="TestForSession" />
@@ -37,8 +38,8 @@
     </action-state>
    
     <action-state id="FilterFlows">
+        <evaluate expression="InitializeRequestedPrincipalContext" />
         <evaluate expression="FilterFlowsByForcedAuthn" />
-        <evaluate expression="FilterFlowsByPassivity" />
         <evaluate expression="FilterFlowsByNonBrowserSupport" />
         <evaluate expression="'proceed'" />
 
@@ -69,12 +70,27 @@
     -->
     <subflow-state id="CallAuthenticationFlow" subflow="#{currentEvent.id}">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="CallSubjectCanonicalization" />
+        <transition on="proceed" to="CheckSubjectCanonicalization" />
         <transition on="ReselectFlow" to="SelectAuthenticationFlow" />
     </subflow-state>
 
-    <!-- This runs a canonicalization step on the result of the authentication. -->
-    <subflow-state id="CallSubjectCanonicalization" subflow="c14n/authn">
+    <!-- Checks if authentication flow already completed c14n. -->
+    <decision-state id="CheckSubjectCanonicalization">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.SubjectCanonicalizationContext)).getPrincipalName() == null"
+            then="PopulateSubjectCanonicalizationContext"
+            else="DetectIdentitySwitch" />
+    </decision-state>
+
+    <!-- This sets up the proper set of candidate c14n flows to run. -->
+    <action-state id="PopulateSubjectCanonicalizationContext">
+        <evaluate expression="PopulateSubjectCanonicalizationContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="CallSubjectCanonicalization" />
+    </action-state>
+
+    <!-- This runs a c14n step on the result of the authentication. -->
+    <subflow-state id="CallSubjectCanonicalization" subflow="c14n">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="DetectIdentitySwitch" />
     </subflow-state>

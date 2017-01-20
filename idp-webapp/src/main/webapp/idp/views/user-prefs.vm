@@ -9,8 +9,9 @@
 ##
 <!DOCTYPE html>
 <html>
-  	<head>
+    <head>
     	<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width,initial-scale=1.0">
     	<title>#springMessageText("idp.userprefs.title", "Web Login Service") - #springMessageText("idp.userprefs.title.suffix", "Login Preferences")</title>
     	<link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
     	<script language="Javascript">
@@ -18,8 +19,8 @@
     	#parse( "user-prefs.js" )
     	// -->
     	</script>
-  	</head>
-  	<body onLoad="document.getElementById('content').style.display='block'; load('spnego')">
+    </head>
+    <body onLoad="document.getElementById('content').style.display='block'; load('spnego')">
     <div class="wrapper">
       <div class="container">
         <header>

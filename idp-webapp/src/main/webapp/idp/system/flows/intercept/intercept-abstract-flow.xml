@@ -19,6 +19,7 @@
     <end-state id="AttributeReleaseRejected" />
     <end-state id="TermsRejected" />
     <end-state id="ContextCheckDenied" />
+    <end-state id="RestartAuthentication" />
     <end-state id="RuntimeException" />
 
     <action-state id="LogRuntimeException">

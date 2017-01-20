@@ -15,8 +15,8 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
     <import resource="../../conf/audit-system.xml" />
@@ -27,11 +27,18 @@
         p:loggingId="%{idp.service.logging.logout-propagation:LogoutPropagation}"
         p:browserProfile="true" />
 
+    <bean id="PopulateMetricContext"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
+
     <bean id="PopulateLogoutPropagationContext"
         class="net.shibboleth.idp.session.impl.PopulateLogoutPropagationContext" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry"
-        p:dataSealer-ref="shibboleth.DataSealer" />
+        p:dataSealer="#{'%{idp.sealer.storeResource:}'.trim().length() > 0 ? getObject('shibboleth.DataSealer') : null}" />
+
+    <bean id="PopulateUserAgentContext"
+          class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         
     <bean id="SelectPropagationFlow"
         class="net.shibboleth.idp.session.impl.SelectLogoutPropagationFlow" scope="prototype"

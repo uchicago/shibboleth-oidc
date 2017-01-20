@@ -26,22 +26,28 @@
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" />
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
+        p:responderId="#{getObject('entityID')}"
+        p:detailedErrorsPredicate="%{idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by name(s). -->
     <bean id="RelyingPartyByName" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName"
-        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" />
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
+        p:responderId="#{getObject('entityID')}" p:detailedErrorsPredicate="%{idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by group. -->
     <bean id="RelyingPartyByGroup" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
-        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" />
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
+        p:responderId="#{getObject('entityID')}" p:detailedErrorsPredicate="%{idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by tag. -->
     <bean id="RelyingPartyByTag" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
-        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" c:trim="false" c:matchAll="false" />    
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
+        p:responderId="#{getObject('entityID')}" p:detailedErrorsPredicate="%{idp.errors.detailed:false}"
+        c:trim="false" c:matchAll="false" />
 
     <bean id="TagCandidate" abstract="true"
         class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate" />
@@ -50,59 +56,74 @@
     
     <bean id="Shibboleth.SSO"
         class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/shibboleth-sso" />
 
     <bean id="SAML1.AttributeQuery"
         class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml-soap" />
 
     <bean id="SAML1.ArtifactResolution"
         class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml-soap" />
 
     <bean id="SAML2.SSO"
         class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-sso"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
+        
+    <util:constant id="SAML2.SSO.FEATURE_AUTHNCONTEXT"
+        static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
 
     <bean id="SAML2.ECP"
         class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml2-ecp"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.Logout"
         class="net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-slo"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.AttributeQuery"
         class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml-soap"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.ArtifactResolution"
         class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml-soap"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="Liberty.SSOS"
-        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" 
-            p:inboundInterceptorFlows="security-policy/saml2-idwsf-ssos" 
-            p:encryptionOptional="%{idp.encryption.optional:false}" />
+        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
+        p:inboundInterceptorFlows="security-policy/saml2-idwsf-ssos"
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="CAS.LoginConfiguration"
-          class="net.shibboleth.idp.cas.config.impl.LoginConfiguration" />
+        class="net.shibboleth.idp.cas.config.impl.LoginConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="CAS.ProxyConfiguration"
-          class="net.shibboleth.idp.cas.config.impl.ProxyConfiguration" />
+        class="net.shibboleth.idp.cas.config.impl.ProxyConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest" />
 
     <!-- Ticket validity period applies to proxy-granting tickets created upon successful proxy callback validation -->
     <bean id="CAS.ValidateConfiguration"
-          class="net.shibboleth.idp.cas.config.impl.ValidateConfiguration"
-          p:ticketValidityPeriod="PT12H" />
+        class="net.shibboleth.idp.cas.config.impl.ValidateConfiguration"
+        p:servletRequest-ref="shibboleth.HttpServletRequest"
+        p:ticketValidityPeriod="PT12H" />
 
     <!-- Artifact Configuration Defaults -->
     
@@ -222,9 +243,11 @@
 
     <!-- Trust Engine options for X.509 certificate evaluation (e.g., TLS). -->
 
-    <bean id="shibboleth.ExplicitX509TrustEngine"
+    <bean id="shibboleth.ExplicitKeyX509TrustEngine"
         class="org.opensaml.security.trust.impl.ExplicitKeyTrustEngine"
         c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+    <!-- Backward compatibility, remove in 4.0. -->
+    <alias name="shibboleth.ExplicitKeyX509TrustEngine" alias="shibboleth.ExplicitX509TrustEngine" />
 
     <bean id="shibboleth.PKIXX509TrustEngine"
         class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine"
@@ -233,7 +256,7 @@
     <bean id="shibboleth.ChainingX509TrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
         <constructor-arg>
             <list>
-                <ref bean="shibboleth.ExplicitX509TrustEngine" />
+                <ref bean="shibboleth.ExplicitKeyX509TrustEngine" />
                 <ref bean="shibboleth.PKIXX509TrustEngine" />
             </list>
         </constructor-arg>

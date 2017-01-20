@@ -45,7 +45,9 @@
     <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
 
     <action-state id="HandleError">
-        <evaluate expression="LogEvent" />
+        <on-entry>
+            <evaluate expression="LogEvent" />
+        </on-entry>
         <evaluate expression="InitializeOutboundMessageContextForError" />
         <evaluate expression="AddResponseShell" />
         <evaluate expression="AddInResponseToToResponse" />

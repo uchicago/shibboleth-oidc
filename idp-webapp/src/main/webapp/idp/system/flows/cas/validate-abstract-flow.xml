@@ -18,9 +18,21 @@
         <evaluate expression="BuildSAMLMetadataContext" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
         <evaluate expression="SelectProfileConfiguration" />
+        <evaluate expression="PopulateInboundInterceptContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ValidateTicket" />
+        <transition on="proceed" to="CheckInboundInterceptContext" />
     </action-state>
+
+    <decision-state id="CheckInboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="ValidateTicket"
+            else="DoInboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoInboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="ValidateTicket" />
+    </subflow-state>
 
     <action-state id="ValidateTicket">
         <evaluate expression="ValidateTicket" />
@@ -28,14 +40,8 @@
         <transition on="ServiceMismatch" to="ProtocolErrorView" />
         <transition on="TicketExpired" to="ProtocolErrorView" />
         <transition on="TicketRetrievalError" to="ProtocolErrorView" />
-        <transition on="ServiceTicketValidated" to="ValidateIdPSession" />
+        <transition on="ServiceTicketValidated" to="ValidateRenew" />
         <transition on="ProxyTicketValidated" to="HandleValidProxyTicket" />
-    </action-state>
-
-    <action-state id="ValidateIdPSession">
-        <evaluate expression="ValidateIdPSession" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ValidateRenew" />
     </action-state>
 
     <action-state id="ValidateRenew">
@@ -73,9 +79,22 @@
 
     <action-state id="UpdateIdPSessionWithSPSession">
         <evaluate expression="UpdateIdPSessionWithSPSession" />
+        <evaluate expression="PopulateOutboundInterceptContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ValidateSuccess" />
+        <transition on="proceed" to="CheckOutboundInterceptContext" />
     </action-state>
+
+    <decision-state id="CheckOutboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="ValidateSuccess"
+            else="DoOutboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoOutboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="ValidateSuccess" />
+        <transition to="HandleError" />
+    </subflow-state>
 
     <!-- View end states -->
     <end-state id="ValidateSuccess" view="cas/validateSuccess">

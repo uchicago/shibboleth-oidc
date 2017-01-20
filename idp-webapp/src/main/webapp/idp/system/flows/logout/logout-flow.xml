@@ -4,6 +4,8 @@
 
     <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="PopulateMetricContext" />
+        <evaluate expression="PopulateUserAgentContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="PopulateClientStorageLoadContext" />
@@ -72,7 +74,7 @@
     </action-state>
 
     <view-state id="LogoutView" view="logout">
-        <on-entry>
+        <on-render>
             <evaluate expression="WriteAuditLog" />
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
@@ -82,9 +84,10 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
-        </on-entry>
-        <transition on="propagate" to="LogoutPropagateView" />
+        </on-render>
+        <transition on="proceed" to="LogoutCompleteView" />
         <transition on="end" to="LogoutCompleteView" />
+        <transition on="propagate" to="LogoutPropagateView" />
     </view-state>
 
     <!-- Terminus -->

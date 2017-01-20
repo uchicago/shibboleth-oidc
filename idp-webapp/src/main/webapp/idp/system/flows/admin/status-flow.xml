@@ -3,8 +3,19 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
     parent="admin.abstract">
 
-    <action-state id="CheckAccess">
+    <!-- Start action. -->
+    
+    <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+        
+        <!-- Branch to determine if authentication is required. -->
+        <transition on="proceed" to="DoAdminPreamble" />
+    </action-state>
+
+    <!-- Resume actual flow processing. -->
+
+    <action-state id="DoProfileWork">
         <evaluate expression="CheckAccess" />
         <evaluate expression="'proceed'" />
         

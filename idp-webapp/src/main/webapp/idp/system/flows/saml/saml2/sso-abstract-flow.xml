@@ -51,7 +51,6 @@
     
     <action-state id="PostInitialSetup">
         <evaluate expression="InitializeAuthenticationContext" />
-        <evaluate expression="InitializeRequestedPrincipalContext" />
         <evaluate expression="ProcessRequestedAuthnContext" />
         <evaluate expression="'proceed'" />
         
@@ -61,6 +60,7 @@
     <subflow-state id="DoAuthenticationSubflow" subflow="authn">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="ResolveAttributes" />
+        <transition on="RestartAuthentication" to="PostInitialSetup" />
     </subflow-state>
     
     <decision-state id="ResolveAttributes">
@@ -86,6 +86,7 @@
     <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="BuildResponse" />
+        <transition on="RestartAuthentication" to="PostInitialSetup" />
     </subflow-state>
 
     <action-state id="BuildResponse">
@@ -112,6 +113,14 @@
         <evaluate expression="PostAssertionPopulateAuditContext" />
         <evaluate expression="UpdateSessionWithSPSession" />
 
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="EncryptAndSign" />
+        <!-- Mask storage failure. -->
+        <transition on="InputOutputError" to="EncryptAndSign" />
+    </action-state>
+
+    <action-state id="EncryptAndSign">
         <evaluate expression="EncryptNameIDs" />
         <evaluate expression="EncryptAttributes" />
         <evaluate expression="SignAssertions" />
@@ -122,8 +131,6 @@
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="PopulateClientStorageSaveContext" />
-        <!-- Mask storage failure. -->
-        <transition on="InputOutputError" to="PopulateClientStorageSaveContext" />
     </action-state>
     
     <!-- We may need to save client storage. -->
@@ -159,7 +166,8 @@
     <!-- For ECP, local errors mean SOAP faults. -->
     
     <decision-state id="HandleErrorLocally">
-        <if test="opensamlProfileRequestContext.isBrowserProfile()" then="HandleErrorWithView" else="SOAPFault" />
+        <if test="opensamlProfileRequestContext.isBrowserProfile() or !SOAPErrorPredicate.apply(opensamlProfileRequestContext)"
+            then="HandleErrorWithView" else="SOAPFault" />
     </decision-state>
 
     <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->

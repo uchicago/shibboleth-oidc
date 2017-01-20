@@ -99,5 +99,5 @@
 
 <!-- If SAML logout, complete the flow by adding a hidden iframe. -->
 #if ( $profileRequestContext.getProfileId().contains("saml2/logout") )
-    <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
+    <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed"></iframe>
 #end

@@ -16,13 +16,14 @@
 ##
 <!DOCTYPE html>
 <html>
-  	<head>
+    <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-  	</head>
+    </head>
 
-  	<body>
+    <body>
     <div class="wrapper">
       <div class="container">
         <header>
@@ -44,7 +45,7 @@
 
       <!-- If SAML logout, complete the flow by adding a hidden iframe. -->
       #if ( $profileRequestContext.getProfileId().contains("saml2/logout") )
-          <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
+          <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed"></iframe>
       #end
 
       <footer>

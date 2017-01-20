@@ -51,7 +51,7 @@
         <transition to="RunSPNEGO" />
     </action-state>
 
-    <view-state id="RunSPNEGO" view="externalRedirect:#{flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SPNEGO.externalAuthnPath')}/#{flowExecutionContext.getKey().toString()}?conversation=#{flowExecutionContext.getKey().toString()}">
+    <view-state id="RunSPNEGO" view="externalRedirect:#{flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SPNEGO.externalAuthnPathStrategy').apply(opensamlProfileRequestContext)}/#{flowExecutionContext.getKey().toString()}?conversation=#{flowExecutionContext.getKey().toString()}">
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.spnego.impl.SPNEGOContext(), true).setKerberosSettings(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SPNEGO.Krb5.Settings'))" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.context.ExternalAuthenticationContext(), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />
@@ -63,9 +63,10 @@
 
     <action-state id="ValidateExternalAuthentication">
         <evaluate expression="ValidateExternalAuthentication" />
+        <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />
 
-        <transition on="proceed" to="CheckWhetherToEnableAutoLogin" />
+        <transition on="proceed" to="CallSubjectCanonicalization" />
         
         <!--
         If not mapped otherwise in the ClassifiedMessages map, remap some
@@ -78,6 +79,15 @@
         <transition on="SPNEGONotAvailable" to="ReselectFlow" />
         <transition on="NTLMUnsupported" to="ReselectFlow" />
     </action-state>
+
+    <!-- This runs a c14n step on the result of the authentication. -->
+    <subflow-state id="CallSubjectCanonicalization" subflow="c14n">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="CheckWhetherToEnableAutoLogin" />
+        
+        <!-- This shouldn't generally happen, but if c14n fails, it's allowable to fall through. -->
+        <transition on="SubjectCanonicalizationError" to="ReselectFlow" />
+    </subflow-state>
 
     <decision-state id="CheckWhetherToEnableAutoLogin">
         <if test="flowScope.enableAutoLoginOnSuccess"

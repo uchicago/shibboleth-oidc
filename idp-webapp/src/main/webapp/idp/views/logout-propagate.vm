@@ -18,14 +18,15 @@
 ##
 <!DOCTYPE html>
 <html>
-  	<head>
+    <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/logout.css">
-  	</head>
+    </head>
 
-  	<body>
+    <body>
     <div class="wrapper">
       <div class="container">
         <header>

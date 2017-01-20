@@ -8,6 +8,7 @@
     <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
     <action-state id="InitializeValidate">
         <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="DecodeMessage" />
         <evaluate expression="ProcessSamlMessage" />
         <evaluate expression="'proceed'" />

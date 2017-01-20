@@ -15,8 +15,8 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <bean id="UseLocalStorage" class="java.lang.Boolean">
         <constructor-arg value="%{idp.storage.htmlLocalStorage:false}" type="boolean" />
@@ -24,8 +24,7 @@
 
     <bean id="SaveCookieBackedClientStorageServices"
         class="org.opensaml.storage.impl.client.SaveCookieBackedClientStorageServices" scope="prototype"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="LogLocalStorageSaveResults"
         class="org.opensaml.storage.impl.client.LogLocalStorageSaveResults" scope="prototype"

@@ -47,6 +47,11 @@
     </util:list>
 
     <!--
+    <bean id="shibboleth.authn.SPNEGO.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
+        c:_0="^(.+)@example\.edu]$" />
+    -->
+
+    <!--
     Define entries here to map events or error messages returned by the SPNEGO module
     and classify them as particular kinds of errors for use in your templates and as
     events in flows.

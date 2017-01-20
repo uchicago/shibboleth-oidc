@@ -1,7 +1,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-      abstract="true" parent="saml.abstract">
+      parent="saml.abstract">
 
     <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
     
@@ -83,7 +83,9 @@
     <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
 
     <action-state id="HandleError">
-        <evaluate expression="LogEvent" />
+        <on-entry>
+            <evaluate expression="LogEvent" />
+        </on-entry>
         <evaluate expression="InitializeOutboundMessageContextForError" />
         <evaluate expression="AddLogoutResponse" />
         <evaluate expression="AddInResponseToToResponse" />

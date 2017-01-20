@@ -15,9 +15,6 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-
     <import resource="common-beans.xml" />
 
     <bean id="InitializeProfileRequestContext"
@@ -29,7 +26,8 @@
         <constructor-arg>
             <bean class="org.opensaml.saml.saml1.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype"
                 p:parserPool-ref="shibboleth.ParserPool"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:bindingDescriptor-ref="shibboleth.Binding.SAML1SOAP" />
         </constructor-arg>
     </bean>
 

@@ -11,9 +11,10 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
+    <import resource="../../conf/audit-system.xml" />
     <import resource="../../../conf/intercept/consent-intercept-config.xml" />
 
     <bean id="TermsOfUseConsentFunction"
@@ -72,8 +73,7 @@
         class="net.shibboleth.idp.consent.flow.impl.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="TermsOfUseConsentFunction"  />
         
-    <bean id="PopulatePreConsentAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+    <bean id="PopulatePreConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:fieldExtractors-ref="shibboleth.consent.PreConsentAuditExtractors"
         p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
@@ -81,14 +81,6 @@
     <bean id="ReadConsentFromStorage"
         class="net.shibboleth.idp.consent.flow.storage.impl.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey" />
-
-    <bean id="SetRPUIInformation"
-            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
-        <property name="fallbackLanguages">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
-        </property>
-    </bean>
 
     <bean id="ExtractConsent"
         class="net.shibboleth.idp.consent.flow.impl.ExtractConsent" scope="prototype"
@@ -99,8 +91,7 @@
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey"
         p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 
-    <bean id="PopulateConsentAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+    <bean id="PopulateConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:fieldExtractors-ref="shibboleth.consent.ConsentAuditExtractors"
         p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />

@@ -15,8 +15,8 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <import resource="../../../conf/authn/ipaddress-authn-config.xml" />
     
@@ -27,7 +27,11 @@
         
     <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
         p:mappings-ref="shibboleth.authn.IPAddress.Mappings"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.IPAddress.addDefaultPrincipals') != null ? getObject('shibboleth.authn.IPAddress.addDefaultPrincipals') : true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.IPAddress.addDefaultPrincipals') ?: true}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}" />
+
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
 
 </beans>

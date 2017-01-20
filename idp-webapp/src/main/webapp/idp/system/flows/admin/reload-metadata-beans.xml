@@ -15,33 +15,28 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <!-- Profile ID for flow. -->    
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String"
+        c:_0="http://shibboleth.net/ns/profiles/reload-metadata" />
 
-    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
-    <import resource="../../conf/audit-system.xml" />
+    <!-- Default operation/resource suppliers for access checks. -->
     
-    <bean id="InitializeProfileRequestContext"
-        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="http://shibboleth.net/ns/profiles/reload-metadata"
-        p:loggingId="%{idp.service.logging.serviceReload:Reload}" />
+    <bean id="shibboleth.AdminOperationLookupStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0="reload" />
+        
+    <bean id="shibboleth.AdminResourceLookupStrategy"
+        class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
+        c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
+        c:outputType="#{T(java.lang.String)}"
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('resolverId')" />
 
-    <bean id="CheckAccess"
-        class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:accessControlService-ref="shibboleth.AccessControlService"
-        p:policyName="%{idp.reload.accessPolicy}" />
+    <!-- Work beans. -->
 
     <bean id="ReloadMetadata"
         class="net.shibboleth.idp.saml.profile.impl.ReloadMetadata" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:metadataResolver-ref="shibboleth.MetadataResolverService" />
         
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
-    
-    <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:activationCondition-ref="shibboleth.ProfileAuditingCondition"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
 </beans>

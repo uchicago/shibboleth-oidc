@@ -14,8 +14,6 @@
        
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <import resource="../security-beans.xml" />
     

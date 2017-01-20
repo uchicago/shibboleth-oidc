@@ -47,7 +47,6 @@
     
     <action-state id="PostInitialSetup">
         <evaluate expression="InitializeAuthenticationContext" />
-        <evaluate expression="InitializeRequestedPrincipalContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="DoAuthenticationSubflow" />
@@ -56,6 +55,7 @@
     <subflow-state id="DoAuthenticationSubflow" subflow="authn">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="ResolveAttributes" />
+        <transition on="RestartAuthentication" to="PostInitialSetup" />
     </subflow-state>
     
     <decision-state id="ResolveAttributes">
@@ -81,6 +81,7 @@
     <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="BuildResponse" />
+        <transition on="RestartAuthentication" to="PostInitialSetup" />
     </subflow-state>
 
     <action-state id="BuildResponse">

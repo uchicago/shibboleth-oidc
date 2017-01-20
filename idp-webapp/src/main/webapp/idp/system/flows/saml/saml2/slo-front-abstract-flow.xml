@@ -19,19 +19,33 @@
     -->
     
     <!--
-    We splice into the parent flow by checking for a LogoutResponse after the inbound
-    message subflow runs, to bypass the rest of the parent flow. Anything else passes
-    control back to the next parent state. 
+    We splice into the parent flow by checking for a LogoutResponse or an Async LogoutRequest
+    after the inbound message subflow runs, to bypass the rest of the parent flow. Anything else
+    passes control back to the next parent state. 
     -->
     <subflow-state id="DoInboundInterceptSubflow">
         <transition on="proceed" to="CheckLogoutResponse" />
     </subflow-state>
     
     <decision-state id="CheckLogoutResponse">
-        <!-- If parent DoInboundInterceptSubflow transition changes on 'proceed', the else clause needs to also change. -->
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutResponse)"
-            then="LogoutResponseView" else="OutboundContextsAndSecurityParameters"/>
+            then="LogoutResponseView" else="CheckAsync1"/>
     </decision-state>
+
+    <decision-state id="CheckAsync1">
+        <!-- If parent DoInboundInterceptSubflow transition changes on 'proceed', the else clause needs to also change. -->
+        <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutRequest) and opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() != null and !opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
+            then="AsyncDecryptionParameters" else="OutboundContextsAndSecurityParameters" />
+    </decision-state>
+    
+    <!-- This is the one action inside "OutboundContextsAndSecurityParameters" that we can't skip. -->
+    <action-state id="AsyncDecryptionParameters">
+        <evaluate expression="PopulateDecryptionParameters" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ExtractSubject" />
+    </action-state>
+    
 
     <!-- LogoutRequest handling starts by loading client storage if needed. -->
         
@@ -107,7 +121,7 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
         
-        <transition on="proceed" to="CheckAsync" />
+        <transition on="proceed" to="CheckAsync2" />
         <transition on="propagate" to="LogoutPropagateView" />
         <transition on="end" to="LogoutCompleteView" />
     </view-state>
@@ -128,7 +142,7 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
         
-        <transition on="proceed" to="CheckAsync" />
+        <transition on="proceed" to="CheckAsync2" />
     </view-state>
 
     <view-state id="LogoutCompleteView" view="logout-complete">
@@ -143,10 +157,10 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
 
-        <transition on="proceed" to="CheckAsync" />
+        <transition on="proceed" to="CheckAsync2" />
     </view-state>
     
-    <decision-state id="CheckAsync">
+    <decision-state id="CheckAsync2">
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() == null or opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
             then="BuildResponse" else="AsyncLogoutView" />
     </decision-state>
@@ -211,8 +225,8 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />
-            <evaluate expression="T(eu.bitwalker.useragentutils.UserAgent).parseUserAgentString(externalContext.nativeRequest.getHeader('User-Agent')).browser" result="requestScope.browser" />
-            <evaluate expression="browser.getGroup().equals(T(eu.bitwalker.useragentutils.Browser).IE)
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.UserAgentContext))" result="requestScope.userAgentContext" />
+            <evaluate expression="userAgentContext.isInstance(T(eu.bitwalker.useragentutils.Browser).IE)
                 ? externalContext.nativeResponse.setContentType('text/plain')
                 : externalContext.nativeResponse.setContentType('application/json')" />
         </on-entry>

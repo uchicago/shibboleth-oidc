@@ -10,6 +10,8 @@
             <evaluate result="flowScope.hasAuthenticationContext" expression="false" />
         </on-entry>
         <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="PopulateMetricContext" />
+        <evaluate expression="InitializeLogin" />
         <evaluate expression="PopulateClientStorageLoadContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="ClientStorageLoad" />
@@ -23,25 +25,46 @@
 
     <action-state id="ContinueLogin">
         <evaluate expression="PopulateSessionContext"/>
-        <evaluate expression="InitializeLogin" />
         <evaluate expression="BuildRelyingPartyContext" />
         <evaluate expression="BuildSAMLMetadataContext" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
         <evaluate expression="SelectProfileConfiguration" />
         <evaluate expression="PublishProtocolRequest" />
+        <evaluate expression="PopulateInboundInterceptContext" />
+        <evaluate expression="PopulateUserAgentContext"/>
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="CheckAuthenticationRequired" />
+        <transition on="proceed" to="CheckInboundInterceptContext" />
     </action-state>
+
+    <decision-state id="CheckInboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="CheckAuthenticationRequired"
+            else="DoInboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoInboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="CheckAuthenticationRequired" />
+    </subflow-state>
 
     <decision-state id="CheckAuthenticationRequired">
         <if test="flowScope.serviceTicketRequest.gateway"
-            then="PrepareForRedirectToService"
+            then="CheckForExistingSession"
             else="CheckInitialAuthenticationRequired" />
     </decision-state>
 
-    <action-state id="PrepareForRedirectToService">
+    <decision-state id="CheckForExistingSession">
+        <on-entry>
+            <set name="flowScope.sessionContext" value="SessionContextLookup.apply(opensamlProfileRequestContext)" />
+        </on-entry>
+        <if test="sessionContext != null and sessionContext.idPSession.authenticationResults.size() > 0"
+            then="CheckResolveAttributes"
+            else="PrepareForReturnToService" />
+    </decision-state>
+
+    <action-state id="PrepareForReturnToService">
         <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />
-        <transition to="RedirectToService" />
+        <transition to="CheckOutboundInterceptContext" />
     </action-state>
 
     <decision-state id="CheckInitialAuthenticationRequired">
@@ -72,6 +95,7 @@
         <transition on="proceed" to="CheckResolveAttributes">
             <evaluate result="flowScope.hasAuthenticationContext" expression="true" />
         </transition>
+        <transition on="RestartAuthentication" to="PostInitialSetup" />
     </subflow-state>
 
     <decision-state id="CheckResolveAttributes">
@@ -102,37 +126,68 @@
 
     <decision-state id="CheckPostAuthnInterceptContext">
         <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
-            then="GrantServiceTicket" else="DoPostAuthnInterceptSubflow" />
+            then="GrantServiceTicket"
+            else="DoPostAuthnInterceptSubflow" />
     </decision-state>
 
     <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="GrantServiceTicket" />
+        <transition on="RestartAuthentication" to="PostInitialSetup" />
     </subflow-state>
 
     <action-state id="GrantServiceTicket">
         <evaluate expression="GrantServiceTicket" />
         <evaluate expression="PublishProtocolResponse" />
+        <evaluate expression="PopulateOutboundInterceptContext" />
         <evaluate expression="PopulateClientStorageSaveContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="ClientStorageSave" />
-        <transition on="NoSaveNeeded" to="RedirectToService">
+        <transition on="NoSaveNeeded" to="CheckOutboundInterceptContext">
             <set name="flowScope.redirectUrl" value="flowScope.serviceTicketResponse.redirectUrl" />
         </transition>
     </action-state>
 
     <subflow-state id="ClientStorageSave" subflow="client-storage/write">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="RedirectToService">
+        <transition on="proceed" to="CheckOutboundInterceptContext">
             <set name="flowScope.redirectUrl" value="flowScope.serviceTicketResponse.redirectUrl" />
         </transition>
     </subflow-state>
 
-    <!-- Redirect end states -->
+    <decision-state id="CheckOutboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="ReturnToService"
+            else="DoOutboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoOutboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="ReturnToService" />
+        <transition to="HandleError" />
+    </subflow-state>
+
+    <decision-state id="ReturnToService">
+        <if test="flowScope.serviceTicketRequest.method == 'POST'"
+            then="PostBackToService"
+            else="RedirectToService" />
+    </decision-state>
+
+    <!-- End states -->
     <end-state id="RedirectToService" view="externalRedirect:#{flowScope.redirectUrl}">
         <on-entry>
             <evaluate expression="PopulateAuditContext" />
             <evaluate expression="WriteAuditLog" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="PostBackToService" view="cas/postBack">
+        <on-entry>
+            <evaluate expression="PopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
+            <set name="requestScope.service" value="flowScope.serviceTicketResponse.service" />
+            <set name="requestScope.ticketParamName" value="flowScope.serviceTicketResponse.ticketParameterName" />
+            <set name="requestScope.ticket" value="flowScope.serviceTicketResponse.ticket" />
         </on-entry>
     </end-state>
 

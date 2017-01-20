@@ -46,22 +46,28 @@
         </property>
     </bean>
 
+    <!-- Default list of custom Principal serializers; users can define their own list and merge it with this one. -->
+    <bean id="shibboleth.DefaultPrincipalSerializers"
+            class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer" />
+                <bean class="net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer" />
+                <bean class="net.shibboleth.idp.authn.duo.impl.DuoPrincipalSerializer" />
+                <bean class="net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer" />
+                <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
+                    p:dataSealer="#{'%{idp.sealer.storeResource:}'.trim().length() > 0 ? getObject('shibboleth.DataSealer') : null}" />
+            </list>
+        </property>
+    </bean>
+    
     <!--
     Defining this allows us to specify symbolic text replacements that shrink the size of results
     saved to client-side storage such as cookies.
     -->
-    <bean id="shibboleth.DefaultAuthenticationResultSerializer"
-            class="net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer">
-        <property name="principalSerializers">
-            <list>
-                <bean class="net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer" />
-                <bean class="net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer" />
-                <bean class="net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer" />
-                <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
-                    p:dataSealer-ref="shibboleth.DataSealer" />
-            </list>
-        </property>
-        <property name="genericPrincipalSerializer.symbolics">
+    <bean id="shibboleth.DefaultPrincipalSymbolics"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
             <map>
                 <!-- Custom principal types. -->
                 <entry key="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal" value="1" />
@@ -97,6 +103,7 @@
                 <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified" value="124" />
 
                 <!-- SAML 1 authn methods -->
+                <entry key="urn:oasis:names:tc:SAML:1.0:am:password" value="200" />
                 <entry key="urn:ietf:rfc:1510" value="201" />
                 <entry key="urn:oasis:names:tc:SAML:1.0:am:HardwareToken" value="202" />
                 <entry key="urn:oasis:names:tc:SAML:1.0:am:X509-PKI" value="203" />
@@ -112,6 +119,19 @@
                 <entry key="http://id.incommon.org/assurance/silver" value="300" />
                 <entry key="http://id.incommon.org/assurance/bronze" value="301" />
             </map>
+        </property>
+    </bean>
+    
+    <!-- The serializer machinery injected into authentication flows by default. -->
+    <bean id="shibboleth.DefaultAuthenticationResultSerializer"
+            class="net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer">
+        <property name="principalSerializers">
+            <ref bean="#{getObject('shibboleth.PrincipalSerializers') != null
+                ? 'shibboleth.PrincipalSerializers' : 'shibboleth.DefaultPrincipalSerializers'}" />
+        </property>
+        <property name="genericPrincipalSerializer.symbolics">
+            <ref bean="#{getObject('shibboleth.PrincipalSymbolics') != null
+                ? 'shibboleth.PrincipalSymbolics' : 'shibboleth.DefaultPrincipalSymbolics'}" />
         </property>
     </bean>
 

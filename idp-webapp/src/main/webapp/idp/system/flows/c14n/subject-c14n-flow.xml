@@ -4,18 +4,10 @@
       parent="c14n.abstract">
 
     <!--
-    This is the SubjectCanonicalization subflow for handling SAML subjects supplied in a request.
-    It handles set up and eventual selection of a c14n subflow before returning control to the calling
-    (profile) flow.
+    This is the master SubjectCanonicalization subflow. It handles selection of
+    c14n subflows before returning control to the calling flow.
     -->
-    
-    <action-state id="PopulateSubjectCanonicalizationContext">
-        <evaluate expression="PopulateSubjectCanonicalizationContext" />
-        <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="SelectSubjectCanonicalizationFlow" />
-    </action-state>
-    
     <!--
     The Select action is the "dispatching" step. Anything starting with "c14n/"
     is a flow descriptor that we send control to.
@@ -40,6 +32,6 @@
         <transition on="ReselectFlow" to="SelectSubjectCanonicalizationFlow" />
     </subflow-state>
 
-    <bean-import resource="subject-c14n-saml-beans.xml" />
+    <bean-import resource="subject-c14n-beans.xml" />
 
 </flow>

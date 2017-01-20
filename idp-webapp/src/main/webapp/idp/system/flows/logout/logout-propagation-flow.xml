@@ -6,7 +6,9 @@
 
     <action-state id="PropagateLogout">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="PopulateLogoutPropagationContext" />
+        <evaluate expression="PopulateUserAgentContext" />
         <evaluate expression="SelectPropagationFlow" />
         
         <!-- Call a subflow with the same ID as the event. -->
@@ -26,8 +28,8 @@
 
     <end-state id="RenderResult" view="logout/result">
         <on-entry>
-            <evaluate expression="T(eu.bitwalker.useragentutils.UserAgent).parseUserAgentString(externalContext.nativeRequest.getHeader('User-Agent')).browser" result="requestScope.browser" />
-            <evaluate expression="browser.getGroup().equals(T(eu.bitwalker.useragentutils.Browser).IE)
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.UserAgentContext))" result="requestScope.userAgentContext" />
+            <evaluate expression="userAgentContext.isInstance(T(eu.bitwalker.useragentutils.Browser).IE)
                 ? externalContext.nativeResponse.setContentType('text/plain')
                 : externalContext.nativeResponse.setContentType('application/json')" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />

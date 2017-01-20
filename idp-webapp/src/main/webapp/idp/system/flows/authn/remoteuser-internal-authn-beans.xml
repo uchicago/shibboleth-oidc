@@ -15,8 +15,8 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <import resource="../../../conf/authn/remoteuser-internal-authn-config.xml" />
     
@@ -34,7 +34,11 @@
         p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"
         p:whitelistedUsernames-ref="shibboleth.authn.RemoteUser.whitelistedUsernames"
         p:blacklistedUsernames-ref="shibboleth.authn.RemoteUser.blacklistedUsernames"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') != null ? getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') : true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') ?: true}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}" />
+
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
 
 </beans>

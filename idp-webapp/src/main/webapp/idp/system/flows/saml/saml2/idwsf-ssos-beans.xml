@@ -11,17 +11,18 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+    <bean id="InitializeProfileRequestContext"
+        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration).PROFILE_ID}"
         p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="false" />
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.LibertyHTTPSOAP11Decoder" scope="prototype">
-                <property name="parserPool" ref="shibboleth.ParserPool" />
-                <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-            </bean>
+            <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.LibertyHTTPSOAP11Decoder" scope="prototype"
+                p:parserPool-ref="shibboleth.ParserPool"
+                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:bindingDescriptor-ref="shibboleth.Binding.LibertySOAP" />
         </constructor-arg>
     </bean>
     
@@ -150,7 +151,7 @@
             <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype"
                 p:entityContextClass="org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext">
                 <property name="roleDescriptorResolver">
-                    <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+                    <bean class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
                         c:mdResolver-ref="shibboleth.MetadataResolver" />
                 </property>
             </bean>

@@ -8,10 +8,20 @@
     <action-state id="X509">
         <evaluate expression="ExtractX509CertificateFromRequest" />
         <evaluate expression="ValidateX509Certificate" />
+        <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="proceed" />
+        <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
+
+    <!-- This runs a c14n step on the result of the authentication. -->
+    <subflow-state id="CallSubjectCanonicalization" subflow="c14n">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="proceed" />
+        
+        <!-- This shouldn't generally happen, but if c14n fails, it's allowable to fall through. -->
+        <transition on="SubjectCanonicalizationError" to="ReselectFlow" />
+    </subflow-state>
 
     <!-- As a "fall-through" method, remap selected events to select a different flow. -->
     <global-transitions>

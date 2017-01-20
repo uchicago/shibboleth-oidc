@@ -3,12 +3,12 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
     <view-state id="ShowServiceLogoutView" view="cas/logoutService">
-        <on-entry>
+        <on-render>
             <set name="viewScope.logoutPropCtx"
                  value="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" />
             <set name="viewScope.messageID" value="T(java.util.UUID).randomUUID()" />
             <set name="viewScope.issueInstant" value="DateFormatter.print(T(org.joda.time.DateTime).now())" />
-        </on-entry>
+        </on-render>
         <transition on="proceed" to="proceed" />
     </view-state>
 

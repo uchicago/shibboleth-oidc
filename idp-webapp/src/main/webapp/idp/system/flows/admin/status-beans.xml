@@ -15,8 +15,16 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <!-- Profile ID for flow. -->    
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/status" />
+    
+    <!-- Default operation/resource suppliers for access checks. -->
+    
+    <bean id="shibboleth.AdminOperationLookupStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0="read" />
+        
+    <bean id="shibboleth.AdminResourceLookupStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0="status" />
     
     <util:list id="ServiceCollection">
         <ref bean="shibboleth.LoggingService" />
@@ -27,16 +35,5 @@
         <ref bean="shibboleth.AttributeResolverService" />
         <ref bean="shibboleth.AttributeFilterService" />
     </util:list>
-
-    <bean id="InitializeProfileRequestContext"
-        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="http://shibboleth.net/ns/profiles/status"
-        p:loggingId="%{idp.service.logging.status:Status}" />
-
-    <bean id="CheckAccess"
-        class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:accessControlService-ref="shibboleth.AccessControlService"
-        p:policyName="%{idp.status.accessPolicy}" />
 
 </beans>

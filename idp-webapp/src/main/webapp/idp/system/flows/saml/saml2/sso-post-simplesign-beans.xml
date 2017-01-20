@@ -11,7 +11,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+    <bean id="InitializeProfileRequestContext"
+        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
         p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="true" />
@@ -19,10 +20,10 @@
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder" scope="prototype">
-                <property name="parserPool" ref="shibboleth.ParserPool" />
-                <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-            </bean>
+            <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder" scope="prototype"
+                p:parserPool-ref="shibboleth.ParserPool"
+                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:bindingDescriptor-ref="shibboleth.Binding.SAML2POSTSimpleSign" />
         </constructor-arg>
     </bean>
     

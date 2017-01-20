@@ -15,24 +15,25 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+    <!-- Default strategy function to obtain the external path. -->
+    <bean id="shibboleth.authn.X509.externalAuthnPathStrategy"
+        class="com.google.common.base.Functions" factory-method="constant"
+        c:_0-ref="shibboleth.authn.X509.externalAuthnPath" />
 
     <import resource="../../../conf/authn/x509-authn-config.xml" />
 
-    <bean id="SetRPUIInformation"
-            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-            p:activationCondition-ref="shibboleth.authn.X509.populateUIInfo"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
-        <property name="fallbackLanguages">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
-        </property>
-    </bean>
-
     <bean id="ValidateExternalAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') != null ? getObject('shibboleth.authn.X509.addDefaultPrincipals') : true}"
+        p:metricName="net.shibboleth.idp.authn.x509"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: true}"
         p:classifiedMessages-ref="shibboleth.authn.X509.ClassifiedMessageMap"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
+
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
 
 </beans>

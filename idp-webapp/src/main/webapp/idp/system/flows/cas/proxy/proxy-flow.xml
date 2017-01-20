@@ -11,27 +11,47 @@
 
     <action-state id="InitializeProxy">
         <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="InitializeProxy" />
         <evaluate expression="BuildRelyingPartyContext" />
         <evaluate expression="BuildSAMLMetadataContext" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
         <evaluate expression="SelectProfileConfiguration" />
         <evaluate expression="PublishProtocolRequest" />
+        <evaluate expression="PopulateInboundInterceptContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ValidateIdPSession" />
+        <transition on="proceed" to="CheckInboundInterceptContext" />
     </action-state>
 
-    <action-state id="ValidateIdPSession">
-        <evaluate expression="ValidateIdPSession" />
-        <evaluate expression="'proceed'" />
+    <decision-state id="CheckInboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="GrantProxyTicket"
+            else="DoInboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoInboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="GrantProxyTicket" />
-    </action-state>
+    </subflow-state>
 
     <action-state id="GrantProxyTicket">
         <evaluate expression="GrantProxyTicket" />
+        <evaluate expression="PopulateOutboundInterceptContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ProxySuccess" />
+        <transition on="proceed" to="CheckOutboundInterceptContext" />
     </action-state>
+
+    <decision-state id="CheckOutboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="ProxySuccess"
+            else="DoOutboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoOutboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="ProxySuccess" />
+        <transition to="HandleError" />
+    </subflow-state>
 
     <!-- View end states -->
     <end-state id="ProxySuccess" view="cas/proxySuccess">

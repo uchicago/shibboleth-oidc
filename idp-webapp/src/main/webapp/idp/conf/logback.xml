@@ -24,10 +24,6 @@
     <variable name="idp.loglevel.spring" value="ERROR" />
     <variable name="idp.loglevel.container" value="ERROR" />
     <variable name="idp.loglevel.xmlsec" value="INFO" />
-    
-    <!-- Syslog address for F-TICKS (see FTICKSLoggingConfiguration). -->
-    <variable name="idp.fticks.loghost" value="localhost" />
-    <variable name="idp.fticks.logport" value="514" />
 
     <!--
     If you want to use custom properties in this config file,
@@ -82,6 +78,18 @@
             <charset>UTF-8</charset>
             <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
         </encoder>
+
+        <!-- Ignore Velocity status page error. -->
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <matcher>
+                    <Name>VelocityStatusMatcher</Name>
+                    <regex>ResourceManager : unable to find resource 'status.vm' in any resource loader.</regex>
+                </matcher>
+                <expression>VelocityStatusMatcher.matches(formattedMessage)</expression>
+            </evaluator>
+            <OnMatch>DENY</OnMatch>
+        </filter>
     </appender>
 
     <appender name="ASYNC_PROCESS" class="ch.qos.logback.classic.AsyncAppender">
@@ -106,6 +114,18 @@
             <charset>UTF-8</charset>
             <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
         </encoder>
+        
+        <!-- Ignore Velocity status page error. -->
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <matcher>
+                    <Name>VelocityStatusMatcher</Name>
+                    <regex>ResourceManager : unable to find resource 'status.vm' in any resource loader.</regex>
+                </matcher>
+                <expression>VelocityStatusMatcher.matches(formattedMessage)</expression>
+            </evaluator>
+            <OnMatch>DENY</OnMatch>
+        </filter>
     </appender>
     
     <!-- Audit log. -->

@@ -124,7 +124,7 @@
         c:resolverService-ref="shibboleth.MetadataResolverService" />
         
     <bean id="shibboleth.RoleDescriptorResolver"
-        class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+        class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
         c:mdResolver-ref="shibboleth.MetadataResolver" />   
         
     <bean id="shibboleth.AccessControlService"

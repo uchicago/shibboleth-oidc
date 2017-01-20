@@ -22,4 +22,7 @@
     <bean id="shibboleth.IPRangeAccessControl" abstract="true"
         class="net.shibboleth.utilities.java.support.security.IPRangeAccessControl" />
 
+    <bean id="shibboleth.PredicateAccessControl" abstract="true"
+        class="org.opensaml.profile.logic.PredicateAccessControl" />
+
 </beans>

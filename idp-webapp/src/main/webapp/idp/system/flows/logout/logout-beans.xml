@@ -15,8 +15,8 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
     <import resource="../../conf/audit-system.xml" />
@@ -27,10 +27,17 @@
         p:loggingId="%{idp.service.logging.logout:Logout}"
         p:browserProfile="true" />
 
+    <bean id="PopulateMetricContext"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
+
+    <bean id="PopulateUserAgentContext"
+          class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
     <bean id="PopulateClientStorageLoadContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="ProcessLogout"
         class="net.shibboleth.idp.session.impl.ProcessLogout" scope="prototype"
@@ -41,13 +48,10 @@
     
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
     
-    <bean id="LogoutPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.LogoutAuditExtractors') ?: getObject('shibboleth.DefaultLogoutAuditExtractors')}" />
         
     <bean id="PopulateMultiRPContextFromLogoutContext"
         class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
@@ -98,19 +102,19 @@
         </property>
     </bean>
 
-    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype">
+    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype"
+            p:suppressedEvents="#{getObject('shibboleth.SuppressedEvents') ?: getObject('shibboleth.DefaultSuppressedEvents')}">
         <property name="eventContextLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
         </property>
     </bean>
     
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
-    <bean id="ErrorViewPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
     
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"

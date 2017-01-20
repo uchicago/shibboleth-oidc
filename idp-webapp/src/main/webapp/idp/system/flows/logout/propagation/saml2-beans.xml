@@ -14,8 +14,8 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
     <import resource="../../../conf/audit-system.xml" />
@@ -51,10 +51,8 @@
     </bean>
 
     <!-- This is a little iffy, but the post-assertion extractors include the fields we want here. -->
-    <bean id="LogoutPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostAssertionAuditExtractors') ?: getObject('shibboleth.DefaultPostAssertionAuditExtractors')}" />
 
     <bean id="EncryptNameIDs"
             class="org.opensaml.saml.saml2.profile.impl.EncryptNameIDs" scope="prototype"
@@ -66,10 +64,8 @@
         </property>
     </bean>
 
-    <bean id="PostResponsePopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
     
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

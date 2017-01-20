@@ -15,12 +15,16 @@
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="false" />
 
+    <bean id="PopulateMetricContext"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
+
     <bean id="InitializeValidate"
           class="net.shibboleth.idp.cas.flow.impl.InitializeValidateAction" />
 
     <bean id="ValidateTicket"
           class="net.shibboleth.idp.cas.flow.impl.ValidateTicketAction"
-          c:ticketService-ref="cas.TicketService" />
+          c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
     <bean id="ValidateRenew"
           class="net.shibboleth.idp.cas.flow.impl.ValidateRenewAction" />
@@ -30,25 +34,24 @@
 
     <bean id="ValidateProxyCallback"
           class="net.shibboleth.idp.cas.flow.impl.ValidateProxyCallbackAction"
-          c:proxyAuthenticator-ref="cas.ProxyAuthenticator"
-          c:ticketService-ref="cas.TicketService" />
+          c:proxyAuthenticator="#{getObject('shibboleth.CASProxyAuthenticator') ?: getObject('shibboleth.DefaultCASProxyAuthenticator')}"
+          c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
     <bean id="PrepareTicketValidationResponse"
           class="net.shibboleth.idp.cas.flow.impl.PrepareTicketValidationResponseAction" />
 
     <bean id="UpdateIdPSessionWithSPSession"
           class="net.shibboleth.idp.cas.flow.impl.UpdateIdPSessionWithSPSessionAction"
-          c:lifetime="%{idp.session.defaultSPlifetime:PT2H}" />
+          c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"
+          c:resolver-ref="shibboleth.SessionManager" />
 
-    <bean id="PopulateAuditContext"
-          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-          p:fieldExtractors-ref="#{
-            getObject('shibboleth.CASValidationAuditExtractors') != null
-                ? 'shibboleth.CASValidationAuditExtractors'
-                : 'shibboleth.DefaultCASValidationAuditExtractors'}"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+          p:fieldExtractors="#{getObject('shibboleth.CASValidationAuditExtractors') ?: getObject('shibboleth.DefaultCASValidationAuditExtractors')}" />
 
     <bean id="ValidateConfigLookup"
           class="net.shibboleth.idp.cas.config.impl.ConfigLookupFunction"
           c:clazz="net.shibboleth.idp.cas.config.impl.ValidateConfiguration" />
+
+    <!-- Supplementary beans -->
+    <bean id="PrincipalLookupFunction" class="net.shibboleth.idp.cas.ticket.TicketPrincipalLookupFunction" />
 </beans>

@@ -13,10 +13,10 @@
         
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder" scope="prototype">
-                <property name="parserPool" ref="shibboleth.ParserPool" />
-                <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-            </bean>
+            <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder" scope="prototype"
+                p:parserPool-ref="shibboleth.ParserPool"
+                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:bindingDescriptor-ref="shibboleth.Binding.SAML2Redirect" />
         </constructor-arg>
     </bean>
 

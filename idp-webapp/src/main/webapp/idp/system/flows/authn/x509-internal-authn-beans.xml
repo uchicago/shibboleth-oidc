@@ -15,8 +15,8 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <import resource="../../../conf/authn/x509-internal-authn-config.xml" />
     
@@ -27,7 +27,11 @@
     <bean id="ValidateX509Certificate"
         class="net.shibboleth.idp.authn.impl.ValidateX509Certificate" scope="prototype"
         p:trustEngine="#{getObject('shibboleth.authn.X509.TrustEngine')}"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') != null ? getObject('shibboleth.authn.X509.addDefaultPrincipals') : true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: true}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
+
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
 
 </beans>

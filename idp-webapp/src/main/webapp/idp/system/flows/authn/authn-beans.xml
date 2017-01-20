@@ -15,17 +15,19 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="PopulateAuthenticationContext"
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows:}'.trim() + ')']}"
+        p:availableFlows-ref="shibboleth.AvailableAuthenticationFlows"
+        p:potentialFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows:}'.trim() + ')']}"
         p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
 
     <bean id="PopulateAuthenticationContextWithInitialFlow"
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows.initial:}'.trim() + ')']}"
+        p:availableFlows-ref="shibboleth.AvailableAuthenticationFlows"
+        p:potentialFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows.initial:}'.trim() + ')']}"
         p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
 
     <bean id="PopulateSessionContext"
@@ -34,9 +36,22 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
+    <bean id="SetRPUIInformation"
+            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+            p:activationCondition="%{idp.authn.rpui:true}"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="fallbackLanguages">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
+        </property>
+    </bean>
+    
     <bean id="ExtractActiveAuthenticationResults"
         class="%{idp.session.activeResultExtraction:net.shibboleth.idp.session.impl.ExtractActiveAuthenticationResults}"
         scope="prototype" />
+
+    <bean id="InitializeRequestedPrincipalContext"
+        class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext" scope="prototype"
+        p:replaceExistingContext="%{idp.authn.overrideRequestedAuthnContext:false}" />
 
     <bean id="ResolveAttributes"
             class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
@@ -66,9 +81,6 @@
 
     <bean id="FilterFlowsByForcedAuthn"
         class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
-
-    <bean id="FilterFlowsByPassivity"
-        class="net.shibboleth.idp.authn.impl.FilterFlowsByPassivity" scope="prototype" />
     
     <bean id="FilterFlowsByNonBrowserSupport"
         class="net.shibboleth.idp.authn.impl.FilterFlowsByNonBrowserSupport" scope="prototype" />
@@ -76,6 +88,10 @@
     <bean id="SelectAuthenticationFlow"
         class="net.shibboleth.idp.authn.impl.SelectAuthenticationFlow" scope="prototype"
         p:favorSSO="%{idp.authn.favorSSO:false}" />
+    
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
     
     <bean id="DetectIdentitySwitch"
         class="net.shibboleth.idp.session.impl.DetectIdentitySwitch" scope="prototype"

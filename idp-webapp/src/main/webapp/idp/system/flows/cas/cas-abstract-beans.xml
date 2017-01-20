@@ -13,20 +13,42 @@
           p:placeholderPrefix="%{"
           p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
     <import resource="../../conf/audit-system.xml" />
 
     <!-- These are beans that are common to all CAS protocol flows. -->
 
+    <bean id="PopulateMetricContext"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
+        
     <bean id="BuildRelyingPartyContext"
           class="net.shibboleth.idp.cas.flow.impl.BuildRelyingPartyContextAction"
           c:registry-ref="shibboleth.CASServiceRegistry"/>
 
     <bean id="BuildSAMLMetadataContext"
           class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction" />
+
+    <bean id="PopulateInboundInterceptContext"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext"
+          scope="prototype"
+          p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.InboundFlowsLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="PopulateOutboundInterceptContext"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext"
+          scope="prototype"
+          p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.OutboundFlowsLookupFunction" />
+        </property>
+    </bean>
 
     <bean id="PublishProtocolRequest"
           class="net.shibboleth.idp.cas.flow.impl.PublishProtocolMessageAction"
@@ -45,26 +67,10 @@
           scope="prototype"
           p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
-    <bean id="ValidateIdPSession"
-          class="net.shibboleth.idp.cas.flow.impl.ValidateIdpSessionAction"
-          c:resolver-ref="shibboleth.SessionManager" />
-
-    <bean id="SessionPrincipalLookupFunction"
-          class="com.google.common.base.Functions"
-          factory-method="compose">
-        <constructor-arg index="0">
-            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction" />
-        </constructor-arg>
-        <constructor-arg index="1">
-            <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
-                  c:type="net.shibboleth.idp.session.context.SessionContext" />
-        </constructor-arg>
-    </bean>
-
     <bean id="PopulateSubjectContext"
           class="net.shibboleth.idp.profile.impl.PopulateSubjectContext"
           scope="prototype"
-          p:principalNameLookupStrategy-ref="SessionPrincipalLookupFunction" />
+          p:principalNameLookupStrategy-ref="PrincipalLookupFunction" />
 
     <bean id="ResolveAttributes"
           class="net.shibboleth.idp.profile.impl.ResolveAttributes"
@@ -81,7 +87,8 @@
         </property>
     </bean>
 
-    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype">
+    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype"
+            p:suppressedEvents="#{getObject('shibboleth.SuppressedEvents') ?: getObject('shibboleth.DefaultSuppressedEvents')}">
         <property name="eventContextLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
         </property>
@@ -95,13 +102,11 @@
     <bean id="WriteAuditLog"
           class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog"
           scope="prototype"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+          p:formattingMap-ref="shibboleth.AuditFormattingMap"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="ErrorViewPopulateAuditContext"
-          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext"
-          scope="prototype"
-          p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+    <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+          p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
 
     <bean id="PopulateProtocolError"
           class="net.shibboleth.idp.cas.flow.impl.PopulateProtocolErrorAction" />

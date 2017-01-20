@@ -14,8 +14,8 @@
 
     <import resource="../../../conf/c14n/simple-subject-c14n-config.xml" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="SimpleSubjectCanonicalization"
         class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization" scope="prototype"

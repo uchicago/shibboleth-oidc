@@ -17,13 +17,14 @@
 
     <import resource="../../../conf/c14n/attribute-sourced-subject-c14n-config.xml" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
             c:resolverService-ref="shibboleth.AttributeResolverService"
             p:attributesToResolve-ref="shibboleth.c14n.attribute.AttributesToResolve"
-            p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}">
+            p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
+            p:principalNameLookupStrategy="#{getObject('shibboleth.c14n.attribute.PrincipalNameLookupStrategy')}">
         <property name="attributeContextCreationStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose"
                 c:g-ref="shibboleth.ChildLookupOrCreate.AttributeContext"

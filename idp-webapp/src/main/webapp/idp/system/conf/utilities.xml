@@ -35,7 +35,7 @@
         class="net.shibboleth.idp.profile.logic.ScriptedPredicate" abstract="true" />
     <bean id="shibboleth.Conditions.Expression"
         class="net.shibboleth.idp.profile.logic.SpringExpressionPredicate" abstract="true" />
-
+    
     <!-- Parent bean for building custom predicates that act on a RP's EntityDescriptor. -->
     <bean id="shibboleth.Conditions.EntityDescriptor" abstract="true"
             class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
@@ -50,11 +50,28 @@
             </bean>
         </constructor-arg>
     </bean>
+
+    <!-- Parent bean for building custom predicates that act on the principal name of the Subject. -->
+    <bean id="shibboleth.Conditions.SubjectName" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+        </constructor-arg>
+    </bean>
+    
     
     <bean id="shibboleth.Conditions.IssuingDelegatedAssertion"
         class="net.shibboleth.idp.saml.saml2.profile.delegation.IssuingDelegatedAssertionPredicate" />
     <bean id="shibboleth.Conditions.AllowedSAMLPresenters" abstract="true"
         class="net.shibboleth.idp.saml.profile.config.logic.AllowedSAMLPresentersPredicate" />
+
+    <bean id="shibboleth.ContextFunctions.Scripted"
+        class="net.shibboleth.idp.profile.context.navigate.ScriptedContextLookupFunction" abstract="true" />
+    <bean id="shibboleth.ContextFunctions.Expression"
+        class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction" abstract="true"
+        c:_0="#{ T(org.opensaml.profile.context.ProfileRequestContext) }" />
 
     <bean id="shibboleth.MessageContextLookup.Inbound"
         class="org.opensaml.profile.context.navigate.InboundMessageContextLookup" />
@@ -101,6 +118,9 @@
     <bean id="shibboleth.ChildLookup.AuthenticationContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.AuthenticationContext) }" />
+    <bean id="shibboleth.ChildLookup.MultiFactorAuthenticationContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext) }" />
     <bean id="shibboleth.ChildLookup.SubjectContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.SubjectContext) }" />

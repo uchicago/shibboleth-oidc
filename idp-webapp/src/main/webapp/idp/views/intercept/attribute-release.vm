@@ -22,6 +22,7 @@
 #set ($privacyStatementURL = $rpUIContext.privacyStatementURL)
 #set ($rpOrganizationLogo = $rpUIContext.getLogo())
 #set ($rpOrganizationName = $rpUIContext.organizationName)
+#set ($replaceDollarWithNewline = true)
 ##
 <!DOCTYPE html>
 <html>
@@ -76,7 +77,16 @@
                                     <td>$encoder.encodeForHTML($attributeDisplayNameFunction.apply($attribute))</td>
                                     <td>
                                         #foreach ($value in $attribute.values)
-                                            <strong>$encoder.encodeForHTML($value.getDisplayValue())</strong>
+                                            #if ($replaceDollarWithNewline)
+                                                #set ($encodedValue = $encoder.encodeForHTML($value.getDisplayValue()).replaceAll($encoder.encodeForHTML("$"),"<br>"))
+                                            #else
+                                                #set ($encodedValue = $encoder.encodeForHTML($value.getDisplayValue()))
+                                            #end
+                                            #if ($attributeReleaseFlowDescriptor.perAttributeConsentEnabled)
+                                                <label for="$attribute.id"><strong>$encodedValue</strong></label>
+                                            #else
+                                                <strong>$encodedValue</strong>
+                                            #end
                                             <br>
                                         #end
                                     </td>
@@ -109,7 +119,7 @@
                     #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed)
                         <p>
                             <input id="_shib_idp_doNotRememberConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_doNotRememberConsent">
-                            #springMessageText("idp.attribute-release.doNotRememberConsent", "Ask me again at next login")
+                            <label for="_shib_idp_doNotRememberConsent">#springMessageText("idp.attribute-release.doNotRememberConsent", "Ask me again at next login")</label>
                             <ul>
                                 <li>#springMessageText("idp.attribute-release.doNotRememberConsentItem", "I agree to send my information this time.")</li>
                             </ul>
@@ -118,7 +128,7 @@
                     #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed || $attributeReleaseFlowDescriptor.globalConsentAllowed)
                         <p>
                             <input id="_shib_idp_rememberConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_rememberConsent" checked>
-                            #springMessageText("idp.attribute-release.rememberConsent", "Ask me again if information changes")
+                            <label for="_shib_idp_rememberConsent">#springMessageText("idp.attribute-release.rememberConsent", "Ask me again if information changes")</label>
                             <ul>
                                 <li>#springMessageText("idp.attribute-release.rememberConsentItem", "I agree that the same information will be sent automatically to this service in the future.")</li>
                             </ul>
@@ -127,7 +137,7 @@
                     #if ($attributeReleaseFlowDescriptor.globalConsentAllowed)
                         <p>
                             <input id="_shib_idp_globalConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_globalConsent">
-                            #springMessageText("idp.attribute-release.globalConsent", "Do not ask me again")
+                            <label for="_shib_idp_globalConsent">#springMessageText("idp.attribute-release.globalConsent", "Do not ask me again")</label>
                             <ul>
                                 <li>#springMessageText("idp.attribute-release.globalConsentItem", "I agree that <strong>all</strong> of my information will be released to <strong>any</strong> service.")</li>
                             </ul>

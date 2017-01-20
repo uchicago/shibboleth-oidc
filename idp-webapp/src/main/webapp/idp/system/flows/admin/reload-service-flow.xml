@@ -3,8 +3,24 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
     parent="admin.abstract">
 
-    <action-state id="ReloadServiceConfiguration">
+    <!-- Start action. -->
+
+    <on-start>
+        <!-- Extract 'id' parameter in case authentication disturbs the URL. -->
+        <evaluate expression="T(net.shibboleth.utilities.java.support.primitive.StringSupport).trimOrNull(externalContext.getNativeRequest().getParameter('id'))" result="flowScope.serviceId" />
+    </on-start>
+    
+    <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+        
+        <!-- Branch to determine if authentication is required. -->
+        <transition on="proceed" to="DoAdminPreamble" />
+    </action-state>
+
+    <!-- Resume actual flow processing. -->
+
+    <action-state id="DoProfileWork">
         <evaluate expression="CheckAccess" />
         <evaluate expression="ReloadServiceConfiguration" />
         <evaluate expression="RecordResponseComplete" />
