@@ -146,10 +146,10 @@ Claims can be configured as normal attribute definitions in the IdP. All standar
 are supported. Here is an example of a claim:
 
 ```xml
-<resolver:AttributeDefinition xsi:type="ad:Simple" id="family_name" sourceAttributeID="family_name">
-    <resolver:Dependency ref="staticAttributes" />
-    <resolver:DisplayName>Family Name</resolver:DisplayName>
-</resolver:AttributeDefinition>
+<AttributeDefinition xsi:type="Simple" id="family_name" sourceAttributeID="family_name">
+    <Dependency ref="staticAttributes" />
+    <DisplayName>Family Name</DisplayName>
+</AttributeDefinition>
 ```
 
 Note that attribute encoders are not needed since the JSON transformation is handled directly via the underlying 
