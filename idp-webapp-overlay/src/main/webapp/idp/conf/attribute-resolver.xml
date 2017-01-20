@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    This file is an EXAMPLE configuration file. While the configuration
-    presented in this example file is semi-functional, it isn't very
-    interesting. It is here only as a starting point for your deployment
-    process.
 
-    Very few attribute definitions and data connectors are demonstrated,
-    and the data is derived statically from the logged-in username and a
-    static example connector.
-
-    Attribute-resolver-full.xml contains more examples of attributes,
-    encoders, and data connectors. Deployers should refer to the Shibboleth
-    documentation for a complete list of components and their options.
--->
 <AttributeResolver
         xmlns="urn:mace:shibboleth:2.0:resolver"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -129,7 +116,7 @@
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
 
-    <DataConnector id="staticAttributes" xsi:type="Script">
+    <DataConnector id="staticAttributes" xsi:type="ScriptedDataConnector">
         <Script><![CDATA[
 
 IdPAttribute = Java.type("net.shibboleth.idp.attribute.IdPAttribute");
