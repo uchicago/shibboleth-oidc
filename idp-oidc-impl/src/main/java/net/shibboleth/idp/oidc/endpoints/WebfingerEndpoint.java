@@ -39,7 +39,7 @@ public class WebfingerEndpoint extends org.mitre.discovery.web.DiscoveryEndpoint
             produces = {"application/json"}
     )
     @Override
-    public String webfinger(@RequestParam("resource") final String resource, final Model model) {
-        return super.webfinger(resource, model);
+    public String webfinger(@RequestParam("resource") final String resource, @RequestParam(value = "rel", required = false) final String rel, final Model model) {
+        return super.webfinger(resource, rel, model);
     }
 }

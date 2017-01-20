@@ -284,7 +284,8 @@ The following packages may be used for log configuration:
 ## Overlay IdP Configuration
 
 The project itself follows an overlay-module where the IdP is configured to embed all of its configuration 
-inside the final war artifact. In doing so, the following changes are then overlaid into the IdP context and need to be accounted for during IdP upgrades. 
+inside the final war artifact. In doing so, the following changes are then overlaid into the IdP context and 
+need to be accounted for during IdP upgrades. 
 
 * `login.vm` and `attribute-release.vm` are overlaid to account for CSRF changes
 * `password-authn-config.xml` is overlaid to indicate JAAS is used for authN. 
