@@ -13,20 +13,10 @@
     encoders, and data connectors. Deployers should refer to the Shibboleth
     documentation for a complete list of components and their options.
 -->
-<resolver:AttributeResolver
-        xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-        xmlns:pc="urn:mace:shibboleth:2.0:resolver:pc"
-        xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
-        xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
-        xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder"
-        xmlns:sec="urn:mace:shibboleth:2.0:security"
+<AttributeResolver
+        xmlns="urn:mace:shibboleth:2.0:resolver"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
-                            urn:mace:shibboleth:2.0:resolver:pc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-pc.xsd
-                            urn:mace:shibboleth:2.0:resolver:ad http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-ad.xsd
-                            urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd
-                            urn:mace:shibboleth:2.0:attribute:encoder http://shibboleth.net/schema/idp/shibboleth-attribute-encoder.xsd
-                            urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 
     <!-- ========================================== -->
     <!--      Attribute Definitions                 -->
@@ -34,11 +24,11 @@
 
     <!--Subject - Identifier for the End-User at the Issuer.-->
     <!--
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="sub" sourceAttributeID="sub">
-        <resolver:Dependency ref="staticAttributes" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:sub" encodeType="false" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="sub" encodeType="false" />
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="sub" sourceAttributeID="sub">
+        <Dependency ref="staticAttributes" />
+        <AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:sub" encodeType="false" />
+        <AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="sub" encodeType="false" />
+    </AttributeDefinition>
     -->
 
     <!--
@@ -46,101 +36,101 @@
     possibly including titles and suffixes, ordered according to
     the End-User's locale and preferences.
     -->
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="name" sourceAttributeID="name">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Name</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="name" sourceAttributeID="name">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Name</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="given_name" sourceAttributeID="given_name">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Given Name</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="given_name" sourceAttributeID="given_name">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Given Name</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="family_name" sourceAttributeID="family_name">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Family Name</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="family_name" sourceAttributeID="family_name">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Family Name</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="middle_name" sourceAttributeID="middle_name">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Middle Name</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="middle_name" sourceAttributeID="middle_name">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Middle Name</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="nickname" sourceAttributeID="nickname">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Nickname</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="nickname" sourceAttributeID="nickname">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Nickname</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="preferred_username" sourceAttributeID="preferred_username">
-        <resolver:Dependency ref="staticAttributes"/>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="preferred_username" sourceAttributeID="preferred_username">
+        <Dependency ref="staticAttributes"/>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="profile" sourceAttributeID="profile">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Profile</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="profile" sourceAttributeID="profile">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Profile</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="picture" sourceAttributeID="picture">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Picture</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="picture" sourceAttributeID="picture">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Picture</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="website" sourceAttributeID="website">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Website</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="website" sourceAttributeID="website">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Website</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="email" sourceAttributeID="email">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Email</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="email" sourceAttributeID="email">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Email</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="email_verified" sourceAttributeID="email_verified">
-        <resolver:Dependency ref="staticAttributes"/>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="email_verified" sourceAttributeID="email_verified">
+        <Dependency ref="staticAttributes"/>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="gender" sourceAttributeID="gender">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Gender</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="gender" sourceAttributeID="gender">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Gender</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="birthdate" sourceAttributeID="birthdate">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Birth Date</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="birthdate" sourceAttributeID="birthdate">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Birth Date</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="zoneinfo" sourceAttributeID="zoneinfo">
-        <resolver:Dependency ref="staticAttributes"/>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="zoneinfo" sourceAttributeID="zoneinfo">
+        <Dependency ref="staticAttributes"/>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="locale" sourceAttributeID="locale">
-        <resolver:Dependency ref="staticAttributes"/>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="locale" sourceAttributeID="locale">
+        <Dependency ref="staticAttributes"/>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="phone_number" sourceAttributeID="phone_number">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Phone Number</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="phone_number" sourceAttributeID="phone_number">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Phone Number</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="phone_number_verified" sourceAttributeID="phone_number_verified">
-        <resolver:Dependency ref="staticAttributes"/>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="phone_number_verified" sourceAttributeID="phone_number_verified">
+        <Dependency ref="staticAttributes"/>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="address" sourceAttributeID="address">
-        <resolver:Dependency ref="staticAttributes"/>
-        <resolver:DisplayName>Address</resolver:DisplayName>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="address" sourceAttributeID="address">
+        <Dependency ref="staticAttributes"/>
+        <DisplayName>Address</DisplayName>
+    </AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="updated_at" sourceAttributeID="updated_at">
-        <resolver:Dependency ref="staticAttributes"/>
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="updated_at" sourceAttributeID="updated_at">
+        <Dependency ref="staticAttributes"/>
+    </AttributeDefinition>
 
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
 
-    <resolver:DataConnector id="staticAttributes" xsi:type="dc:Script">
-        <dc:Script><![CDATA[
+    <DataConnector id="staticAttributes" xsi:type="Script">
+        <Script><![CDATA[
 
 IdPAttribute = Java.type("net.shibboleth.idp.attribute.IdPAttribute");
 StringAttributeValue = Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
@@ -279,7 +269,7 @@ set = new HashSet();
 set.add(new StringAttributeValue("2800012"));
 attr.setValues(set);
 connectorResults.add(attr);
-    ]]></dc:Script>
-    </resolver:DataConnector>
+    ]]></Script>
+    </DataConnector>
 
-</resolver:AttributeResolver>
+</AttributeResolver>
