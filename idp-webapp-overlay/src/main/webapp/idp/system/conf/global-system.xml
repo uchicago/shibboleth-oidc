@@ -13,8 +13,8 @@
        default-destroy-method="destroy">
 
     <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
-        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+          class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+          p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <!-- This bean MUST be called "conversionService" to work properly. -->
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
@@ -31,12 +31,12 @@
 
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
     <bean id="shibboleth.IdentifiableBeanPostProcessor"
-        class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+          class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
-            p:cacheSeconds="%{idp.message.cacheSeconds:300}"
-            p:basenames-ref="#{'%{idp.message.resources:shibboleth.MessageSourceResources}'.trim()}"
-            p:defaultEncoding="UTF-8" />
+          p:cacheSeconds="%{idp.message.cacheSeconds:300}"
+          p:basenames-ref="#{'%{idp.message.resources:shibboleth.MessageSourceResources}'.trim()}"
+          p:defaultEncoding="UTF-8" />
 
     <import resource="../../conf/global.xml" />
     <import resource="../../conf/errors.xml" />
@@ -47,14 +47,17 @@
     <import resource="subject-c14n-system.xml" />
     <import resource="profile-intercept-system.xml" />
     <import resource="cas-protocol-system.xml" />
-    <import resource="oidc-protocol-system.xml" />
+    <import resource="general-admin-system.xml" />
+    <import resource="oidc-protocol-system" />
     <import resource="utilities.xml" />
 
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
-        depends-on="shibboleth.LoggingService,shibboleth.ParserPool" p:parserPool-ref="shibboleth.ParserPool" />
+          depends-on="shibboleth.LoggingService,shibboleth.ParserPool,shibboleth.metrics.MetricRegistry"
+          p:parserPool-ref="shibboleth.ParserPool"
+          p:metricRegistry-ref="shibboleth.metrics.MetricRegistry" />
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
-            depends-on="shibboleth.LoggingService">
+          depends-on="shibboleth.LoggingService">
         <property name="overrideLogging" value="false"/>
         <property name="velocityProperties">
             <props>
@@ -80,12 +83,12 @@
     </bean>
 
     <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
-            depends-on="shibboleth.LoggingService"
-            p:maxPoolSize="100"
-            p:coalescing="true"
-            p:ignoreComments="true"
-            p:ignoreElementContentWhitespace="true"
-            p:namespaceAware="true">
+          depends-on="shibboleth.LoggingService"
+          p:maxPoolSize="100"
+          p:coalescing="true"
+          p:ignoreComments="true"
+          p:ignoreElementContentWhitespace="true"
+          p:namespaceAware="true">
         <property name="builderAttributes">
             <map>
                 <!-- Sun/Oracle is the default, for Xerces, set property to org.apache.xerces.util.SecurityManager -->
@@ -111,7 +114,7 @@
 
     <!--  Bean used by the SchemaValidation metadata filter and anything else doing basic schema validation. -->
     <bean id="shibboleth.SchemaBuilder" lazy-init="true"
-        class="org.opensaml.saml.common.xml.SAMLSchemaBuilder" c:ver="SAML_11" >
+          class="org.opensaml.saml.common.xml.SAMLSchemaBuilder" c:ver="SAML_11" >
         <property name="schemaBuilder">
             <bean class="net.shibboleth.utilities.java.support.xml.SchemaBuilder">
                 <property name="resourceResolver">
@@ -137,125 +140,131 @@
     <bean id="shibboleth.EndpointResolver" class="org.opensaml.saml.common.binding.impl.DefaultEndpointResolver" />
 
     <bean id="shibboleth.CookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-        p:secure="%{idp.cookie.secure:false}"
-        p:httpOnly="%{idp.cookie.httpOnly:true}"
-        p:cookieDomain="%{idp.cookie.domain:}"
-        p:cookiePath="%{idp.cookie.path:}"
-        p:maxAge="-1" />
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:secure="%{idp.cookie.secure:false}"
+          p:httpOnly="%{idp.cookie.httpOnly:true}"
+          p:cookieDomain="%{idp.cookie.domain:}"
+          p:cookiePath="%{idp.cookie.path:}"
+          p:maxAge="-1" />
 
     <bean id="shibboleth.PersistentCookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-        p:secure="%{idp.cookie.secure:false}"
-        p:httpOnly="%{idp.cookie.httpOnly:true}"
-        p:cookieDomain="%{idp.cookie.domain:}"
-        p:cookiePath="%{idp.cookie.path:}"
-        p:maxAge="%{idp.cookie.maxAge:31536000}" />
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:secure="%{idp.cookie.secure:false}"
+          p:httpOnly="%{idp.cookie.httpOnly:true}"
+          p:cookieDomain="%{idp.cookie.domain:}"
+          p:cookiePath="%{idp.cookie.path:}"
+          p:maxAge="%{idp.cookie.maxAge:31536000}" />
 
     <bean id="shibboleth.UserPrefsCookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-        p:secure="%{idp.cookie.secure:false}"
-        p:httpOnly="false"
-        p:cookieDomain="%{idp.cookie.domain:}"
-        p:cookiePath="%{idp.cookie.path:}"
-        p:maxAge="%{idp.cookie.maxAge:31536000}" />
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:secure="%{idp.cookie.secure:false}"
+          p:httpOnly="false"
+          p:cookieDomain="%{idp.cookie.domain:}"
+          p:cookiePath="%{idp.cookie.path:}"
+          p:maxAge="%{idp.cookie.maxAge:31536000}" />
 
-    <bean id="shibboleth.DataSealerKeyStrategy"
-            class="net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy"
-        p:keystoreType="%{idp.sealer.storeType:JCEKS}"
-        p:keystoreResource="%{idp.sealer.storeResource}"
-        p:keyVersionResource="%{idp.sealer.versionResource}"
-        p:keystorePassword="%{idp.sealer.storePassword}"
-        p:keyAlias="%{idp.sealer.aliasBase:secret}"
-        p:keyPassword="%{idp.sealer.keyPassword}"
-        p:updateInterval="%{idp.sealer.updateInterval:PT15M}" />
+    <bean id="shibboleth.DataSealerKeyStrategy" lazy-init="true"
+          class="net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy"
+          p:keystoreType="%{idp.sealer.storeType:JCEKS}"
+          p:keystoreResource="%{idp.sealer.storeResource:}"
+          p:keyVersionResource="%{idp.sealer.versionResource:}"
+          p:keystorePassword="%{idp.sealer.storePassword:}"
+          p:keyAlias="%{idp.sealer.aliasBase:secret}"
+          p:keyPassword="%{idp.sealer.keyPassword:}"
+          p:updateInterval="%{idp.sealer.updateInterval:PT15M}" />
 
-    <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
-        p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy" />
+    <bean id="shibboleth.DataSealer" lazy-init="true"
+          class="net.shibboleth.utilities.java.support.security.DataSealer"
+          p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy" />
 
     <!-- This is a convenience for compatibility with the examples for configuring this in V2. -->
     <alias name="shibboleth.DataSealer" alias="shibboleth.TransientIDDataSealer"/>
 
     <bean id="shibboleth.StorageService" lazy-init="true"
-        class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
-        p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}" />
+          class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
+          p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}" />
 
-    <bean id="shibboleth.ClientSessionStorageService"
-        class="org.opensaml.storage.impl.client.ClientStorageService"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:cookieManager-ref="shibboleth.CookieManager"
-        p:storageName="shib_idp_session_ss"
-        p:dataSealer-ref="shibboleth.DataSealer" />
+    <bean id="shibboleth.ClientSessionStorageService" lazy-init="true"
+          class="org.opensaml.storage.impl.client.ClientStorageService"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:cookieManager-ref="shibboleth.CookieManager"
+          p:storageName="%{idp.storage.clientSessionStorageName:shib_idp_session_ss}"
+          p:dataSealer-ref="shibboleth.DataSealer" />
 
-    <bean id="shibboleth.ClientPersistentStorageService"
-        class="org.opensaml.storage.impl.client.ClientStorageService"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:cookieManager-ref="shibboleth.PersistentCookieManager"
-        p:storageName="shib_idp_persistent_ss"
-        p:dataSealer-ref="shibboleth.DataSealer"
-        p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy" />
+    <bean id="shibboleth.ClientPersistentStorageService" lazy-init="true"
+          class="org.opensaml.storage.impl.client.ClientStorageService"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:cookieManager-ref="shibboleth.PersistentCookieManager"
+          p:storageName="%{idp.storage.clientPersistentStorageName:shib_idp_persistent_ss}"
+          p:dataSealer-ref="shibboleth.DataSealer"
+          p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy" />
 
     <!--
     Default list of ClientStorageService plugins needed for injection into storage read/write flows.
     Declared here for compatibility with pre-3.2 installs that don't declare this list inside
     session-manager.xml
     -->
-    <util:list id="shibboleth.DefaultClientStorageServices">
-        <ref bean="shibboleth.ClientSessionStorageService" />
-        <ref bean="shibboleth.ClientPersistentStorageService" />
-    </util:list>
+    <bean id="shibboleth.DefaultClientStorageServices" lazy-init="true"
+          class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="shibboleth.ClientSessionStorageService" />
+                <ref bean="shibboleth.ClientPersistentStorageService" />
+            </list>
+        </property>
+    </bean>
 
     <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LoggingService"
-        p:storage-ref="#{'%{idp.replayCache.StorageService:shibboleth.StorageService}'.trim()}" p:strict="true" />
+          p:storage-ref="#{'%{idp.replayCache.StorageService:shibboleth.StorageService}'.trim()}" p:strict="true" />
 
     <bean id="shibboleth.SAMLArtifactMap" depends-on="shibboleth.StorageService"
-        class="org.opensaml.saml.common.binding.artifact.impl.StorageServiceSAMLArtifactMap"
-        p:storageService-ref="#{'%{idp.artifact.StorageService:shibboleth.StorageService}'.trim()}" />
+          class="org.opensaml.saml.common.binding.artifact.impl.StorageServiceSAMLArtifactMap"
+          p:storageService-ref="#{'%{idp.artifact.StorageService:shibboleth.StorageService}'.trim()}" />
 
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
-        class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />
+          class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />
 
     <!-- Parent beans for Signature/Encryption/TLS Configuration objects. -->
-        
+
     <bean id="shibboleth.BasicSignatureValidationConfiguration" abstract="true"
-        class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration"
-        p:whitelistedAlgorithms="#{getObject('shibboleth.SignatureWhitelist')}"
-        p:blacklistedAlgorithms="#{getObject('shibboleth.SignatureBlacklist')}" />
-    
+          class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration"
+          p:whitelistedAlgorithms="#{getObject('shibboleth.SignatureWhitelist')}"
+          p:blacklistedAlgorithms="#{getObject('shibboleth.SignatureBlacklist')}" />
+
     <bean id="shibboleth.BasicClientTLSValidationConfiguration" abstract="true"
-        class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration" />
-    
+          class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration" />
+
     <bean id="shibboleth.BasicSignatureSigningConfiguration" abstract="true"
-        class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
-        p:whitelistedAlgorithms="#{getObject('shibboleth.SignatureWhitelist')}"
-        p:blacklistedAlgorithms="#{getObject('shibboleth.SignatureBlacklist')}" />
-    
+          class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+          p:whitelistedAlgorithms="#{getObject('shibboleth.SignatureWhitelist')}"
+          p:blacklistedAlgorithms="#{getObject('shibboleth.SignatureBlacklist')}" />
+
     <bean id="shibboleth.BasicEncryptionConfiguration" abstract="true"
-        class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration"
-        p:whitelistedAlgorithms="#{getObject('shibboleth.EncryptionWhitelist')}"
-        p:blacklistedAlgorithms="#{getObject('shibboleth.EncryptionBlacklist')}" />
+          class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration"
+          p:whitelistedAlgorithms="#{getObject('shibboleth.EncryptionWhitelist')}"
+          p:blacklistedAlgorithms="#{getObject('shibboleth.EncryptionBlacklist')}" />
 
     <bean id="shibboleth.BasicDecryptionConfiguration" abstract="true"
-        class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
-        p:whitelistedAlgorithms="#{getObject('shibboleth.EncryptionWhitelist')}"
-        p:blacklistedAlgorithms="#{getObject('shibboleth.EncryptionBlacklist')}" />
+          class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
+          p:whitelistedAlgorithms="#{getObject('shibboleth.EncryptionWhitelist')}"
+          p:blacklistedAlgorithms="#{getObject('shibboleth.EncryptionBlacklist')}" />
 
     <!-- Beans that implement the mashing of security configurations into final parameter sets. -->
-    
+
     <bean id="shibboleth.SignatureValidationParametersResolver"
-        class="org.opensaml.xmlsec.impl.BasicSignatureValidationParametersResolver" />
+          class="org.opensaml.xmlsec.impl.BasicSignatureValidationParametersResolver" />
     <bean id="shibboleth.SignatureSigningParametersResolver"
-        class="org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver" />
+          class="org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver" />
     <bean id="shibboleth.DecryptionParametersResolver"
-        class="org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver" />
+          class="org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver" />
     <bean id="shibboleth.EncryptionParametersResolver"
-        class="org.opensaml.saml.security.impl.SAMLMetadataEncryptionParametersResolver"
-        c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+          class="org.opensaml.saml.security.impl.SAMLMetadataEncryptionParametersResolver"
+          c:resolver-ref="shibboleth.MetadataCredentialResolver" />
     <bean id="shibboleth.ClientTLSValidationParametersResolver"
-        class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationParametersResolver" />
+          class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationParametersResolver" />
 
     <!--
     The beans below are primarily used by trust engines in relying-party-system.xml, but also in the
@@ -263,53 +272,106 @@
     -->
 
     <bean id="shibboleth.MetadataCredentialResolver"
-        class="org.opensaml.saml.security.impl.MetadataCredentialResolver"
-         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
-         p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
+          class="org.opensaml.saml.security.impl.MetadataCredentialResolver"
+          p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
+          p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
     </bean>
 
     <bean id="shibboleth.KeyInfoCredentialResolver"
-        class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
-        factory-method="buildBasicInlineKeyInfoCredentialResolver" />
-        
+          class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
+          factory-method="buildBasicInlineKeyInfoCredentialResolver" />
+
     <!--  These are the common HttpClients wired to by multiple components, such as HTTPResources. -->
 
     <bean id="shibboleth.NonCachingHttpClient"
-        lazy-init="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
-        p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
-        p:connectionTimeout="%{idp.httpclient.connectionTimeout:-1}" />
-    
+          lazy-init="true"
+          class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
+          p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
+          p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
+          p:connectionTimeout="%{idp.httpclient.connectionTimeout:60000}"
+          p:connectionRequestTimeout="%{idp.httpclient.connectionRequestTimeout:60000}"
+          p:socketTimeout="%{idp.httpclient.socketTimeout:60000}"
+          p:maxConnectionsTotal="%{idp.httpclient.maxConnectionsTotal:100}"
+          p:maxConnectionsPerRoute="%{idp.httpclient.maxConnectionsPerRoute:100}" />
+
     <bean id="shibboleth.FileCachingHttpClient"
-        lazy-init="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
-        p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
-        p:connectionTimeout="%{idp.httpclient.connectionTimeout:-1}"
-        p:cacheDirectory="%{idp.httpclient.filecaching.cacheDirectory}"
-        p:maxCacheEntries="%{idp.httpclient.filecaching.maxCacheEntries:100}"
-        p:maxCacheEntrySize="%{idp.httpclient.filecaching.maxCacheEntrySize:10485760}" />
-        
+          lazy-init="true"
+          class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean"
+          p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
+          p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
+          p:connectionTimeout="%{idp.httpclient.connectionTimeout:60000}"
+          p:connectionRequestTimeout="%{idp.httpclient.connectionRequestTimeout:60000}"
+          p:socketTimeout="%{idp.httpclient.socketTimeout:60000}"
+          p:maxConnectionsTotal="%{idp.httpclient.maxConnectionsTotal:100}"
+          p:maxConnectionsPerRoute="%{idp.httpclient.maxConnectionsPerRoute:100}"
+          p:cacheDirectory="%{idp.httpclient.filecaching.cacheDirectory}"
+          p:maxCacheEntries="%{idp.httpclient.filecaching.maxCacheEntries:100}"
+          p:maxCacheEntrySize="%{idp.httpclient.filecaching.maxCacheEntrySize:10485760}" />
+
     <bean id="shibboleth.MemoryCachingHttpClient"
-        lazy-init="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
-        p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
-        p:connectionTimeout="%{idp.httpclient.connectionTimeout:-1}"
-        p:maxCacheEntries="%{idp.httpclient.memorycaching.maxCacheEntries:50}"
-        p:maxCacheEntrySize="%{idp.httpclient.memorycaching.maxCacheEntrySize:1048576}" />
-        
-    <bean id="shibboleth.SecurityEnhancedTLSSocketFactory" name="shibboleth.TrustEngineTLSSocketFactory" 
-        lazy-init="true"
-        class="org.opensaml.security.httpclient.impl.SecurityEnhancedTLSSocketFactory">
-        <constructor-arg>
-            <bean class="net.shibboleth.utilities.java.support.httpclient.HttpClientSupport"
-                factory-method="buildNoTrustTLSSocketFactory" />
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="org.apache.http.conn.ssl.StrictHostnameVerifier" />
-        </constructor-arg>
+          lazy-init="true"
+          class="net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean"
+          p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
+          p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
+          p:connectionTimeout="%{idp.httpclient.connectionTimeout:60000}"
+          p:connectionRequestTimeout="%{idp.httpclient.connectionRequestTimeout:60000}"
+          p:socketTimeout="%{idp.httpclient.socketTimeout:60000}"
+          p:maxConnectionsTotal="%{idp.httpclient.maxConnectionsTotal:100}"
+          p:maxConnectionsPerRoute="%{idp.httpclient.maxConnectionsPerRoute:100}"
+          p:maxCacheEntries="%{idp.httpclient.memorycaching.maxCacheEntries:50}"
+          p:maxCacheEntrySize="%{idp.httpclient.memorycaching.maxCacheEntrySize:1048576}" />
+
+    <bean id="shibboleth.SecurityEnhancedTLSSocketFactory" name="shibboleth.TrustEngineTLSSocketFactory"
+          lazy-init="true"
+          class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
+          factory-method="buildTLSSocketFactory" />
+
+    <bean id="shibboleth.SecurityEnhancedTLSSocketFactoryWithClientTLS"
+          lazy-init="true"
+          class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
+          factory-method="buildTLSSocketFactoryWithClientTLS" />
+
+    <bean id="shibboleth.StaticExplicitTrustEngine" abstract="true"
+          class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean" />
+
+    <bean id="shibboleth.StaticPKIXTrustEngine" abstract="true"
+          class="net.shibboleth.idp.profile.spring.factory.StaticPKIXFactoryBean" />
+
+    <!-- Default Jackson ObjectMapper with JodaTime support. -->
+
+    <bean id="shibboleth.JSONObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+          p:targetObject-ref="shibboleth.JSONObjectMapper"
+          p:targetMethod="setSerializationInclusion">
+        <property name="arguments">
+            <util:constant static-field="com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL" />
+        </property>
     </bean>
-    
- </beans>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+          p:targetObject-ref="shibboleth.JSONObjectMapper"
+          p:targetMethod="registerModule">
+        <property name="arguments">
+            <bean class="com.fasterxml.jackson.datatype.joda.JodaModule" />
+        </property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+          p:targetObject-ref="shibboleth.JSONObjectMapper"
+          p:targetMethod="setDateFormat">
+        <property name="arguments">
+            <bean class="java.text.SimpleDateFormat" c:_0="YYYY-MM-dd'T'HH:mm:ss.SSSZZ" />
+        </property>
+    </bean>
+
+    <!-- Action bean templates. -->
+
+    <bean id="shibboleth.AbstractPopulateAuditContext" abstract="true"
+          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap"
+          p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+          p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
+          p:fieldReplacements="#{getObject('shibboleth.AuditFieldReplacementMap')}" />
+
+</beans>
