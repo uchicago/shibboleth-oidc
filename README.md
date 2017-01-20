@@ -1,15 +1,19 @@
 # OpenId Connect for Shibboleth Identity Provider v3 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/uchicago/shibboleth-oidc/blob/master/LICENSE) 
 
 ## Contents
+
 - [Scope](#scope)
 - [Design](#design)
 - [Default IdP Configuration](#default-idp-configuration)
 - [Overlay IdP Configuration](#overlay-idp-configuration)
 
 ## Heroku [![](https://heroku-badge.herokuapp.com/?app=shibboleth-oidc)](https://shibboleth-oidc.herokuapp.com/idp)
-An instance of this codebase is presently running on [Heroku](https://shibboleth-oidc.herokuapp.com/idp). You may need to refresh the page twice to wake up the instance as idle timeouts may cause it to go down.
+
+An instance of this codebase is presently running on [Heroku](https://shibboleth-oidc.herokuapp.com/idp). 
+You may need to refresh the page twice to wake up the instance as idle timeouts may cause it to go down.
 
 ## Scope
+
 We are working on adding support for the OpenID Connect protocol to the Shibboleth Identity Provider v3. Realistically, these
 are the items we are planning to address:
 
@@ -25,8 +29,9 @@ IdP config without the presence of a web interface to facilitate. This includes 
 authZ codes and more.
 
 ### Resources
-* http://openid.net/specs/openid-connect-basic-1_0.html
-* http://openid.net/specs/openid-connect-implicit-1_0.html
+
+* [OpenID Connect Basic](http://openid.net/specs/openid-connect-basic-1_0.html)
+* [OpenID Connect Implicit](http://openid.net/specs/openid-connect-implicit-1_0.html)
  
 ### Planned
 
@@ -38,14 +43,21 @@ The following may be considered in future versions:
 * Web UIs that facilitate managing tokens, whitelisted/blacklisted RPs, etc. 
 
 ### Toolkit
+
 - Apache Maven v3.3+
 - JDK 7+
 - [MITREid Connect](https://github.com/mitreid-connect/) handles the OIDC implementation.
-- [Shibboleth Identity Provider v3.2.1](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
-- [Modified test client application from MITREid Connect](https://github.com/mmoayyed/simple-web-app)
+- [Shibboleth Identity Provider v3.3.0](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 
 ## Design
-The OIDC support is provided via the [MITREid Connect](https://github.com/mitreid-connect/) project. It is itself based on Spring Security OAuth which itself in turn is based on Spring Security. So, the design principal of this extension is to mostly adapt the above frameworks to what the Shibboleth IdP framework provides in terms of authentication and attribute resolution. Also note that that MITREid Connect is entirely Spring annotations-based when it comes to wiring up the components. Spring Security OAuth also uses various annotations to respond to endpoint requests. Such changes also need to be accounted for in the IdP as it does not presently use a native model for annotation-based configuration of components. 
+
+The OIDC support is provided via the [MITREid Connect](https://github.com/mitreid-connect/) project. 
+It is itself based on Spring Security OAuth which itself in turn is based on Spring Security. So, 
+the design principal of this extension is to mostly adapt the above frameworks to what the Shibboleth 
+IdP framework provides in terms of authentication and attribute resolution. Also note that that MITREid 
+Connect is entirely Spring annotations-based when it comes to wiring up the components. Spring Security 
+OAuth also uses various annotations to respond to endpoint requests. Such changes also need to be accounted 
+for in the IdP as it does not presently use a native model for annotation-based configuration of components. 
 
 ### Endpoints
 
@@ -57,10 +69,16 @@ The following endpoints are exposed by this extension:
 - `/idp/profile/oidc/userinfo`
 - `/idp/.well-known`
 
-Each of these endpoints is protected via Spring Security, and configured in `oidc-protocol-endpoints.xml`. Spring Security OAuth itself presents various components that respond to framework endpoints and handles the OAuth functionality. In this extension, these endpoints are merely registered to note the new URL endpoint within the IdP framework. 
+Each of these endpoints is protected via Spring Security, and configured in `oidc-protocol-endpoints.xml`. 
+Spring Security OAuth itself presents various components that respond to framework endpoints and handles 
+the OAuth functionality. In this extension, these endpoints are merely registered to note the new URL endpoint within the IdP framework. 
 
 ### Storage
-MITREid Connect ships with a JPA implementation already that is responsible for managing the persistence of various tokens and the configuration of available/supported scopes, clients, etc. This extension leverages that functionality and configures a by-default inmemory database instance inside `oidc-protocol-storage.xml`. The database choice and driver are controllable via IdP settings inside `oidc.properties`. 
+
+MITREid Connect ships with a JPA implementation already that is responsible for managing the persistence 
+of various tokens and the configuration of available/supported scopes, clients, etc. This extension 
+leverages that functionality and configures a by-default inmemory database instance inside `oidc-protocol-storage.xml`. 
+The database choice and driver are controllable via IdP settings inside `oidc.properties`. 
 
 ```properties
 oidc.db.schema=%{idp.home}/conf/schema/hsqldb-schema.sql
@@ -71,6 +89,7 @@ oidc.db.psw=
 ```
 
 #### Schema 
+
 Note that the default schema provided by this extension assumes a HSQLDB database. If you wish to use a different database, you will need 
 to provide an different schema. Additional schemas are provieded in the `conf` directory for various databases. The following databases
 are supported:
@@ -82,12 +101,16 @@ are supported:
 The following differences are to be noted:
 
 #### System Scopes
-Systems scopes are directly provided in the IdP configuration inside the `oidc-protocol.xml`. An adopter may choose to ignore/remove scopes that are deemed unsupported. 
+
+Systems scopes are directly provided in the IdP configuration inside the `oidc-protocol.xml`. An adopter 
+may choose to ignore/remove scopes that are deemed unsupported. 
 
 #### Clients
+
 Registration of clients is now directly provided in the IdP configuration inside the `oidc-protocol.xml`. 
 
 ### Issuer
+
 The OIDC issuer is controlled via the `oidc.properties` file:
 
 ```properties
@@ -98,20 +121,27 @@ This is used directly in the IdP configuration inside the `oidc-protocol.xml`.
 
 ### System
 
-There are various other authentication manager/provider components registered in `oidc-protocol-system.xml` that handle backchannel authentication requests for tokens and userinfo data. These are primarily based on Spring Security and MITREid Connect extensions of Spring Security. Additionally, auto-registration of MITREid Connect annotation-aware components  as well as all other components registered in this extension is handled here. 
+There are various other authentication manager/provider components registered in `oidc-protocol-system.xml` 
+that handle backchannel authentication requests for tokens and userinfo data. These are primarily based on 
+Spring Security and MITREid Connect extensions of Spring Security. Additionally, auto-registration of MITREid Connect 
+annotation-aware components  as well as all other components registered in this extension is handled here. 
 
 ### Encryption/Signing
-This extension ships with a default encryption/signing components defined in the `oidc-protocol-system.xml`. A default JWKS is also provided which can be controlled via `oidc.properties` at:
+
+This extension ships with a default encryption/signing components defined in the `oidc-protocol-system.xml`. 
+A default JWKS is also provided which can be controlled via `oidc.properties` at:
 
 ```properties
 oidc.jwtset.keystore=%{idp.home}/credentials/keystore.jwks
 ```
 
-This file is presently not reloaded on changes, and its associated context is also not yet reloadable. Key rotations for the default keystore must happen manually, and require a restart for the time being. 
+This file is presently not reloaded on changes, and its associated context is also not yet reloadable. Key 
+rotations for the default keystore must happen manually, and require a restart for the time being. 
 
 Note that every client registered in the IdP is also able to specify an endpoint for its JWKS. 
 
 ### Claims
+
 Claims can be configured as normal attribute definitions in the IdP. All standard claims that are present in the specification 
 are supported. Here is an example of a claim:
 
@@ -122,7 +152,8 @@ are supported. Here is an example of a claim:
 </resolver:AttributeDefinition>
 ```
 
-Note that attribute encoders are not needed since the JSON transformation is handled directly via the underlying frameworks. Also, claims can be filtered in turn by the IdP itself via the normal attribute filtering policy. Here is an example:
+Note that attribute encoders are not needed since the JSON transformation is handled directly via the underlying 
+frameworks. Also, claims can be filtered in turn by the IdP itself via the normal attribute filtering policy. Here is an example:
 
 ```xml
 <AttributeFilterPolicy id="default">
@@ -136,12 +167,15 @@ Note that attribute encoders are not needed since the JSON transformation is han
 
 The requester (i.e. EntityID) is always the `clientId` of the client registered in the IdP.
 
-Note that each client is able to specify which scopes it supports. This allows a second level of granularity where an adopter may choose to support only specific claims within a system scope. 
+Note that each client is able to specify which scopes it supports. This allows a second level of granularity where an 
+adopter may choose to support only specific claims within a system scope. 
 
 ### Flows
 
 #### Authorization Code Flow
-This extension registered an authentication flow for OIDC inside `oidc/login/login-flow.xml` whose beans are configured inside `oidc/login/login-beans.xml`. A typical walkthrough of the authentication flow is as such:
+
+This extension registered an authentication flow for OIDC inside `oidc/login/login-flow.xml` whose beans are 
+configured inside `oidc/login/login-beans.xml`. A typical walkthrough of the authentication flow is as such:
 
 - The client makes a request to `/idp/.well-known` to discover endpoints for OIDC conversation.
 - The IdP's `/idp/.well-known` endpoint presents a JSON envelope that contains everything the client needs to know for dynamic discovery.
@@ -159,23 +193,37 @@ This extension registered an authentication flow for OIDC inside `oidc/login/log
 - The client validates the access token and the idToken, optionally invoking the `/idp/profile/oidc/jwk` endpoint to verify the `idToken`.
 - The client will use the access token to issue a request to `/idp/profile/oidc/userinfo` to grab claims. 
 
-There are many many other permutations of this flow, and many additional extension parameters that could be passed. To learn about all that is possible in this flow, Study [the basics of the specification](http://openid.net/specs/openid-connect-basic-1_0.html).
+There are many many other permutations of this flow, and many additional extension parameters that could be passed. 
+To learn about all that is possible in this flow, Study [the basics of the specification](http://openid.net/specs/openid-connect-basic-1_0.html).
 
 #### Hybrid Flow
-The hybrid flow is virtually identical to the authorication code flow, except that upon authorization requests the `response_type` parameter must be set to `id_token token`. 
+
+The hybrid flow is virtually identical to the authorication code flow, except that upon authorization 
+requests the `response_type` parameter must be set to `id_token token`. 
 
 #### Authentication Context/Method Ref
-This extension supports the `acr/amr` claims. If the client requests a specific `acr_value` in the original request, the IdP attempts to calculate whether that value is indeed supported by any of the authentication flows. If none is deemed viable, the authentication context weight map of the IdP is consulted to figure out the appropriate `acr`. The result is passed onto the IdP for authentication. 
 
-Since MITREid Connect at this point does not natively support `acr/amr` claims, an implementation of a claim service is provided by this extension to handle `acr/amr` claims for the client. 
+This extension supports the `acr/amr` claims. If the client requests a specific `acr_value` in the 
+original request, the IdP attempts to calculate whether that value is indeed supported by any of the authentication 
+flows. If none is deemed viable, the authentication context weight map of the IdP is consulted to figure out the appropriate `acr`. 
+The result is passed onto the IdP for authentication. 
+
+Since MITREid Connect at this point does not natively support `acr/amr` claims, an implementation of a 
+claim service is provided by this extension to handle `acr/amr` claims for the client. 
 
 #### Max-Age, AuthN Time
-This extension supports the `max_age` and `auth_time` claims. If `max_age` is provided in the original request, the IdP attempts to calculate the authentication creation instant and may simulate a `forcedAuthN` so the end-user is actively reauthenticated. 
 
-Since MITREid Connect's support for these claims is strictly tied to an authentication that is very much handled by Spring Security ( as a requirement for Spring Security OAuth), a custom service is provided by this extension to handle the production of `max_age` and `auth_time`. 
+This extension supports the `max_age` and `auth_time` claims. If `max_age` is provided in the original 
+request, the IdP attempts to calculate the authentication creation instant and may simulate a `forcedAuthN` so the end-user is actively reauthenticated. 
+
+Since MITREid Connect's support for these claims is strictly tied to an authentication that is very much 
+handled by Spring Security ( as a requirement for Spring Security OAuth), a custom service is provided by 
+this extension to handle the production of `max_age` and `auth_time`. 
 
 ## Default IdP Configuration 
-Follow the below steps if you wish to enable this extension inside a vanilla IdP v3 deployment. Note that synchronization of changes, as we make progress here, is entirely manual at this point.
+
+Follow the below steps if you wish to enable this extension inside a vanilla IdP v3 deployment. Note 
+that synchronization of changes, as we make progress here, is entirely manual at this point.
 
 ### Build
 
@@ -215,6 +263,7 @@ Unzip the `target/idp.war` artifact into an `idp-temp`. This will be used as a r
 - Copy `idp-temp/idp/system/views/oidc` into `$IDP_HOME/system/views`
 
 ### Copy JARs
+
 Cross examine the `idp-temp/WEB-INF/lib` directory with your IdP and copy all JARs that are not present. 
 
 ### Logging
@@ -233,7 +282,9 @@ The following packages may be used for log configuration:
 ```
 
 ## Overlay IdP Configuration
-The project itself follows an overlay-module where the IdP is configured to embed all of its configuration inside the final war artifact. In doing so, the following changes are then overlaid into the IdP context and need to be accounted for during IdP upgrades. 
+
+The project itself follows an overlay-module where the IdP is configured to embed all of its configuration 
+inside the final war artifact. In doing so, the following changes are then overlaid into the IdP context and need to be accounted for during IdP upgrades. 
 
 * `login.vm` and `attribute-release.vm` are overlaid to account for CSRF changes
 * `password-authn-config.xml` is overlaid to indicate JAAS is used for authN. 

@@ -111,7 +111,9 @@ form legend {
     color: #B7B7B7;
     border: 1px solid #B7B7B7;
 }
-.form-field-focus {
+.form-field-focus,
+.form-field:focus,
+input[type="text"]:focus {
     color: #333333;
     border-color: #333;
 }
