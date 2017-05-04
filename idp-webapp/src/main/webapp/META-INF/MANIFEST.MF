@@ -63,7 +63,17 @@ Class-Path: opensaml-core-3.2.0.jar joda-time-2.7.jar java-support-7.2
  s-resources-2.4.4.RELEASE.jar spring-extensions-5.3.0.jar idp-admin-a
  pi-3.3.0.jar idp-admin-impl-3.3.0.jar jsonapi-converter-0.5.jar retro
  fit-2.1.0.jar okhttp-3.3.0.jar okio-1.8.0.jar jackson-annotations-2.8
- .3.jar bcprov-jdk15on-1.56.jar
+ .3.jar bcprov-jdk15on-1.56.jar idp-admin-api-3.3.1.jar idp-profile-ap
+ i-3.3.1.jar idp-core-3.3.1.jar idp-attribute-api-3.3.1.jar idp-authn-
+ api-3.3.1.jar idp-admin-impl-3.3.1.jar idp-ui-3.3.1.jar idp-saml-api-
+ 3.3.1.jar idp-attribute-resolver-api-3.3.1.jar idp-session-api-3.3.1.
+ jar idp-attribute-filter-api-3.3.1.jar idp-attribute-filter-impl-3.3.
+ 1.jar idp-attribute-filter-spring-3.3.1.jar idp-saml-impl-3.3.1.jar i
+ dp-schema-3.3.1.jar idp-attribute-resolver-impl-3.3.1.jar idp-attribu
+ te-resolver-spring-3.3.1.jar idp-profile-spring-3.3.1.jar idp-profile
+ -impl-3.3.1.jar idp-authn-impl-3.3.1.jar idp-consent-api-3.3.1.jar id
+ p-cas-api-3.3.1.jar idp-cas-impl-3.3.1.jar idp-consent-impl-3.3.1.jar
+  idp-session-impl-3.3.1.jar
 Build-Jdk: 1.7.0_80
 Created-By: Apache Maven 3.3.1
 

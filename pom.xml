@@ -9,7 +9,7 @@
     <artifactId>shibboleth-idp-webapp-parent</artifactId>
     <packaging>pom</packaging>
     <name>Shibboleth Identity Provider Web Application Parent</name>
-    <version>3.3.0</version>
+    <version>3.3.1</version>
     <dependencies>
         <dependency>
             <groupId>net.shibboleth.utilities</groupId>
@@ -168,7 +168,9 @@
         <hibernate.commons.annotations.version>4.0.4.Final</hibernate.commons.annotations.version>
         <httpcore.version>4.3.3</httpcore.version>
         <httpclient.version>4.3.6</httpclient.version>
+
         <idp.version>${project.version}</idp.version>
+
         <idwsfconsumer.version>1.0.0</idwsfconsumer.version>
         <jackson.version>2.8.3</jackson.version>
         <jandex.version>1.1.0.Final</jandex.version>
@@ -192,7 +194,9 @@
         <ognl.version>2.6.11</ognl.version>
         <okhttp.version>3.3.0</okhttp.version>
         <okio.version>1.8.0</okio.version>
-        <opensaml.version>${project.version}</opensaml.version>
+
+        <opensaml.version>3.3.0</opensaml.version>
+
         <retrofit.version>2.1.0</retrofit.version>
         <slf4j.version>1.7.12</slf4j.version>
         <spring.version>4.3.2.RELEASE</spring.version>

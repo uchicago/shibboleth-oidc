@@ -3,7 +3,7 @@
     <parent>
         <groupId>net.shibboleth.idp</groupId>
         <artifactId>shibboleth-idp-webapp-parent</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>idp-webapp</artifactId>
