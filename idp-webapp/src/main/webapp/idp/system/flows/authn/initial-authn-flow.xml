@@ -12,7 +12,8 @@
     
     <action-state id="AuthenticationSetup">
         <evaluate expression="PopulateSessionContext" />
-        <evaluate expression="'proceed'" />
+        <evaluate expression="SetRPUIInformation" />
+         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="TestForSession" />
     </action-state>

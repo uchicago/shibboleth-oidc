@@ -23,7 +23,7 @@
         
         <transition on="proceed" to="ValidateDuoWebResponse" />
         <transition on="cancel" to="ReselectFlow" />
-        <transition on-exception="com.duosecurity.duoweb.DuoWebException" to="AuthenticationException" />
+        <transition on-exception="com.duosecurity.duoweb.DuoWebException" to="LogDuoException" />
     </view-state>
 
     <action-state id="ValidateDuoWebResponse">
@@ -31,6 +31,13 @@
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="proceed" />
+    </action-state>
+
+    <action-state id="LogDuoException">
+        <on-entry>
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn.duo').error('DuoWebException', flowExecutionException.getCause())" />
+        </on-entry>
+        <evaluate expression="'AuthenticationException'" />
     </action-state>
 
     <bean-import resource="duo-authn-beans.xml" />

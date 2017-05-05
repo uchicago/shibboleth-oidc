@@ -20,6 +20,7 @@
         <evaluate expression="PopulateAttributeConsentContext" />
         <evaluate expression="PopulatePreConsentAuditContext" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="TestForRevokeConsent" />
     </action-state>
 
@@ -36,12 +37,15 @@
     <action-state id="RevokeConsent">
         <evaluate expression="RevokeConsent" />
         <evaluate expression="'ClearAttributeReleaseConsent'" />
+        
+        <transition on="ClearAttributeReleaseConsent" to="ClearAttributeReleaseConsent" />
     </action-state>
 
     <!-- Write 'ClearAttributeReleaseConsent' event to consent audit log. -->
     <action-state id="ClearAttributeReleaseConsent">
         <evaluate expression="WriteAttributeReleaseConsentAuditLog" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="TestForRevokeGlobalAttributeConsent" />
     </action-state>
 
@@ -53,6 +57,7 @@
     <action-state id="RevokeGlobalAttributeConsent">
         <evaluate expression="RevokeGlobalAttributeConsent" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="PopulateConsentContext" />
     </action-state>
 
@@ -61,6 +66,7 @@
     <action-state id="ReadConsentFromStorage">
         <evaluate expression="ReadConsentFromStorage" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="TestForReadGlobalAttributeConsentFromStorage" />
     </action-state>
 
@@ -72,6 +78,7 @@
     <action-state id="ReadGlobalAttributeConsentFromStorage">
         <evaluate expression="ReadGlobalAttributeConsentFromStorage" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="TestForGlobalAttributeConsent" />
     </action-state>
 
@@ -89,6 +96,7 @@
     <action-state id="PopulateConsentContext">
         <evaluate expression="PopulateConsentContext" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="IsConsentRequired" />
     </action-state>
 
@@ -140,12 +148,15 @@
     <action-state id="GlobalConsent">
         <evaluate expression="CreateGlobalConsentResult" />
         <evaluate expression="'GlobalAttributeReleaseConsent'" />
+        
+        <transition on="GlobalAttributeReleaseConsent" to="GlobalAttributeReleaseConsent" />
     </action-state>
 
     <!-- Write 'GlobalAttributeReleaseConsent' event to consent audit log. -->
     <action-state id="GlobalAttributeReleaseConsent">
         <evaluate expression="WriteAttributeReleaseConsentAuditLog" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="proceed" />
     </action-state>
 
@@ -155,6 +166,8 @@
     <action-state id="ExtractConsent">
         <evaluate expression="ExtractConsent" />
         <evaluate expression="'AttributeReleaseConsent'" />
+        
+        <transition on="AttributeReleaseConsent" to="AttributeReleaseConsent" />
     </action-state>
 
     <!-- Write 'AttributeReleaseConsent' event to consent audit log. -->
@@ -162,6 +175,7 @@
         <evaluate expression="PopulateConsentAuditContext" />
         <evaluate expression="WriteAttributeReleaseConsentAuditLog" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="TestForDoNotRememberConsent" />
     </action-state>
 
@@ -179,6 +193,7 @@
     <action-state id="CreateResult">
         <evaluate expression="CreateResult" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="ReleaseAttributes" />
     </action-state>
 
@@ -188,6 +203,7 @@
     <action-state id="ReleaseAttributes">
         <evaluate expression="ReleaseAttributes" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="proceed" />
     </action-state>
 

@@ -3,6 +3,7 @@
 ##
 ## Velocity context will contain the following properties
 ## flowRequestContext - the Spring Web Flow RequestContext
+## profileRequestContext - root of context tree
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
 ## response - HttpServletResponse

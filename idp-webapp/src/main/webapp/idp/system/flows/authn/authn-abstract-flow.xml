@@ -32,17 +32,30 @@
     <end-state id="SubjectCanonicalizationError" />
 
     <action-state id="LogRuntimeException">
-        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
         <transition to="RuntimeException" />
     </action-state>
 
-    <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="#{currentEvent.id.startsWith('authn/')}" to="ReselectFlow">
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setSignaledFlowId(currentEvent.id)" />
         </transition>
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
+        <transition on="AuthenticationException" to="AuthenticationException" />
+        <transition on="IdentitySwitch" to="IdentitySwitch" />
+        <transition on="InputOutputError" to="InputOutputError" />
+        <transition on="InvalidCredentials" to="InvalidCredentials" />
+        <transition on="InvalidProfileContext" to="InvalidProfileContext" />
+        <transition on="InvalidSubjectContext" to="InvalidSubjectContext" />
+        <transition on="InvalidSubjectCanonicalizationContext" to="InvalidSubjectCanonicalizationContext" />
+        <transition on="NoCredentials" to="NoCredentials" />
+        <transition on="NoPassive" to="NoPassive" />
+        <transition on="NoPotentialFlow" to="NoPotentialFlow" />
+        <transition on="RequestUnsupported" to="RequestUnsupported" />
+        <transition on="ReselectFlow" to="ReselectFlow" />
+        <transition on="RestartAuthentication" to="RestartAuthentication" />
+        <transition on="RuntimeException" to="RuntimeException" />
+        <transition on="SubjectCanonicalizationError" to="SubjectCanonicalizationError" />
     </global-transitions>
 
 </flow>

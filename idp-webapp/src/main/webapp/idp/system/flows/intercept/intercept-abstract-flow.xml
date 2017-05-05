@@ -23,14 +23,21 @@
     <end-state id="RuntimeException" />
 
     <action-state id="LogRuntimeException">
-        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
         <transition to="RuntimeException" />
     </action-state>
 
-    <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
+        <transition on="InvalidProfileContext" to="InvalidProfileContext" />
+        <transition on="MessageExpired" to="MessageExpired" />
+        <transition on="MessageReplay" to="MessageReplay" />
+        <transition on="MessageAuthenticationError" to="MessageAuthenticationError" />
+        <transition on="AttributeReleaseRejected" to="AttributeReleaseRejected" />
+        <transition on="TermsRejected" to="TermsRejected" />
+        <transition on="ContextCheckDenied" to="ContextCheckDenied" />
+        <transition on="RestartAuthentication" to="RestartAuthentication" />
+        <transition on="RuntimeException" to="RuntimeException" />
     </global-transitions>
 
 </flow>

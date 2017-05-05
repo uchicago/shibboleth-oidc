@@ -70,8 +70,13 @@
                     // Attribute check is required to decide if first factor alone is enough.
                     resCtx = input.getSubcontext(
                         "net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext", true);
-                    resCtx.setPrincipal(input.getSubcontext(
-                        "net.shibboleth.idp.authn.context.SubjectCanonicalizationContext").getPrincipalName());
+
+                    // Look up the username using a standard function.
+                    usernameLookupStrategyClass
+                        = Java.type("net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy");
+                    usernameLookupStrategy = new usernameLookupStrategyClass();
+                    resCtx.setPrincipal(usernameLookupStrategy.apply(input));
+                        
                     resCtx.getRequestedIdPAttributeNames().add("allowedLoginMethods");
                     resCtx.resolveAttributes(custom);
                     

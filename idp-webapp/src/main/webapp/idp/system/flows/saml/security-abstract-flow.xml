@@ -18,7 +18,9 @@
 
     <!-- Default is to turn any error event into its own end-state. -->
     <global-transitions>
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
+        <transition on="MessageExpired" to="MessageExpired" />
+        <transition on="MessageReplay" to="MessageReplay" />
+        <transition on="MessageAuthenticationError" to="MessageAuthenticationError" />
     </global-transitions>
 
 </flow>

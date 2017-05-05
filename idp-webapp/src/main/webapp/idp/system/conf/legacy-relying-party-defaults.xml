@@ -11,40 +11,49 @@
         default-destroy-method="destroy">
 	
     <!--  SAML2 -->
+    <alias alias="shibboleth.SAML2.Artifact.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.Artifact.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml-soap" />
         
+    <alias alias="shibboleth.SAML2.Logout.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
         c:_0="%{idp.artifact.endpointIndex:2}" />
     <bean id="shibboleth.SAML2.Logout.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-slo" />
 
+    <alias alias="shibboleth.SAML2.AttributeQuery.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
         c:_0="%{idp.artifact.endpointIndex:2}" />
     <bean id="shibboleth.SAML2.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml-soap" />
 
+    <alias alias="shibboleth.SAML2.BrowserSSO.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
         c:_0="%{idp.artifact.endpointIndex:2}" />
     <bean id="shibboleth.SAML2.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-sso" />
-        
+
+    <alias alias="shibboleth.SAML2.ECP.ServletRequest" name="shibboleth.HttpServletRequest" />        
     <bean id="shibboleth.SAML2.ECP.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-ecp" />
 
     <!--  SAML2 - Liberty -->
+    <alias alias="shibboleth.SAML2.SSOS.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.SSOS.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/saml2-ssos" /><!-- TODO -->
+        c:_0="security-policy/saml2-ssos" />
 
     <!--  SAML1 -->
+    <alias alias="shibboleth.SAML1.Artifact.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML1.Artifact.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml-soap" />
-        
+    
+    <alias alias="shibboleth.SAML1.AttributeQuery.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
         c:_0="%{idp.artifact.endpointIndex:2}" />
     <bean id="shibboleth.SAML1.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml-soap" />
-        
+    
+    <alias alias="shibboleth.SAML1.BrowserSSO.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
         c:_0="%{idp.artifact.endpointIndex:2}" />
     <bean id="shibboleth.SAML1.BrowserSSO.InboundFlowId" class="java.lang.String"

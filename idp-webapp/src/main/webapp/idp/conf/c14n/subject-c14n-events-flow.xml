@@ -13,6 +13,10 @@
     <!-- Custom error events to reflect back from user-supplied c14n subflows. -->
     <!--
     <end-state id="MyCustomEvent" />
+
+    <global-transitions>
+        <transition on="MyCustomEvent" to="MyCustomEvent" />
+    </global-transitions>
     -->
 
 </flow>

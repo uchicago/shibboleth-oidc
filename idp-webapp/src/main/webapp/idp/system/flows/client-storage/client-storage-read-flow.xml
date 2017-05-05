@@ -33,7 +33,7 @@
     <!-- Passthrough state if an exception is thrown. -->
     <action-state id="LogRuntimeException">
         <on-entry>
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
         </on-entry>
         <evaluate expression="'RuntimeException'" />
     </action-state>
@@ -47,7 +47,8 @@
 
     <global-transitions>
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
+        <transition on="InvalidProfileContext" to="InvalidProfileContext" />
+        <transition on="RuntimeException" to="RuntimeException" />
     </global-transitions>
 
     <bean-import resource="client-storage-read-beans.xml" />

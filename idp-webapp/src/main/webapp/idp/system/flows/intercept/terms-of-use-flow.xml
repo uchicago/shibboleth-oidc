@@ -12,6 +12,7 @@
         <evaluate expression="PopulatePreConsentAuditContext" />
         <evaluate expression="ReadConsentFromStorage" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="IsConsentRequired" />
     </action-state>
     
@@ -47,12 +48,15 @@
         <evaluate expression="CreateResult" />
         <!-- Set the event ID to 'TermsAccepted' for auditing. -->
         <evaluate expression="'TermsAccepted'" />
+        
+        <transition on="TermsAccepted" to="TermsAccepted" />
     </action-state>
 
     <action-state id="TermsAccepted">
         <evaluate expression="PopulateConsentAuditContext" />
         <evaluate expression="WriteConsentAuditLog" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="proceed" />
     </action-state>
 
