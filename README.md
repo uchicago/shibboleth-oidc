@@ -305,7 +305,7 @@ and adjust the values of hostname, entityId, passwords, etc. Then from the comma
 #### Initial installs
 
 ```bash
-./mvn[w] clean package -P new
+./mvn[w] clean install -P new
 ```
 
 This will wipe out any previous files inside `credentials` and `metadata` directories and start anew.
@@ -313,7 +313,7 @@ This will wipe out any previous files inside `credentials` and `metadata` direct
 #### Subsequent installs
 
 ```bash
-./mvn[w] clean package
+./mvn[w] clean install
 ```
 
 ### Run IdP
@@ -344,13 +344,13 @@ If you want a somewhat faster build, run:
 Scripted as:
 
 ```bash
-./runidp.sh
+./runidp.[sh|cmd]
 ```
 
 ### Run Client Application
 
 ```bash
-./runclient.sh
+./runclient.[sh|cmd]
 ```
 
 The client is automatically and by default pre=registered with IdP under `https://mmoayyed.unicon.net:9443/simple-web-app`.
