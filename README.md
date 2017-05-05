@@ -241,13 +241,14 @@ Build the codebase via:
 
 ### Cross Examine Changes
 
-Unzip the `target/idp.war` artifact into an `idp-temp`. This will be used as a reference to copy configuration into your IdP deployment.
+Unzip the `idp-webapp-overlay/target/idp.war` artifact into an `idp-temp`. 
+This will be used as a reference to copy configuration into your IdP deployment.
 
-- Cross examine the `idp-temp/WEB-INF.xml` with your IdP and apply all differences. 
-- Cross examine the `idp-temp/idp/login.vm` and `idp-temp/idp/intercept/attribute-release.vm` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/WEB-INF/web.xml` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/views/login.vm` and `idp-temp/idp/views/intercept/attribute-release.vm` with your IdP and apply all differences. 
 - Cross examine the `idp-temp/idp/system/conf/global-system.xml` with your IdP and apply all differences. 
 - Cross examine the `idp-temp/idp/system/conf/webflow-config.xml` with your IdP and apply all differences. 
-- Cross examine the `idp-temp/idp/system/conf/mvc-beans.xml` with your IdP and apply all differences. 
+- Cross examine the `idp-temp/idp/conf/mvc-beans.xml` with your IdP and apply all differences. 
 - Cross examine the `idp-temp/idp/conf/idp.properties` with your IdP and apply all differences. 
 - Cross examine the `idp-temp/idp/conf/attribute-resolver.xml` with your IdP and apply all differences. 
 - Cross examine the `idp-temp/idp/conf/attribute-filter.xml` with your IdP and apply all differences. 
@@ -255,8 +256,8 @@ Unzip the `target/idp.war` artifact into an `idp-temp`. This will be used as a r
 
 ### Copy Configuration
 
-- Copy `idp-temp/idp/conf/oidc.properties`, `idp-temp/idp/conf/oidc-protocol.xml` and `idp-temp/idp/conf/schema-hsqldb-schema.sql` into 
-`$IDP_HOME/conf`
+- Copy `idp-temp/idp/conf/oidc.properties`, `idp-temp/idp/conf/oidc-protocol.xml` into `$IDP_HOME/conf`
+- Copy the directory `idp-temp/idp/conf/schema` to `$IDP_HOME/conf/`
 - Copy `idp-temp/idp/credentials/keystore.jwks` into `$IDP_HOME/credentials`
 - Copy `idp-temp/idp/system/conf/oidc-protocol-*.xml` into `$IDP_HOME/system/conf`
 - Copy `idp-temp/idp/system/flows/oidc` into `$IDP_HOME/system/flows`
