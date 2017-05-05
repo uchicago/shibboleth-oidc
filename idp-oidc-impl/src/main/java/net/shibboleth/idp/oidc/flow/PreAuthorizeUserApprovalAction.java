@@ -226,11 +226,11 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
 
         final Set<SystemScope> sortedScopes = getSystemScopes(scopes);
         response.setScopes(sortedScopes);
-        log.debug("Response will contain the following scopes", sortedScopes);
+        log.debug("Response will contain the following scopes {}", sortedScopes);
 
         final Map<String, Map<String, String>> claimsForScopes = getUserInfoClaimsForScopes(sortedScopes);
         response.setClaims(claimsForScopes);
-        log.debug("Response will contain the following claims for scopes", claimsForScopes.keySet());
+        log.debug("Response will contain the following claims for scopes {}", claimsForScopes.keySet());
 
         // client stats
         final Integer count = statsService.getCountForClientId(client.getId());
@@ -279,7 +279,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
                         log.debug("Added claim {} with value {}", claim, element.getAsString());
                     }
                 }
-                log.debug("Final claims for system scope {} are", systemScope.getValue(), claimValues);
+                log.debug("Final claims for system scope {} are {}", systemScope.getValue(), claimValues);
                 claimsForScopes.put(systemScope.getValue(), claimValues);
             }
         }

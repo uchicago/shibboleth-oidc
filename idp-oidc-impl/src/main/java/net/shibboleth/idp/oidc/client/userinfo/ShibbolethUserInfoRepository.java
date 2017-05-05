@@ -138,13 +138,13 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
      * @param userInfo  the user info
      * @param attribute the attribute
      */
-    private void setUserInfoClaimByAttribute(final SubjectContext principal, 
-                                             final DefaultUserInfo userInfo, 
+    private void setUserInfoClaimByAttribute(final SubjectContext principal,
+                                             final DefaultUserInfo userInfo,
                                              final IdPAttribute attribute) {
         switch (attribute.getId()) {
             case "sub":
-                log.debug("Overriding existing sub value {} to {}", principal.getPrincipalName());
                 userInfo.setSub(getAttributeValue(attribute).getValue().toString());
+                log.debug("Overriding existing sub value {} to {}", principal.getPrincipalName(), userInfo.getSub());
                 break;
             case "name":
                 userInfo.setName(getAttributeValue(attribute).getValue().toString());

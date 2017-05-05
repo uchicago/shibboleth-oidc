@@ -382,13 +382,13 @@ public class ShibbolethAcrAwareTokenService implements OIDCTokenService {
                     AuthenticationClassRefAuthority.getAuthenticationClassRefAuthority(authority);
             if (acr != null) {
                 idClaims.claim(OIDCConstants.ACR, acr.getAuthority());
-                log.debug("Added {} claim as", OIDCConstants.ACR, acr.getAuthority());
+                log.debug("Added {} claim as {}", OIDCConstants.ACR, acr.getAuthority());
             }
             final AuthenticationMethodRefAuthority amr =
                     AuthenticationMethodRefAuthority.getAuthenticationClassRefAuthority(authority);
             if (amr != null) {
                 idClaims.claim(OIDCConstants.AMR, amr.getAuthority());
-                log.debug("Added {} claim as", OIDCConstants.AMR, amr.getAuthority());
+                log.debug("Added {} claim as {}", OIDCConstants.AMR, amr.getAuthority());
             }
         }
     }

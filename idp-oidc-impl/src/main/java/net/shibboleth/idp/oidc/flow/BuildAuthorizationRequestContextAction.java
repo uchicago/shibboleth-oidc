@@ -105,8 +105,8 @@ public class BuildAuthorizationRequestContextAction extends AbstractProfileActio
         authZContext.setAuthorizationRequest(authorizationRequest);
 
         if (authZContext.isImplicitResponseType() && Strings.isNullOrEmpty(authZContext.getNonce())) {
-            log.error("{} is required since the requesting flow is implicit");
-            throw new OIDCException("{} is required when handling implicit response type");  
+            log.error("nonce is required since the requesting flow is implicit");
+            throw new OIDCException("nonce is required when handling implicit response type");
         }
         
         final ClientDetailsEntity client = loadClientObject(authZContext);

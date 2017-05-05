@@ -68,7 +68,8 @@ public class LoginConfigurationLookupFunction<T> implements Function<ProfileRequ
         log.debug("Located relying party context with id {}", rpContext.getRelyingPartyId());
 
         if (!this.configClass.isInstance(rpContext.getProfileConfig())) {
-            log.error("{} cannot be applied or is not an instance of the relying party context profile configuration");
+            log.error("{} cannot be applied or is not an instance of the relying party context profile configuration",
+                    this.configClass);
             return null;
         }
         return this.configClass.cast(rpContext.getProfileConfig());
