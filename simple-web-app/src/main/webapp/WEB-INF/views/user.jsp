@@ -35,12 +35,25 @@
 
 				<p>Your ID Token has the following set of claims:</p>
 				
-				<security:authentication property="idTokenValue" var="idToken" />
+				<security:authentication property="idToken" var="idToken" />
 				<table class="table table-striped table-hover" id="idTokenTable">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>Value</th>
+							<th class="span1">Name</th>
+							<th class="span11">Value</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>				
+				</table>
+				
+				<p>The ID Token header contains the following claims:</p>
+				
+				<table class="table table-striped table-hover" id="idTokenHeader">
+					<thead>
+						<tr>
+							<th class="span1">Name</th>
+							<th class="span11">Value</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -54,8 +67,8 @@
 				<table class="table table-striped table-hover" id="userInfoTable">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>Value</th>
+							<th class="span1">Name</th>
+							<th class="span11">Value</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -71,24 +84,34 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 
-		var idTokenString = "${ idToken }";
+		var idTokenString = "${ idToken.serialize() }";
 		var idToken = jwt.WebTokenParser.parse(idTokenString);
+		var idHeader = JSON.parse(jwt.base64urldecode(idToken.headerSegment));
 		var idClaims = JSON.parse(jwt.base64urldecode(idToken.payloadSegment));
 	
 		_.each(idClaims, function(val, key, list) {
-			$('#idTokenTable tbody').append('<tr><td>' + _.escape(key) + '</td><td>' + _.escape(val) + '</td></tr>');
+			if (_.contains(["iat", "exp", "auth_time", "nbf"], key)) {
+				// it's a date field, parse and print it
+				var date = new Date(val * 1000);
+				$('#idTokenTable tbody').append('<tr><td>' + _.escape(key) + '</td><td><span title="' + _.escape(val) + '">' + date + '</span></td></tr>');
+			} else {
+				$('#idTokenTable tbody').append('<tr><td>' + _.escape(key) + '</td><td>' + _.escape(val) + '</td></tr>');
+			}
 		});
-
+		
+		_.each(idHeader, function(val, key, list) {
+			if (_.contains(["iat", "exp", "auth_time", "nbf"], key)) {
+				// it's a date field, parse and print it
+				var date = new Date(val * 1000);
+				$('#idTokenHeader tbody').append('<tr><td>' + _.escape(key) + '</td><td><span title="' + _.escape(val) + '">' + date + '</span></td></tr>');
+			} else {
+				$('#idTokenHeader tbody').append('<tr><td>' + _.escape(key) + '</td><td>' + _.escape(val) + '</td></tr>');
+			}
+		});
+		
 		var userInfo = ${ userInfoJson };
 		_.each(userInfo, function(val, key, list) {
-		    if(key === "address" && 'formatted' in val) {
-		        address = JSON.parse(val.formatted);
-                if('formatted' in address) {
-			        $('#userInfoTable tbody').append('<tr><td>' + _.escape(key) + '</td><td>' + address.formatted + '</td></tr>');
-                }
-		    } else {
-			    $('#userInfoTable tbody').append('<tr><td>' + _.escape(key) + '</td><td>' + _.escape(val) + '</td></tr>');
-		    }
+			$('#userInfoTable tbody').append('<tr><td>' + _.escape(key) + '</td><td>' + _.escape(val) + '</td></tr>');
 		});
 	});
 

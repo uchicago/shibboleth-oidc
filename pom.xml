@@ -209,6 +209,9 @@
         <woodstox.core.asl.version>4.4.1</woodstox.core.asl.version>
         <xml.apis.version>1.4.01</xml.apis.version>
         <xmlsec.version>2.0.5</xmlsec.version>
+
+        <org.aspectj-version>1.6.9</org.aspectj-version>
+        <spring.security.version>3.2.8.RELEASE</spring.security.version>
         
         <checkstyle.version>6.15</checkstyle.version>
         <license.plugin>2.11</license.plugin>

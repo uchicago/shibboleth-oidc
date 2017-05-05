@@ -12,9 +12,6 @@
     <artifactId>simple-web-app</artifactId>
     <packaging>war</packaging>
     <properties>
-        <org.aspectj-version>1.6.9</org.aspectj-version>
-        <spring.security.version>3.1.4.RELEASE</spring.security.version>
-        <mitreid-connect-version>1.1.12</mitreid-connect-version>
         <install.dir>${project.parent.basedir}</install.dir>
     </properties>
     <dependencies>
@@ -48,7 +45,7 @@
         <dependency>
             <groupId>org.mitre</groupId>
             <artifactId>openid-connect-client</artifactId>
-            <version>${mitreid-connect-version}</version>
+            <version>${mitreid.version}</version>
         </dependency>
 
         <!-- Spring -->
