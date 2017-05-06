@@ -24,14 +24,6 @@ services:
     volumes:
      - ~/.m2:/root/.m2
 
-
-  # simplesamlphp:
-  #   build: ./simplesamlphp/
-  #   links:
-  #     - httpd-proxy:idptestbed
-  #   networks:
-  #    - back
-
 networks:
   front:
     driver: bridge
