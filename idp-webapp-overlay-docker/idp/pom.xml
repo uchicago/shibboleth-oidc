@@ -1,14 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>net.shibboleth.idp</groupId>
-        <artifactId>shibboleth-idp-webapp-parent</artifactId>
-        <version>3.3.1</version>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <groupId>net.shibboleth.idp</groupId>
     <artifactId>idp-webapp-overlay-docker</artifactId>
     <packaging>war</packaging>
     <name>Shibboleth Identity Provider Web Application Dockerized</name>
+    <version>3.3.1</version>
+
+    <properties>
+
+    </properties>
 
     <dependencies>
         <dependency>
@@ -70,7 +76,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>${maven.plugin.war}</version>
+                <version>3.1.0</version>
                 <configuration>
                     <warName>idp</warName>
                     <overlays>

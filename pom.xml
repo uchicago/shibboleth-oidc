@@ -97,7 +97,6 @@
         <module>idp-webapp-support</module>
         <module>idp-oidc-impl</module>
         <module>idp-webapp-overlay</module>
-        <module>idp-webapp-overlay-docker</module>
         <module>simple-web-app</module>
     </modules>
 
@@ -218,7 +217,7 @@
         <license.plugin>2.11</license.plugin>
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
         <maven.plugin.exec>1.4.0</maven.plugin.exec>
-        <maven.plugin.war>2.6</maven.plugin.war>
+        <maven.plugin.war>3.1.0</maven.plugin.war>
         <maven.plugin.clean>2.6.1</maven.plugin.clean>
         <maven.plugin.keytool>1.5</maven.plugin.keytool>
         <maven.plugin.compiler>3.3</maven.plugin.compiler>
