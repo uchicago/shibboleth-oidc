@@ -1,0 +1,39 @@
+version: "2"
+
+services:
+  httpd-proxy:
+    build: ./httpd-proxy/
+    networks:
+     - front
+     - back
+    ports:
+     - "80:80"
+     - "443:443"
+
+  sp:
+    build: ./sp/ 
+    networks:
+     - back
+
+  idp:
+    build: ./idp-webapp-overlay-docker
+    ports:
+      - "5000:5000"
+    networks:
+     - back
+    volumes:
+     - ~/.m2:/root/.m2
+
+
+  # simplesamlphp:
+  #   build: ./simplesamlphp/
+  #   links:
+  #     - httpd-proxy:idptestbed
+  #   networks:
+  #    - back
+
+networks:
+  front:
+    driver: bridge
+  back:    
+    driver: bridge

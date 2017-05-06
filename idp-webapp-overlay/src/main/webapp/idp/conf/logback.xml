@@ -13,9 +13,9 @@
     <!-- <variable name="idp.process.appender" value="ASYNC_PROCESS" /> -->
 
     <!-- Logging level shortcuts. -->
-    <variable name="idp.loglevel.idp" value="DEBUG" />
+    <variable name="idp.loglevel.idp" value="INFO" />
     <variable name="idp.loglevel.ldap" value="WARN" />
-    <variable name="idp.loglevel.messages" value="DEBUG" />
+    <variable name="idp.loglevel.messages" value="INFO" />
     <variable name="idp.loglevel.encryption" value="INFO" />
     <variable name="idp.loglevel.opensaml" value="INFO" />
     <variable name="idp.loglevel.props" value="INFO" />

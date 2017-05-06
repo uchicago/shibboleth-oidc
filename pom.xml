@@ -97,6 +97,7 @@
         <module>idp-webapp-support</module>
         <module>idp-oidc-impl</module>
         <module>idp-webapp-overlay</module>
+        <module>idp-webapp-overlay-docker</module>
         <module>simple-web-app</module>
     </modules>
 
