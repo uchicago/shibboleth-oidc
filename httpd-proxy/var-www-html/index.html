@@ -2,21 +2,34 @@
 
 <head>
     <title>Shibboleth IdP - OpenID Connect</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <h1>Shibboleth IdP - OpenID Connect</h1>
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Shibboleth IdP - OpenID Connect</h1>
 
-    <p>Apps:</p>
-    <ul>
-        <li><a href="/idp/">Shibboleth IdP</a></li>
-        <li><a href="/idp/shibboleth">Shibboleth IdP - SAML Metadata</a></li>
-        <li><a href="/idp/.well-known">Shibboleth IdP - OpenID Connect Discovery</a></li>
-        
-        <li><a href="/sp/Shibboleth.sso/Metadata">Shibboleth SP- SAML Metadata</a></li>
-        
-        <li><a href="/php-shib-protected/">PHP App Protected by Shibboleth SP</a></li>
-    </ul>
+            <p>Resources:</p>
+
+            <ul>
+                <li><a href="/idp/">Shibboleth IdP</a></li>
+                <li><a href="/idp/shibboleth">Shibboleth IdP - Metadata</a></li>
+                <li><a href="/idp/.well-known">Shibboleth IdP - OpenID Connect Discovery</a></li>
+            </ul>
+
+            <ul>
+                <li><a href="/Shibboleth.sso/Metadata">Shibboleth SP- SAML Metadata</a></li>
+                <li><a href="/php-shib-protected/">Shibboleth SP - PHP Application</a></li>
+            </ul>
+
+            <p><a class="btn btn-primary" href="https://github.com/uchicago/shibboleth-oidc" role="button">On Github</a></p>
+        </div>
+    </div>
+
+    
 
 </body>
 

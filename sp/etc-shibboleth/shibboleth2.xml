@@ -87,11 +87,10 @@
         <!-- Example of locally maintained metadata. -->
         <!--
         <MetadataProvider type="XML" validate="true" file="partner-metadata.xml"/>
-        <MetadataProvider type="XML" validate="true" file="idp-metadata.xml"/>
+        <MetadataProvider type="XML" url="https://idptestbed/idp/shibboleth" backingFilePath="idp-metadata.xml" />
         -->
+        <MetadataProvider type="XML" validate="true" file="idp-metadata.xml"/>
 
-        <MetadataProvider type="XML" url="https://idptestbed/idp/shibboleth" backingFilePath="idp-metadata.xml">
-        
         <!-- Map to extract attributes from SAML assertions. -->
         <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
         
