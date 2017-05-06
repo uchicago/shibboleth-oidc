@@ -12,7 +12,19 @@
                         urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
                             
 
+    <!--
     <MetadataProvider id="LocalMetadata"  xsi:type="FilesystemMetadataProvider" metadataFile="%{idp.home}/metadata/sp-metadata.xml"/>
-          
+    --> 
+
+    <MetadataProvider id="HTTPMetadata"
+                      xsi:type="FileBackedHTTPMetadataProvider"
+                      backingFile="%{idp.home}/metadata/sp-metadata.xml"
+                      metadataURL="https://idptestbed/sp/Shibboleth.sso/Metadata"> 
+        
+        <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P30D"/>
+        <MetadataFilter xsi:type="EntityRoleWhiteList">
+            <RetainedRole>md:SPSSODescriptor</RetainedRole>
+        </MetadataFilter>
+    </MetadataProvider>     
     
 </MetadataProvider>

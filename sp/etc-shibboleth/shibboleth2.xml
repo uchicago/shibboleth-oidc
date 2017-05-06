@@ -73,7 +73,7 @@
         <!-- Example of remotely supplied batch of signed metadata. -->
         <!--
         <MetadataProvider type="XML" validate="true"
-	      uri="http://federation.org/federation-metadata.xml"
+          uri="http://federation.org/federation-metadata.xml"
               backingFilePath="federation-metadata.xml" reloadInterval="7200">
             <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
             <MetadataFilter type="Signature" certificate="fedsigner.pem"/>
@@ -87,10 +87,11 @@
         <!-- Example of locally maintained metadata. -->
         <!--
         <MetadataProvider type="XML" validate="true" file="partner-metadata.xml"/>
-        -->
-        
         <MetadataProvider type="XML" validate="true" file="idp-metadata.xml"/>
+        -->
 
+        <MetadataProvider type="XML" url="https://idptestbed/idp/shibboleth" backingFilePath="idp-metadata.xml">
+        
         <!-- Map to extract attributes from SAML assertions. -->
         <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
         
