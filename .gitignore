@@ -30,3 +30,5 @@ target/
 testshib-metadata.xml
 idp-metadata.xml
 **/overlays/
+.history
+.vscode
