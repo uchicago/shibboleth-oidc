@@ -18,7 +18,7 @@ services:
   idp:
     build: ./idp-webapp-overlay-docker
     expose:
-     - "8080"
+      - "8443"
     ports:
       - "5000:5000"
     networks:

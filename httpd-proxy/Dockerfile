@@ -1,7 +1,7 @@
 FROM centos:centos7
 
 RUN yum -y update \
-    && yum -y install httpd mod_ssl mod_ldap wget \
+    && yum -y install httpd mod_ssl mod_ldap mod_headers wget \
     && yum -y clean all
 
 COPY httpd-foreground /usr/local/bin/

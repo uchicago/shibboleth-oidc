@@ -220,7 +220,8 @@ Since MITREid Connect's support for these claims is strictly tied to an authenti
 handled by Spring Security ( as a requirement for Spring Security OAuth), a custom service is provided by 
 this extension to handle the production of `max_age` and `auth_time`. 
 
-## Default IdP Configuration 
+
+## Default IdP Configuration
 
 Follow the below steps if you wish to enable this extension inside a vanilla IdP v3 deployment. Note 
 that synchronization of changes, as we make progress here, is entirely manual at this point.
@@ -356,3 +357,9 @@ Scripted as:
 
 The client is automatically and by default pre=registered with IdP under `https://mmoayyed.unicon.net:9443/simple-web-app`.
 It runs inside a Jetty instance that is configured to use port `9443` and the same keystore the IdP uses for simplicity. 
+
+## Dockerized IdP Configuration
+
+Must have built and installed the IdP package locally first. 
+
+./rundocker.sh

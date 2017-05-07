@@ -101,8 +101,10 @@
                     <plugin>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
-                        <version>9.3.6.v20151106</version>
+                        <version>9.4.4.v20170414</version>
                         <configuration>
+                            <jettyXml>${project.basedir}/etc/jetty/jetty.xml,${project.basedir}/etc/jetty/jetty-ssl.xml,${project.basedir}/etc/jetty/jetty-https.xml</jettyXml>
+                            <dumpOnStart>true</dumpOnStart>
                             <webApp>
                                 <contextPath>/idp</contextPath>
                             </webApp>
