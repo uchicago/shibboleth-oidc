@@ -360,6 +360,33 @@ It runs inside a Jetty instance that is configured to use port `9443` and the sa
 
 ## Dockerized IdP Configuration
 
-Must have built and installed the IdP package locally first. 
+The Shibboleth IdP along with a sample PHP application protected by the Shibboleth SP and a sample OpenID Connect enabled application are all put together inside docker containers, controlled mostly via the `docker-compose.yml` file.
 
+The Shibboleth IdP that runs inside the docker container is itself an overlay of the `idp-webapp-overlay` project that only overrides what is needed for the docker build to run successfully.
+
+### Build
+
+```bash
+git clone git@github.com:uchicago/shibboleth-oidc.git
+```
+
+Build the codebase via:
+
+```bash
+./mvn[w] clean package -P new
+```
+
+### Configure
+
+- Copy and overwrite the generated `idp-metadata.xml` from the `idp-webapp-overlay` project over to then `idp-webapp-overlay-docker` project.
+- Adjust the newly copied `idp-metadata.xml` file, changing entityId and endpoint references to `idptestbed`.
+- Exchange the newly adjusted `idp-metadata.xml` file with the `sp`.
+- Add `127.0.0.1 idptestbed` to your hosts file.
+
+### Run
+
+The run the container:
+
+```bash
 ./rundocker.sh
+```
