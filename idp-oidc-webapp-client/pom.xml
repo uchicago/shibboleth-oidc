@@ -6,10 +6,10 @@
         <artifactId>shibboleth-idp-webapp-parent</artifactId>
         <version>3.3.1</version>
     </parent>
-    <name>OpenID Connect Sample Client Web Application</name>
+    <name>Shibboleth Identity Provider OpenID Connect Sample Client</name>
     <description>A sample web application that acts as an OpenID Connect client for the IdP</description>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>simple-web-app</artifactId>
+    <artifactId>idp-oidc-webapp-client</artifactId>
     <packaging>war</packaging>
     <properties>
         <install.dir>${project.parent.basedir}</install.dir>
@@ -167,7 +167,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.1.0</version>
                 <configuration>
                     <warName>${project.artifactId}</warName>
                 </configuration>
@@ -197,7 +197,7 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.3.6.v20151106</version>
+                <version>9.4.4.v20170414</version>
                 <configuration>
                     <jettyXml>${project.basedir}/etc/jetty/jetty.xml,${project.basedir}/etc/jetty/jetty-ssl.xml,${project.basedir}/etc/jetty/jetty-https.xml
                     </jettyXml>

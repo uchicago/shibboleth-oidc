@@ -97,7 +97,7 @@
         <module>idp-webapp-support</module>
         <module>idp-oidc-impl</module>
         <module>idp-webapp-overlay</module>
-        <module>simple-web-app</module>
+        <module>idp-oidc-webapp-client</module>
     </modules>
 
     <build>

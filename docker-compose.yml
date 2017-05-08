@@ -26,8 +26,21 @@ services:
     volumes:
      - ~/.m2:/root/.m2
 
+  client:
+    build: ./idp-oidc-webapp-client-overlay-docker
+    expose:
+      - "8443"
+    ports:
+      - "5001:5001"
+    networks:
+     - back
+    volumes:
+     - ~/.m2:/root/.m2
+
 networks:
   front:
     driver: bridge
   back:    
     driver: bridge
+
+

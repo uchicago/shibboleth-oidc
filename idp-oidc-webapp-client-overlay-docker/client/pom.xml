@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.shibboleth.idp</groupId>
+    <artifactId>idp-oidc-webapp-client-overlay-docker</artifactId>
+    <packaging>war</packaging>
+    <name>Shibboleth Identity Provider OpenID Client Application Dockerized</name>
+    <version>3.3.1</version>
+
+    <properties>
+        <file.separator>/</file.separator>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-oidc-webapp-client</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.rimerosolutions.maven.plugins</groupId>
+                <artifactId>wrapper-maven-plugin</artifactId>
+                <version>0.0.4</version>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>jetty</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>9.4.4.v20170414</version>
+                        <configuration>
+                            <jettyXml>${project.basedir}/etc/jetty/jetty.xml,${project.basedir}/etc/jetty/jetty-ssl.xml,${project.basedir}/etc/jetty/jetty-https.xml
+                            </jettyXml>
+                            <webApp>
+                                <contextPath>/simple-web-app</contextPath>
+                            </webApp>
+                            <systemProperties>
+                                <systemProperty>
+                                    <name>org.eclipse.jetty.annotations.maxWait</name>
+                                    <value>240</value>
+                                </systemProperty>
+                            </systemProperties>
+                            <!-- Works with remote debugging and mvn jetty:run-forked -->
+                            <jvmArgs>-Xdebug -Xrunjdwp:transport=dt_socket,address=5001,server=y,suspend=n</jvmArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
