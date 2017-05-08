@@ -36,6 +36,8 @@ services:
      - back
     volumes:
      - ~/.m2:/root/.m2
+    links:
+      - httpd-proxy:idptestbed
 
 networks:
   front:

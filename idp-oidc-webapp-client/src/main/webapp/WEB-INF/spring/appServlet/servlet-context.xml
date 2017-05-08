@@ -113,7 +113,7 @@
 
     <!--
       -
-      -	Issuer Services: Determine which identity provider issuer is used.
+      -    Issuer Services: Determine which identity provider issuer is used.
       -
       -->
 
@@ -171,8 +171,8 @@
                 <entry key="${server.url}">
                     <bean class="org.mitre.openid.connect.config.ServerConfiguration">
                         <property name="issuer" value="${server.url}" />
-                        <property name="authorizationEndpointUri"	value="${server.authz.url}" />
-                        <property name="tokenEndpointUri"	value="${server.token.url}" />
+                        <property name="authorizationEndpointUri"    value="${server.authz.url}" />
+                        <property name="tokenEndpointUri"    value="${server.token.url}" />
                         <property name="userInfoUri" value="${server.userinfo.url}" />
                         <property name="jwksUri" value="${server.jwks.url}" />
                     </bean>
@@ -196,8 +196,8 @@
                 <entry key="${server.url}">
                     <bean class="org.mitre.openid.connect.config.ServerConfiguration">
                       <property name="issuer" value="${server.url}" />
-                      <property name="authorizationEndpointUri"	value="${server.authz.url}" />
-                      <property name="tokenEndpointUri"	value="${server.token.url}" />
+                      <property name="authorizationEndpointUri"    value="${server.authz.url}" />
+                      <property name="tokenEndpointUri"    value="${server.token.url}" />
                       <property name="userInfoUri" value="${server.userinfo.url}" />
                       <property name="jwksUri" value="${server.jwks.url}" />
                     </bean>
@@ -212,7 +212,7 @@
 
     <!--
       -
-      -	Client Configuration: Determine which client identifier and credentials are used.
+      -    Client Configuration: Determine which client identifier and credentials are used.
       -
       -->
 
@@ -238,12 +238,12 @@
                 <property name="tokenEndpointAuthMethod" value="SECRET_BASIC" />
                 <property name="redirectUris">
                     <set>
-                        <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
+                        <value>${client.url.login}</value>
                     </set>
                 </property>
                 <!-- for signed requests -->
                 <property name="requestObjectSigningAlg" value="RS256" />
-                <property name="jwksUri" value="https://mmoayyed.unicon.net:9443/simple-web-app/jwk" />
+                <property name="jwksUri" value="${client.url.jwk}" />
             </bean>
         </property>
         <!--
@@ -284,7 +284,7 @@
                         <property name="tokenEndpointAuthMethod" value="SECRET_BASIC" />
                         <property name="redirectUris">
                             <set>
-                                <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
+                                <value>${client.url.login}</value>
                             </set>
                         </property>
                     </bean>
@@ -316,7 +316,7 @@
                         <property name="tokenEndpointAuthMethod" value="SECRET_BASIC" />
                         <property name="redirectUris">
                             <set>
-                                <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
+                                <value>${client.url.login}</value>
                             </set>
                         </property>
 
@@ -339,7 +339,7 @@
                 <property name="tokenEndpointAuthMethod" value="SECRET_BASIC" />
                 <property name="redirectUris">
                     <set>
-                        <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
+                        <value>${client.url.login}</value>
                     </set>
                 </property>
             </bean>
@@ -362,7 +362,7 @@
 
     <!--
       -
-      -	Auth request options service: returns the optional components of the request
+      -    Auth request options service: returns the optional components of the request
       -
       -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticAuthRequestOptionsService" id="staticAuthRequestOptionsService">

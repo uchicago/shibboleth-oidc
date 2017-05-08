@@ -108,6 +108,10 @@
 
                     <!-- MitreID Connect Client -->
                     <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
+
+                    <!-- MitreID Connect Client Dockerized -->
+                    <value>https://idptestbed/simple-web-app/openid_connect_login</value>
+                    
                 </set>
             </property>
         </bean>
