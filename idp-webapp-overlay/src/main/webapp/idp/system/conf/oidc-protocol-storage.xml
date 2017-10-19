@@ -15,7 +15,9 @@
         <property name="entityManagerFactory" ref="entityManagerFactory" />
         <qualifier value="defaultTransactionManager" />
     </bean>
+    
     <tx:annotation-driven transaction-manager="transactionManager" />
+    
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="packagesToScan" value="org.mitre" />
         <property name="persistenceProviderClass" value="org.eclipse.persistence.jpa.PersistenceProvider" />
@@ -42,7 +44,16 @@
     <!-- Use the following to set up the OIC tables in the in-memory DB
            If you are using a file based HSQLDB you should not run this every time. -->
     <jdbc:initialize-database data-source="dataSource">
-        <jdbc:script location="%{oidc.db.schema}"/>
+        <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema.type}/%{oidc.db.schema.type}_database_tables.sql"/>
+        <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema.type}/loading_temp_tables.sql"/>
+        <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema.type}/scopes.sql"/>
+        
+        <!--
+        <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema}/security-schema.sql"/>
+        <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema}/clients.sql"/>
+        <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema}/users.sql"/>
+        -->
+        
     </jdbc:initialize-database>
 
     <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">

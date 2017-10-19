@@ -46,8 +46,8 @@ The following may be considered in future versions:
 
 - Apache Maven v3.3+
 - JDK 7+
-- [MITREid Connect](https://github.com/mitreid-connect/) handles the OIDC implementation.
-- [Shibboleth Identity Provider v3.3.0](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
+- [MITREid Connect v1.3.1](https://github.com/mitreid-connect/) handles the OIDC implementation.
+- [Shibboleth Identity Provider v3.3.2](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 
 ## Design
 

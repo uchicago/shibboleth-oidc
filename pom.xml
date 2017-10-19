@@ -147,7 +147,7 @@
         </plugins>
     </build>
     <properties>
-        <mitreid.version>1.2.6</mitreid.version>
+        <mitreid.version>1.3.1</mitreid.version>
         <servlet.version>3.1.0</servlet.version>
 
         <!-- IdP Dependencies -->

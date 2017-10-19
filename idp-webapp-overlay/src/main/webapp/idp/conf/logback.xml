@@ -13,7 +13,7 @@
     <!-- <variable name="idp.process.appender" value="ASYNC_PROCESS" /> -->
 
     <!-- Logging level shortcuts. -->
-    <variable name="idp.loglevel.idp" value="INFO" />
+    <variable name="idp.loglevel.idp" value="DEBUG" />
     <variable name="idp.loglevel.ldap" value="WARN" />
     <variable name="idp.loglevel.messages" value="INFO" />
     <variable name="idp.loglevel.encryption" value="INFO" />
@@ -35,6 +35,9 @@
     <!-- ============== Logging Categories and Levels ============== -->
     <!-- =========================================================== -->
 
+    <logger name="org.mitre" level="${idp.loglevel.idp:-INFO}"/>
+    <logger name="org.hibernate" level="${idp.loglevel.idp:-INFO}"/>
+    
     <!-- Logs IdP, but not OpenSAML, messages -->
     <logger name="net.shibboleth.idp" level="${idp.loglevel.idp:-INFO}"/>
 

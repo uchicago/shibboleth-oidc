@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS access_token (
 	refresh_token_id BIGINT,
 	client_id BIGINT,
 	auth_holder_id BIGINT,
-	id_token_id BIGINT,
 	approved_site_id BIGINT
 );
 
@@ -131,6 +130,7 @@ CREATE TABLE IF NOT EXISTS client_details (
 	dynamically_registered BOOLEAN DEFAULT false NOT NULL,
 	allow_introspection BOOLEAN DEFAULT false NOT NULL,
 	id_token_validity_seconds BIGINT DEFAULT 600 NOT NULL,
+	device_code_validity_seconds BIGINT,
 	
 	client_id VARCHAR(256),
 	client_secret VARCHAR(2048),
@@ -168,6 +168,12 @@ CREATE TABLE IF NOT EXISTS client_details (
 	created_at TIMESTAMP NULL,
 	initiate_login_uri VARCHAR(2048),
 	clear_access_tokens_on_refresh BOOLEAN DEFAULT true NOT NULL,
+	
+	software_statement VARCHAR(4096),
+	software_id VARCHAR(2048),
+	software_version VARCHAR(2048),
+	
+	code_challenge_method VARCHAR(256),
 	
 	UNIQUE (client_id)
 );
@@ -232,8 +238,6 @@ CREATE TABLE IF NOT EXISTS system_scope (
 	icon VARCHAR(256),
 	restricted BOOLEAN DEFAULT false NOT NULL,
 	default_scope BOOLEAN DEFAULT false NOT NULL,
-	structured BOOLEAN DEFAULT false NOT NULL,
-	structured_param_description VARCHAR(256),
 	UNIQUE (scope)
 );
 
@@ -357,9 +361,23 @@ CREATE TABLE IF NOT EXISTS saved_registered_client (
 	registered_client VARCHAR(8192)
 );
 
+CREATE TABLE IF NOT EXISTS device_code (
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	device_code VARCHAR(1024),
+	user_code VARCHAR(1024),
+	expiration TIMESTAMP NULL,
+	client_id VARCHAR(256),
+	approved BOOLEAN,
+	auth_holder_id BIGINT	
+);
 
-CREATE INDEX at_tv_idx ON access_token(token_value(767));
-CREATE INDEX ts_oi_idx ON token_scope(owner_id);
-CREATE INDEX at_exp_idx ON access_token(expiration);
-CREATE INDEX rf_ahi_idx ON refresh_token(auth_holder_id);
-CREATE INDEX cd_ci_idx ON client_details(client_id);
+CREATE TABLE IF NOT EXISTS device_code_scope (
+	owner_id BIGINT NOT NULL,
+	scope VARCHAR(256) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS device_code_request_parameter (
+	owner_id BIGINT,
+	param VARCHAR(2048),
+	val VARCHAR(2048)
+);

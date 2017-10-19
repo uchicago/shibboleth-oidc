@@ -80,6 +80,10 @@ public class PostAuthorizationUserApprovalAction extends AbstractProfileAction {
          * the authZ request to be a session attribute.
          */
         OIDCUtils.putSessionAttribute(request, "authorizationRequest", authZContext.getAuthorizationRequest());
-        return super.doExecute(springRequestContext, profileRequestContext);
+        final Event event = super.doExecute(springRequestContext, profileRequestContext);
+        if (event == null) {
+            return Events.Done.event(this);
+        }
+        return event;
     }
 }

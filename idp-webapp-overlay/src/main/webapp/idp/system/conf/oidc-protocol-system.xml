@@ -30,7 +30,7 @@
     <!-- OAuth/Spring Security Beans -->
     <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
 
-    <bean id="oauthRequestValidator" class="org.mitre.oauth2.token.StructuredScopeAwareOAuth2RequestValidator" />
+    <bean id="oauthRequestValidator" class="org.mitre.oauth2.token.ScopeServiceAwareOAuth2RequestValidator" />
 
     <bean id="clientCredentialsEndpointFilter"
           class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter"
@@ -68,31 +68,26 @@
                                      authentication-manager-ref="authenticationManager">
         <security:expression-handler ref="oauthExpressionHandler" />
     </security:global-method-security>
-
-    <!-- OpenId Connect JWK Encryption -->
-    <bean id="defaultKeyStore" class="org.mitre.jose.keystore.JWKSetKeyStore"
-          p:location="%{oidc.jwtset.keystore}" />
-
-    <bean id="defaultSignerService" class="org.mitre.jwt.signer.service.impl.DefaultJWTSigningAndValidationService"
-          c:keyStore-ref="defaultKeyStore"
-          p:defaultSigningAlgorithmName="%{oidc.signing.default.alg.name:RS256}"
-          p:defaultSignerKeyId="%{oidc.signing.default.key.id:rsa1}" />
-
-    <bean id="defaultEncryptionService"
-          class="org.mitre.jwt.encryption.service.impl.DefaultJWTEncryptionAndDecryptionService"
-          c:keyStore-ref="defaultKeyStore"
-          p:defaultAlgorithm="%{oidc.encryption.default.alg.name:RSA1_5}"
-          p:defaultDecryptionKeyId="%{oidc.decryption.default.key.id:rsa1}"
-          p:defaultEncryptionKeyId="%{oidc.encryption.default.key.id:rsa1}" />
+    
 
     <!-- Profile Configuration -->
     <bean id="OIDC.LoginConfiguration"
           class="net.shibboleth.idp.oidc.config.login.LoginConfiguration"
           p:postAuthenticationFlows="attribute-release" />
 
+    <!-- Ignored by Shibboleth OIDC yet required by MitreID -->
+    <bean class="org.mitre.openid.connect.config.UIConfiguration" id="uiConfiguration">
+        <property name="jsFiles">
+            <set/>
+        </property>
+    </bean>
+    
     <!-- Resources to pull -->
     <import resource="oidc-protocol-endpoints.xml" />
+    <import resource="oidc-protocol-assertion.xml" />
+    <import resource="oidc-protocol-crypto.xml" />
     <import resource="oidc-protocol-storage.xml" />
+    <import resource="oidc-protocol-task.xml" />
     <import resource="../../conf/oidc-protocol.xml" />
 
 </beans>

@@ -22,57 +22,97 @@
               p:value="openid"
               p:description="log in using your identity"
               p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+              p:defaultScope="true"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
               p:id="2"
               p:value="profile"
               p:description="basic profile information"
               p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+              p:defaultScope="true"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
               p:id="3"
               p:value="email"
               p:description="email address"
               p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+              p:defaultScope="true"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
               p:id="4"
               p:value="address"
               p:description="physical address"
               p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+              p:defaultScope="true"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
               p:id="5"
               p:value="phone"
               p:description="telephone number"
               p:restricted="false"
-              p:defaultScope="true"
-              p:structured="false"/>
+              p:defaultScope="true"/>
 
         <bean class="org.mitre.oauth2.model.SystemScope"
               p:id="6"
               p:value="offline_access"
               p:description="offline access"
               p:restricted="false"
-              p:defaultScope="false"
-              p:structured="false"/>
+              p:defaultScope="false"/>
 
     </util:set>
 
     <util:set id="oidcClients">
         <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
-              p:id="1"
+              p:id="2"
               p:clientId="client"
               p:clientSecret="secret"
               p:clientName="Test Client"
+              p:dynamicallyRegistered="false"
+              p:accessTokenValiditySeconds="3600"
+              p:requestObjectSigningAlg="none"
+              p:idTokenValiditySeconds="600"
+              p:allowIntrospection="true">
+
+            <property name="scope">
+                <set>
+                    <value>openid</value>
+                    <value>profile</value>
+                    <value>email</value>
+                    <value>address</value>
+                    <value>phone</value>
+                    <value>offline_access</value>
+                </set>
+            </property>
+            <property name="grantTypes">
+                <set>
+                    <value>authorization_code</value>
+                    <value>implicit</value>
+                    <value>refresh_token</value>
+                </set>
+            </property>
+            <property name="redirectUris">
+                <set>
+                    <!-- OpenID Test instance for Code Profile -->
+                    <value>https://op.certification.openid.net:60233/authz_cb</value>
+
+                    <!-- OpenID Test instance for Implicit Profile -->
+                    <value>https://op.certification.openid.net:60160/authz_cb</value>
+
+                    <!-- MitreID Connect Client -->
+                    <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
+
+                    <!-- MitreID Connect Client Dockerized -->
+                    <value>https://idptestbed/simple-web-app/openid_connect_login</value>
+                    
+                </set>
+            </property>
+        </bean>
+
+        <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
+              p:id="123123"
+              p:clientId="clientsfgsdfgdxfg"
+              p:clientSecret="secretdfgdfgsdfgsdfg"
+              p:clientName="Test Client Misagh"
               p:dynamicallyRegistered="false"
               p:accessTokenValiditySeconds="3600"
               p:requestObjectSigningAlg="none"
@@ -111,11 +151,11 @@
 
                     <!-- MitreID Connect Client Dockerized -->
                     <value>https://idptestbed/simple-web-app/openid_connect_login</value>
-                    
+
                 </set>
             </property>
         </bean>
-
+        
     </util:set>
 
 </beans>

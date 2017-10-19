@@ -164,7 +164,7 @@
                     <plugin>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
-                        <version>9.4.4.v20170414</version>
+                        <version>9.3.6.v20151106</version>
                         <configuration>
                             <jettyXml>${project.basedir}/etc/jetty/jetty.xml,${project.basedir}/etc/jetty/jetty-ssl.xml,${project.basedir}/etc/jetty/jetty-https.xml</jettyXml>
                             <webApp>
@@ -181,7 +181,7 @@
                                     <value>240</value>
                                 </systemProperty>
                             </systemProperties>
-                            <jvmArgs>-Didp.home=${idphome} -Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n</jvmArgs>
+                            <jvmArgs>-Didp.home=${idphome} -Xdebug -Xrunjdwp:transport=dt_socket,address=5002,server=y,suspend=n</jvmArgs>
                         </configuration>
                         <executions>
                             <execution>

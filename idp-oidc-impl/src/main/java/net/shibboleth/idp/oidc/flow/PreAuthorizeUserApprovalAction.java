@@ -32,6 +32,7 @@ import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.model.SystemScope;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.mitre.oauth2.service.SystemScopeService;
+import org.mitre.openid.connect.model.ClientStat;
 import org.mitre.openid.connect.model.UserInfo;
 import org.mitre.openid.connect.service.ScopeClaimTranslationService;
 import org.mitre.openid.connect.service.StatsService;
@@ -233,7 +234,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         log.debug("Response will contain the following claims for scopes {}", claimsForScopes.keySet());
 
         // client stats
-        final Integer count = statsService.getCountForClientId(client.getId());
+        final Integer count = statsService.getCountForClientId(client.getClientId()).getApprovedSiteCount();
         response.setCount(count);
 
         if (client.getContacts() != null) {
