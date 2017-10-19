@@ -5,7 +5,6 @@ import org.mitre.oauth2.repository.OAuth2ClientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.Set;
@@ -19,9 +18,6 @@ public class ShibbolethClientRepositoryBootstrapper {
     @Autowired
     private OAuth2ClientRepository clientRepository;
     
-    @Autowired
-    private ApplicationContext applicationContext;
-
     public ShibbolethClientRepositoryBootstrapper(final Set<ClientDetailsEntity> definedClients) {
         this.definedClients = definedClients;
     }
@@ -36,7 +32,7 @@ public class ShibbolethClientRepositoryBootstrapper {
 
         for (final ClientDetailsEntity client : definedClients) {
             try {
-                log.debug("Attempting to save/update client id [{}] in the repository", client.getClientId());
+                log.debug("Attempting to save/update client id [{}] in the repository with redirectUris [{}]", client.getClientId(), client.getRedirectUris());
                 this.clientRepository.saveClient(client);
                 log.info("Updated client id [{}] in the repository successfully", client.getClientId());
             } catch (final Exception e) {

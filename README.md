@@ -24,9 +24,7 @@ are the items we are planning to address:
 * Ability to resolve, consume and release OIDC claims, taking advantage of IdP's machinery to release attributes. 
 * Ability to configure an expiration and revocation policy around OIDC access and refresh tokens from an admin perspective. 
 
-Note that no significant UI enhancements are taken into account. All configuration and changes are directly assumed to be applied to the 
-IdP config without the presence of a web interface to facilitate. This includes administration and management of metadata, 
-authZ codes and more.
+Note that no significant UI enhancements are taken into account. All configuration and changes are directly assumed to be applied to the IdP config without the presence of a web interface to facilitate. This includes administration and management of metadata, authZ codes and more.
 
 ### Resources
 
@@ -90,19 +88,18 @@ oidc.db.psw=
 
 #### Schema 
 
-Note that the default schema provided by this extension assumes a HSQLDB database. If you wish to use a different database, you will need 
-to provide an different schema. Additional schemas are provieded in the `conf` directory for various databases. The following databases
-are supported:
+Note that the default schema provided by this extension assumes a HSQLDB database. If you wish to use a different database, you will need to provide an different schema. Additional schemas are provieded in the `conf` directory for various databases. The following databases are supported:
  
  1. HSQL
  2. Postgres
  3. MySQL
+ 4. Oracle
 
 The following differences are to be noted:
 
 #### System Scopes
 
-Systems scopes are directly provided in the IdP configuration inside the `oidc-protocol.xml`. An adopter 
+Systems scopes are directly provided in the IdP configuration inside the `oidc-protocol-scopes.xml`. An adopter 
 may choose to ignore/remove scopes that are deemed unsupported. 
 
 #### Clients

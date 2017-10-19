@@ -52,7 +52,7 @@
     <import resource="oidc-protocol-crypto.xml"/>
     <import resource="oidc-protocol-storage.xml"/>
     <import resource="oidc-protocol-task.xml"/>
-    <import resource="../../conf/oidc-system-scopes.xml"/>
+    <import resource="oidc-protocol-scopes.xml"/>
     <import resource="../../conf/oidc-protocol.xml"/>
 
 </beans>

@@ -11,7 +11,7 @@
        default-destroy-method="destroy">
 
     <bean id="ShibbolethClientRepositoryBootstrapper" class="net.shibboleth.idp.oidc.client.ShibbolethClientRepositoryBootstrapper"
-          c:definedClients-ref="oidcClients" />
+          c:definedClients-ref="oidcClients"/>
     <!-- 
     OIDC clients defined here will be imported on startup to the client repository.
     Any changes you make to these definitions will be saved/updated every time.
@@ -20,10 +20,44 @@
     -->
     <util:set id="oidcClients">
         <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
-              p:id="2"
+              p:id="1000"
+              p:clientId="another-client"
+              p:clientSecret="another-secret"
+              p:clientName="Another Client"
+              p:dynamicallyRegistered="false"
+              p:accessTokenValiditySeconds="3600"
+              p:requestObjectSigningAlg="none"
+              p:idTokenValiditySeconds="600"
+              p:allowIntrospection="true">
+
+            <property name="scope">
+                <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                    <constructor-arg type="java.lang.String" value="openid,profile,email,address,phone,offline_access"/>
+                </bean>
+            </property>
+            <property name="grantTypes">
+                <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                    <constructor-arg type="java.lang.String" value="authorization_code,implicit,refresh_token"/>
+                </bean>
+            </property>
+            <property name="redirectUris">
+                <set>
+                    <!-- OpenID Test instance for Code Profile -->
+                    <value>https://op.certification.openid.net:60233/authz_cb</value>
+                    <!-- OpenID Test instance for Implicit Profile -->
+                    <value>https://op.certification.openid.net:60160/authz_cb</value>
+                    <!-- MitreID Connect Client -->
+                    <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
+                    <!-- MitreID Connect Client Dockerized -->
+                    <value>https://idptestbed/simple-web-app/openid_connect_login</value>
+                </set>
+            </property>
+        </bean>
+        <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
+              p:id="2000"
               p:clientId="client"
               p:clientSecret="secret"
-              p:clientName="Test Client"
+              p:clientName="Sample Client"
               p:dynamicallyRegistered="false"
               p:accessTokenValiditySeconds="3600"
               p:requestObjectSigningAlg="none"
@@ -31,88 +65,28 @@
               p:allowIntrospection="true">
 
             <property name="scope">
-                <set>
-                    <value>openid</value>
-                    <value>profile</value>
-                    <value>email</value>
-                    <value>address</value>
-                    <value>phone</value>
-                    <value>offline_access</value>
-                </set>
+                <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                    <constructor-arg type="java.lang.String" value="openid,profile,email,address,phone,offline_access"/>
+                </bean>
             </property>
             <property name="grantTypes">
-                <set>
-                    <value>authorization_code</value>
-                    <value>implicit</value>
-                    <value>refresh_token</value>
-                </set>
+                <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                    <constructor-arg type="java.lang.String" value="authorization_code,implicit,refresh_token"/>
+                </bean>
             </property>
             <property name="redirectUris">
                 <set>
                     <!-- OpenID Test instance for Code Profile -->
                     <value>https://op.certification.openid.net:60233/authz_cb</value>
-
                     <!-- OpenID Test instance for Implicit Profile -->
                     <value>https://op.certification.openid.net:60160/authz_cb</value>
-
                     <!-- MitreID Connect Client -->
                     <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
-
                     <!-- MitreID Connect Client Dockerized -->
                     <value>https://idptestbed/simple-web-app/openid_connect_login</value>
-
                 </set>
             </property>
         </bean>
-
-        <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
-              p:id="123123"
-              p:clientId="clientsfgsdfgdxfg"
-              p:clientSecret="secretdfgdfgsdfgsdfg"
-              p:clientName="Test Client Misagh"
-              p:dynamicallyRegistered="false"
-              p:accessTokenValiditySeconds="3600"
-              p:requestObjectSigningAlg="none"
-              p:idTokenValiditySeconds="600"
-              p:allowIntrospection="true">
-
-            <property name="scope">
-                <set>
-                    <value>openid</value>
-                    <value>profile</value>
-                    <value>email</value>
-                    <value>address</value>
-                    <value>phone</value>
-                    <value>offline_access</value>
-                </set>
-            </property>
-
-            <property name="grantTypes">
-                <set>
-                    <value>authorization_code</value>
-                    <value>implicit</value>
-                    <value>refresh_token</value>
-                </set>
-            </property>
-
-            <property name="redirectUris">
-                <set>
-                    <!-- OpenID Test instance for Code Profile -->
-                    <value>https://op.certification.openid.net:60233/authz_cb</value>
-
-                    <!-- OpenID Test instance for Implicit Profile -->
-                    <value>https://op.certification.openid.net:60160/authz_cb</value>
-
-                    <!-- MitreID Connect Client -->
-                    <value>https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login</value>
-
-                    <!-- MitreID Connect Client Dockerized -->
-                    <value>https://idptestbed/simple-web-app/openid_connect_login</value>
-
-                </set>
-            </property>
-        </bean>
-
     </util:set>
-    
+
 </beans>

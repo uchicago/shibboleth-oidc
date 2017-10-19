@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.shibboleth.idp</groupId>
         <artifactId>shibboleth-idp-webapp-parent</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
     </parent>
     <name>Shibboleth Identity Provider OpenID Connect Sample Client</name>
     <description>A sample web application that acts as an OpenID Connect client for the IdP</description>

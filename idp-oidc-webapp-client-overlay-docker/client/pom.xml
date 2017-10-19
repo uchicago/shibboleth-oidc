@@ -10,7 +10,7 @@
     <artifactId>idp-oidc-webapp-client-overlay-docker</artifactId>
     <packaging>war</packaging>
     <name>Shibboleth Identity Provider OpenID Client Application Dockerized</name>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
 
     <properties>
         <file.separator>/</file.separator>
