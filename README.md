@@ -42,8 +42,8 @@ The following may be considered in future versions:
 
 ### Toolkit
 
-- Apache Maven v3.3+
-- JDK 7+
+- Apache Maven v3.5+
+- JDK 8+
 - [MITREid Connect v1.3.1](https://github.com/mitreid-connect/) handles the OIDC implementation.
 - [Shibboleth Identity Provider v3.3.2](https://wiki.shibboleth.net/confluence/display/IDP30/Home)
 
@@ -94,8 +94,6 @@ Note that the default schema provided by this extension assumes a HSQLDB databas
  2. Postgres
  3. MySQL
  4. Oracle
-
-The following differences are to be noted:
 
 #### System Scopes
 
