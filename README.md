@@ -79,7 +79,7 @@ leverages that functionality and configures a by-default inmemory database insta
 The database choice and driver are controllable via IdP settings inside `oidc.properties`. 
 
 ```properties
-oidc.db.schema=%{idp.home}/conf/schema/hsqldb-schema.sql
+oidc.db.schema.type=hsql
 oidc.db.driver=org.hsqldb.jdbcDriver
 oidc.db.url=jdbc:hsqldb:mem:oic;sql.syntax_mys=true
 oidc.db.uid=sa
@@ -114,8 +114,6 @@ The OIDC issuer is controlled via the `oidc.properties` file:
 oidc.issuer=
 ```
 
-This is used directly in the IdP configuration inside the `oidc-protocol.xml`. 
-
 ### System
 
 There are various other authentication manager/provider components registered in `oidc-protocol-system.xml` 
@@ -137,6 +135,37 @@ rotations for the default keystore must happen manually, and require a restart f
 
 Note that every client registered in the IdP is also able to specify an endpoint for its JWKS. 
 
+### Clients
+
+Client definitions are managed in the database by default. They may also be defined in `oidc-protocol.xml` and upon startup, they will be imported into the running database of choice where definitions will either be saved or updated.
+
+```xml
+<util:set id="oidcClients">
+    <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
+            p:id="1000"
+            p:clientId="client"
+            p:clientSecret="secret"
+            p:clientName="Sample Client">
+
+        <property name="scope">
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String" value="openid,profile,email,address,phone,offline_access"/>
+            </bean>
+        </property>
+        <property name="grantTypes">
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String" value="authorization_code,implicit,refresh_token"/>
+            </bean>
+        </property>
+        <property name="redirectUris">
+            <set>
+                <value>http://localhost:8080/simple-web-app/openid_connect_login</value>
+            </set>
+        </property>
+    </bean>
+</util:set>
+```
+
 ### Claims
 
 Claims can be configured as normal attribute definitions in the IdP. All standard claims that are present in the specification 
@@ -155,7 +184,7 @@ frameworks. Also, claims can be filtered in turn by the IdP itself via the norma
 ```xml
 <AttributeFilterPolicy id="default">
     <PolicyRequirementRule xsi:type="Requester" value="client" />
-    
+
     <AttributeRule attributeID="family_name">
         <PermitValueRule xsi:type="ANY" />
     </AttributeRule>
