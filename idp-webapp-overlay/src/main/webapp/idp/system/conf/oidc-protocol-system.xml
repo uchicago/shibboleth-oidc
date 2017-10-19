@@ -12,68 +12,25 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Application Context -->
-    <context:component-scan annotation-config="true" base-package="org.mitre" />
-    <context:component-scan annotation-config="true" base-package="net.shibboleth.idp.oidc" />
+    <context:component-scan base-package="org.mitre"/>
+    <context:component-scan base-package="net.shibboleth.idp.oidc"/>
 
     <mvc:annotation-driven ignore-default-model-on-redirect="true">
         <mvc:message-converters>
-            <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
-            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
 
     <mvc:interceptors>
-        <bean id="userInfoInterceptor" class="org.mitre.openid.connect.web.UserInfoInterceptor" />
-        <bean id="serverConfigInterceptor" class="org.mitre.openid.connect.web.ServerConfigInterceptor" />
+        <bean id="userInfoInterceptor" class="org.mitre.openid.connect.web.UserInfoInterceptor"/>
+        <bean id="serverConfigInterceptor" class="org.mitre.openid.connect.web.ServerConfigInterceptor"/>
     </mvc:interceptors>
-
-    <!-- OAuth/Spring Security Beans -->
-    <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
-
-    <bean id="oauthRequestValidator" class="org.mitre.oauth2.token.ScopeServiceAwareOAuth2RequestValidator" />
-
-    <bean id="clientCredentialsEndpointFilter"
-          class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter"
-            p:authenticationManager-ref="clientAuthenticationManager"
-            p:requiresAuthenticationRequestMatcher-ref="clientAuthMatcher" />
-
-    <bean id="clientAssertionEndpointFilter"
-          class="org.mitre.openid.connect.assertion.JWTBearerClientAssertionTokenEndpointFilter"
-          c:additionalMatcher-ref="clientAuthMatcher"
-          p:authenticationManager-ref="clientAssertionAuthenticationManager"  />
-
-    <bean id="clientAssertionAuthenticationProvider"
-          class="org.mitre.openid.connect.assertion.JWTBearerAuthenticationProvider" />
-
-    <bean id="oauthAuthenticationEntryPoint"
-          class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint"
-          p:realmName="%{oidc.oauth.authn.entrypoint.realm:OIDC}" />
-
-    <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
-
-    <bean id="oauth2ExceptionTranslator"
-          class="org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator" />
-
-    <!-- Spring Security -->
-    <security:authentication-manager id="clientAuthenticationManager">
-        <security:authentication-provider user-service-ref="clientUserDetailsService" />
-        <security:authentication-provider user-service-ref="uriEncodedClientUserDetailsService" />
-    </security:authentication-manager>
-
-    <security:authentication-manager id="clientAssertionAuthenticationManager">
-        <security:authentication-provider ref="clientAssertionAuthenticationProvider" />
-    </security:authentication-manager>
-
-    <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true"
-                                     authentication-manager-ref="authenticationManager">
-        <security:expression-handler ref="oauthExpressionHandler" />
-    </security:global-method-security>
-    
 
     <!-- Profile Configuration -->
     <bean id="OIDC.LoginConfiguration"
           class="net.shibboleth.idp.oidc.config.login.LoginConfiguration"
-          p:postAuthenticationFlows="attribute-release" />
+          p:postAuthenticationFlows="attribute-release"/>
 
     <!-- Ignored by Shibboleth OIDC yet required by MitreID -->
     <bean class="org.mitre.openid.connect.config.UIConfiguration" id="uiConfiguration">
@@ -81,13 +38,21 @@
             <set/>
         </property>
     </bean>
-    
+
+    <bean id="configBean" class="org.mitre.openid.connect.config.ConfigurationPropertiesBean">
+        <property name="issuer" value="%{oidc.issuer}"/>
+        <property name="regTokenLifeTime" value="%{oidc.token.lifetime:172800}"/>
+        <property name="forceHttps" value="%{oidc.force.https:true}"/>
+    </bean>
+
     <!-- Resources to pull -->
-    <import resource="oidc-protocol-endpoints.xml" />
-    <import resource="oidc-protocol-assertion.xml" />
-    <import resource="oidc-protocol-crypto.xml" />
-    <import resource="oidc-protocol-storage.xml" />
-    <import resource="oidc-protocol-task.xml" />
-    <import resource="../../conf/oidc-protocol.xml" />
+    <import resource="oidc-protocol-spring-security.xml"/>
+    <import resource="oidc-protocol-endpoints.xml"/>
+    <import resource="oidc-protocol-assertion.xml"/>
+    <import resource="oidc-protocol-crypto.xml"/>
+    <import resource="oidc-protocol-storage.xml"/>
+    <import resource="oidc-protocol-task.xml"/>
+    <import resource="../../conf/oidc-system-scopes.xml"/>
+    <import resource="../../conf/oidc-protocol.xml"/>
 
 </beans>

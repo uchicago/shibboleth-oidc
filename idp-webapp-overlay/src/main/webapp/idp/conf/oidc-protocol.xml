@@ -10,57 +10,14 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="configBean" class="org.mitre.openid.connect.config.ConfigurationPropertiesBean">
-        <property name="issuer" value="%{oidc.issuer}"/>
-        <property name="regTokenLifeTime" value="%{oidc.token.lifetime:172800}"/>
-        <property name="forceHttps" value="%{oidc.force.https:true}"/>
-    </bean>
-
-    <util:set id="supportedSystemScopes">
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="1"
-              p:value="openid"
-              p:description="log in using your identity"
-              p:restricted="false"
-              p:defaultScope="true"/>
-
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="2"
-              p:value="profile"
-              p:description="basic profile information"
-              p:restricted="false"
-              p:defaultScope="true"/>
-
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="3"
-              p:value="email"
-              p:description="email address"
-              p:restricted="false"
-              p:defaultScope="true"/>
-
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="4"
-              p:value="address"
-              p:description="physical address"
-              p:restricted="false"
-              p:defaultScope="true"/>
-
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="5"
-              p:value="phone"
-              p:description="telephone number"
-              p:restricted="false"
-              p:defaultScope="true"/>
-
-        <bean class="org.mitre.oauth2.model.SystemScope"
-              p:id="6"
-              p:value="offline_access"
-              p:description="offline access"
-              p:restricted="false"
-              p:defaultScope="false"/>
-
-    </util:set>
-
+    <bean id="ShibbolethClientRepositoryBootstrapper" class="net.shibboleth.idp.oidc.client.ShibbolethClientRepositoryBootstrapper"
+          c:definedClients-ref="oidcClients" />
+    <!-- 
+    OIDC clients defined here will be imported on startup to the client repository.
+    Any changes you make to these definitions will be saved/updated every time.
+    The client definitions here may be empty inside the set, such that you may directly also import clients
+    into the repository/database by running SQL clients provided in the schema directories.
+    -->
     <util:set id="oidcClients">
         <bean class="org.mitre.oauth2.model.ClientDetailsEntity"
               p:id="2"
@@ -103,7 +60,7 @@
 
                     <!-- MitreID Connect Client Dockerized -->
                     <value>https://idptestbed/simple-web-app/openid_connect_login</value>
-                    
+
                 </set>
             </property>
         </bean>
@@ -155,7 +112,7 @@
                 </set>
             </property>
         </bean>
-        
-    </util:set>
 
+    </util:set>
+    
 </beans>

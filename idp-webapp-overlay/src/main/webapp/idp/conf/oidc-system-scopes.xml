@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+    
+    <util:set id="supportedSystemScopes">
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="1"
+              p:value="openid"
+              p:description="log in using your identity"
+              p:restricted="false"
+              p:defaultScope="true"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="2"
+              p:value="profile"
+              p:description="basic profile information"
+              p:restricted="false"
+              p:defaultScope="true"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="3"
+              p:value="email"
+              p:description="email address"
+              p:restricted="false"
+              p:defaultScope="true"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="4"
+              p:value="address"
+              p:description="physical address"
+              p:restricted="false"
+              p:defaultScope="true"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="5"
+              p:value="phone"
+              p:description="telephone number"
+              p:restricted="false"
+              p:defaultScope="true"/>
+
+        <bean class="org.mitre.oauth2.model.SystemScope"
+              p:id="6"
+              p:value="offline_access"
+              p:description="offline access"
+              p:restricted="false"
+              p:defaultScope="false"/>
+    </util:set>
+
+    
+
+</beans>

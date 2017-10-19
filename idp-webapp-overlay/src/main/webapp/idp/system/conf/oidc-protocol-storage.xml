@@ -12,33 +12,34 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-        <qualifier value="defaultTransactionManager" />
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <qualifier value="defaultTransactionManager"/>
     </bean>
-    
-    <tx:annotation-driven transaction-manager="transactionManager" />
-    
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="packagesToScan" value="org.mitre" />
-        <property name="persistenceProviderClass" value="org.eclipse.persistence.jpa.PersistenceProvider" />
-        <property name="dataSource" ref="dataSource" />
-        <property name="jpaVendorAdapter" ref="jpaAdapter" />
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="entityManagerFactory" 
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="packagesToScan" value="org.mitre"/>
+        <property name="persistenceProviderClass" value="org.eclipse.persistence.jpa.PersistenceProvider"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jpaVendorAdapter" ref="jpaAdapter"/>
         <property name="jpaPropertyMap">
             <map>
-                <entry key="eclipselink.weaving" value="false" />
-                <entry key="eclipselink.logging.level" value="INFO" />
-                <entry key="eclipselink.logging.level.sql" value="INFO" />
-                <entry key="eclipselink.cache.shared.default" value="false" />
+                <entry key="eclipselink.weaving" value="false"/>
+                <entry key="eclipselink.logging.level" value="INFO"/>
+                <entry key="eclipselink.logging.level.sql" value="INFO"/>
+                <entry key="eclipselink.cache.shared.default" value="false"/>
             </map>
         </property>
-        <property name="persistenceUnitName" value="defaultPersistenceUnit" />
+        <property name="persistenceUnitName" value="defaultPersistenceUnit"/>
     </bean>
 
     <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-        <property name="driverClassName" value="%{oidc.db.driver}" />
-        <property name="jdbcUrl" value="%{oidc.db.url}" />
-        <property name="username" value="%{oidc.db.uid}" />
-        <property name="password" value="%{oidc.db.psw}" />
+        <property name="driverClassName" value="%{oidc.db.driver}"/>
+        <property name="jdbcUrl" value="%{oidc.db.url}"/>
+        <property name="username" value="%{oidc.db.uid}"/>
+        <property name="password" value="%{oidc.db.psw}"/>
     </bean>
 
     <!-- Use the following to set up the OIC tables in the in-memory DB
@@ -47,18 +48,18 @@
         <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema.type}/%{oidc.db.schema.type}_database_tables.sql"/>
         <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema.type}/loading_temp_tables.sql"/>
         <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema.type}/scopes.sql"/>
-        
+        <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema.type}/clients.sql"/>
+
         <!--
         <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema}/security-schema.sql"/>
-        <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema}/clients.sql"/>
         <jdbc:script location="%{idp.home}/conf/schema/%{oidc.db.schema}/users.sql"/>
         -->
-        
+
     </jdbc:initialize-database>
 
     <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
-        <property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
-        <property name="showSql" value="true" />
+        <property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform"/>
+        <property name="showSql" value="true"/>
     </bean>
 
 </beans>
