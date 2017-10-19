@@ -35,7 +35,13 @@
 
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/profile/oidc/authorize</url-pattern>
+        <url-pattern>/profile/oidc/token</url-pattern>
+        <url-pattern>/profile/oidc/userinfo</url-pattern>
+        <url-pattern>/profile/oidc/jwk</url-pattern>
+        <url-pattern>/profile/oidc/introspect</url-pattern>
+        <url-pattern>/profile/oidc/register</url-pattern>
+        <url-pattern>/profile/oidc/login</url-pattern>
     </filter-mapping>
     
     <!-- Filters and filter mappings -->
