@@ -9,10 +9,10 @@
 <Configure id="Server" class="org.eclipse.jetty.server.Server">
 
   <New id="sslContextFactory" class="org.eclipse.jetty.util.ssl.SslContextFactory">
-    <Set name="KeyStorePath">/etc/jetty/thekeystore</Set>
+    <Set name="KeyStorePath">/etc/cas/thekeystore</Set>
     <Set name="KeyStorePassword">changeit</Set>
     <Set name="KeyManagerPassword">changeit</Set>
-    <Set name="TrustStorePath">/etc/jetty/thekeystore</Set>
+    <Set name="TrustStorePath">/etc/cas/thekeystore</Set>
     <Set name="TrustStorePassword">changeit</Set>
   </New>
 
