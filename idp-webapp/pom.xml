@@ -388,6 +388,7 @@
             <groupId>net.shibboleth.idp</groupId>
             <artifactId>idp-profile-impl</artifactId>
             <version>${idp.version}</version>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

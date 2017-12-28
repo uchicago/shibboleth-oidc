@@ -31,6 +31,8 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
+import net.shibboleth.idp.oidc.client.userinfo.authn.authority.AuthenticationClassRefAuthority;
+import net.shibboleth.idp.oidc.client.userinfo.authn.authority.AuthenticationMethodRefAuthority;
 import net.shibboleth.idp.oidc.config.OIDCConstants;
 import org.mitre.jwt.encryption.service.JWTEncryptionAndDecryptionService;
 import org.mitre.jwt.signer.service.JWTSigningAndValidationService;

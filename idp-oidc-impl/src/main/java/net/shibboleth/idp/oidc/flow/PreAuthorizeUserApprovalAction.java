@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, 
- * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements. See the
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache 
- * License, Version 2.0 (the "License"); you may not use this file except in 
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -114,10 +114,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
                               @Nonnull final ProfileRequestContext profileRequestContext) {
 
-        this.userInfoService.initialize(profileRequestContext);
-
         final OIDCAuthorizationRequestContext authZContext =
-                profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
+            profileRequestContext.getSubcontext(OIDCAuthorizationRequestContext.class);
         if (authZContext == null) {
             log.warn("No authorization request could be located in the profile request context");
             return Events.Failure.event(this);
@@ -156,7 +154,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         */
 
         final Authentication authentication =
-                SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext);
+            SpringSecurityAuthenticationTokenFactory.buildAuthentication(profileRequestContext, client);
         storeSpringSecurityAuthenticationContext(profileRequestContext, springRequestContext, authentication);
         storeAuthenticationTimeIntoAuthorizationRequest(authentication, authRequest);
         final OIDCResponse response = buildOpenIdConnectResponse(authRequest, client);
@@ -173,9 +171,9 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
      * @param authRequest    the auth request
      */
     private static void storeAuthenticationTimeIntoAuthorizationRequest(final Authentication authentication,
-                                                                 final AuthorizationRequest authRequest) {
+                                                                        final AuthorizationRequest authRequest) {
         authRequest.getExtensions().put(OIDCConstants.AUTH_TIME,
-                ((SpringSecurityAuthenticationToken) authentication).getAuthenticationDateTime().getMillis());
+            ((SpringSecurityAuthenticationToken) authentication).getAuthenticationDateTime().getMillis());
     }
 
     /**
@@ -186,7 +184,7 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
      * @param authentication        the authentication
      */
     private void storeSpringSecurityAuthenticationContext(@Nonnull final ProfileRequestContext profileRequestContext,
-                                                          final RequestContext springRequestContext, 
+                                                          final RequestContext springRequestContext,
                                                           final Authentication authentication) {
         final HttpServletRequest request = OIDCUtils.getHttpServletRequest(springRequestContext);
         if (request == null) {
@@ -198,8 +196,8 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         SecurityContextHolder.setContext(securityContext);
         final HttpSession session = request.getSession();
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-        log.debug("Stored authentication [{}] into Spring security context", 
-                SecurityContextHolder.getContext().getAuthentication());
+        log.debug("Stored authentication [{}] into Spring security context",
+            SecurityContextHolder.getContext().getAuthentication());
     }
 
     /**
@@ -217,18 +215,18 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
         response.setRedirectUri(authRequest.getRedirectUri());
 
         log.debug("Built initial response for client {} and redirect uri {}",
-                client, authRequest.getRedirectUri());
+            client, authRequest.getRedirectUri());
 
         // pre-process the scopes
         final Set<SystemScope> scopes = scopeService.fromStrings(authRequest.getScope());
         log.debug("System scopes retrieved based on the authorization request scope {} are {}",
-                authRequest.getScope(), scopes);
+            authRequest.getScope(), scopes);
 
         final Set<SystemScope> sortedScopes = getSystemScopes(scopes);
         response.setScopes(sortedScopes);
         log.debug("Response will contain the following scopes {}", sortedScopes);
 
-        final Map<String, Map<String, String>> claimsForScopes = getUserInfoClaimsForScopes(sortedScopes);
+        final Map<String, Map<String, String>> claimsForScopes = getUserInfoClaimsForScopes(sortedScopes, client);
         response.setClaims(claimsForScopes);
         log.debug("Response will contain the following claims for scopes {}", claimsForScopes.keySet());
 
@@ -251,15 +249,17 @@ public class PreAuthorizeUserApprovalAction extends AbstractProfileAction {
      * Gets user info claims for scopes.
      *
      * @param sortedScopes the sorted scopes
+     * @param client       the client
      * @return the user info claims for scopes
      */
-    private Map<String, Map<String, String>> getUserInfoClaimsForScopes(final Set<SystemScope> sortedScopes) {
+    private Map<String, Map<String, String>> getUserInfoClaimsForScopes(final Set<SystemScope> sortedScopes,
+                                                                        final ClientDetailsEntity client) {
 
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         final Authentication authentication = securityContext.getAuthentication();
         final SubjectContext context = (SubjectContext) authentication.getPrincipal();
 
-        final UserInfo user = userInfoService.getByUsername(context.getPrincipalName());
+        final UserInfo user = userInfoService.getByUsernameAndClientId(context.getPrincipalName(), client.getClientId());
         log.debug("Located UserInfo object from principal name {}", context.getPrincipalName());
 
         final Map<String, Map<String, String>> claimsForScopes = new HashMap<>();

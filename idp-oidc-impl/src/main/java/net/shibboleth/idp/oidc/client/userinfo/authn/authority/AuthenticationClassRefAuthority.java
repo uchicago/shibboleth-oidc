@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.shibboleth.idp.oidc.client.userinfo.authn;
+package net.shibboleth.idp.oidc.client.userinfo.authn.authority;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -22,6 +22,8 @@ import org.springframework.security.core.GrantedAuthority;
  * The type Authentication class ref authority.
  */
 public class AuthenticationClassRefAuthority implements GrantedAuthority {
+    private static final long serialVersionUID = -2973724746234368470L;
+    
     /**
      * The Authority.
      */

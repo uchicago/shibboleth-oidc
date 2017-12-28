@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, 
- * Inc. (UCAID) under one or more contributor license agreements. See the 
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements. See the
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache 
- * License, Version 2.0 (the "License"); you may not use this file except in 
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -20,18 +20,20 @@ import com.google.common.base.Strings;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
-import net.shibboleth.idp.consent.context.impl.ConsentContext;
-import net.shibboleth.idp.consent.impl.Consent;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.oidc.OIDCException;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 import org.mitre.openid.connect.model.DefaultAddress;
 import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.mitre.openid.connect.model.UserInfo;
 import org.mitre.openid.connect.repository.UserInfoRepository;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -48,89 +50,77 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * The Profile request context.
-     */
-    private ProfileRequestContext profileRequestContext;
+    @Autowired
+    @Qualifier("shibboleth.AttributeResolverService")
+    private ReloadableService<AttributeResolver> attributeResolverService;
 
-    /**
-     * Initialize.
-     *
-     * @param prc the prc
-     */
-    public void initialize(final ProfileRequestContext prc) {
-        this.profileRequestContext = prc;
-    }
-
-    /**
-     * Gets subject context.
-     *
-     * @return the subject context
-     */
-    public SubjectContext getSubjectContext() {
-        return profileRequestContext.getSubcontext(SubjectContext.class);
-    }
-
-    /**
-     * Gets consent context.
-     *
-     * @return the consent context
-     */
-    public ConsentContext getConsentContext() {
-        return profileRequestContext.getSubcontext(ConsentContext.class);
-    }
-
-    /**
-     * Gets attribute release context.
-     *
-     * @return the attribute release context
-     */
-    public AttributeReleaseContext getAttributeReleaseContext() {
-        return profileRequestContext.getSubcontext(AttributeReleaseContext.class);
-    }
+    @Autowired
+    @Qualifier("shibboleth.AttributeFilterService")
+    private ReloadableService<AttributeFilter> attributeFilterService;
 
     @Override
-    public UserInfo getByUsername(final String s) {
-        final SubjectContext principal = getSubjectContext();
+    public UserInfo getByUsername(final String username) {
+        return getByUsernameAndClientId(username, null);
+    }
 
-        if (principal == null || principal.getPrincipalName() == null) {
-            throw new OIDCException("No SubjectContext found in the profile request context");
-        }
+    public UserInfo getByUsernameAndClientId(final String username, final String recipientId) {
         final DefaultUserInfo userInfo = new DefaultUserInfo();
-        log.debug("Set userinfo preferred username to {}", principal.getPrincipalName());
-        userInfo.setPreferredUsername(principal.getPrincipalName());
+        log.debug("Set userinfo preferred username to {}", username);
+        userInfo.setPreferredUsername(username);
 
-        log.debug("Set userinfo sub claim to {}", principal.getPrincipalName());
-        userInfo.setSub(principal.getPrincipalName());
+        log.debug("Set userinfo sub claim to {}", username);
+        userInfo.setSub(username);
 
-        log.debug("Setting preferred username to {}", principal.getPrincipalName());
+        final AttributeResolver resolver = (AttributeResolver) this.attributeResolverService.getServiceableComponent();
+        if (resolver == null) {
+            log.error("Could not determine the attribute resolver service from context");
+            return userInfo;
+        }
+        final AttributeFilter filter = (AttributeFilter) this.attributeFilterService.getServiceableComponent();
+        if (filter == null) {
+            log.error("Could not determine the attribute filter service from context");
+            return userInfo;
+        }
 
-        if (getAttributeReleaseContext() != null) {
-            log.debug("Found attribute release context. Locating consentable attributes...");
+        try {
+            final AttributeResolutionContext attributeContext = new AttributeResolutionContext();
+            attributeContext.setPrincipal(username);
+            attributeContext.setAttributeIssuerID(getClass().getSimpleName());
+            attributeContext.setAllowCachedResults(true);
+            attributeContext.setAttributeRecipientID(recipientId);
+            resolver.resolveAttributes(attributeContext);
+            final Map<String, IdPAttribute> resolvedAttributes = attributeContext.getResolvedIdPAttributes();
 
-            final Map<String, IdPAttribute> consentableAttributes = getAttributeReleaseContext().getConsentableAttributes();
-            log.debug("Consentable attributes are {}", consentableAttributes.keySet());
+            final AttributeFilterContext filterContext = new AttributeFilterContext();
+            filterContext.setPrincipal(username);
+            filterContext.setAttributeIssuerID(getClass().getSimpleName());
+            filterContext.setPrefilteredIdPAttributes(resolvedAttributes.values());
+            filterContext.setAttributeRecipientID(recipientId);
+            filter.filterAttributes(filterContext);
 
-            for (final String attributeKey : consentableAttributes.keySet()) {
-                final IdPAttribute attribute = consentableAttributes.get(attributeKey);
-                log.debug("Processing userinfo claim for attribute {}", attributeKey);
-
-                final boolean releaseAttribute = getConsentContext() == null || consentedToAttributeRelease(attribute);
-                if (releaseAttribute) {
-                    log.debug("Attribute {} is authorized for release. Mapping...", attribute.getId());
-                    setUserInfoClaimByAttribute(principal, userInfo, attribute);
-                }
+            final Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
+            for (final String attributeKey : filteredAttributes.keySet()) {
+                final IdPAttribute attribute = filteredAttributes.get(attributeKey);
+                log.debug("Attribute {} is authorized for release. Mapping...", attribute.getId());
+                setUserInfoClaimByAttribute(username, userInfo, attribute);
             }
+        } catch (final Exception e) {
+            log.error(e.getMessage(), e);
         }
 
         if (Strings.isNullOrEmpty(userInfo.getSub())) {
-            log.warn("userinfo sub claim cannot be null/empty. Reset claim value to {}", principal.getPrincipalName());
-            userInfo.setSub(principal.getPrincipalName());
+            log.warn("userinfo sub claim cannot be null/empty. Reset claim value to {}", username);
+            userInfo.setSub(username);
         }
         log.debug("Final userinfo object constructed from attributes is\n {}", userInfo.toJson());
         return userInfo;
     }
 
+    @Override
+    public UserInfo getByEmailAddress(final String s) {
+        throw new OIDCException("Operation is not supported");
+    }
+    
     /**
      * Sets user info claim by attribute.
      *
@@ -138,13 +128,13 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
      * @param userInfo  the user info
      * @param attribute the attribute
      */
-    private void setUserInfoClaimByAttribute(final SubjectContext principal,
+    private void setUserInfoClaimByAttribute(final String principal,
                                              final DefaultUserInfo userInfo,
                                              final IdPAttribute attribute) {
         switch (attribute.getId()) {
             case "sub":
                 userInfo.setSub(getAttributeValue(attribute).getValue().toString());
-                log.debug("Overriding existing sub value {} to {}", principal.getPrincipalName(), userInfo.getSub());
+                log.debug("Overriding existing sub value {} to {}", principal, userInfo.getSub());
                 break;
             case "name":
                 userInfo.setName(getAttributeValue(attribute).getValue().toString());
@@ -196,7 +186,7 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
                 break;
             case "phone_number_verified":
                 userInfo.setPhoneNumberVerified(
-                        Boolean.valueOf(getAttributeValue(attribute).getValue().toString()));
+                    Boolean.valueOf(getAttributeValue(attribute).getValue().toString()));
                 break;
             case "updated_at":
                 userInfo.setUpdatedTime(getAttributeValue(attribute).getValue().toString());
@@ -224,20 +214,5 @@ public class ShibbolethUserInfoRepository implements UserInfoRepository {
         return new EmptyAttributeValue(EmptyAttributeValue.EmptyType.NULL_VALUE);
     }
 
-    /**
-     * Consented to attribute release boolean.
-     *
-     * @param attribute the attribute
-     * @return the boolean
-     */
-    private boolean consentedToAttributeRelease(final IdPAttribute attribute) {
-        final Map<String, Consent> consents = getConsentContext().getCurrentConsents();
-        return consents.containsKey(attribute.getId()) &&
-                consents.get(attribute.getId()).isApproved();
-    }
 
-    @Override
-    public UserInfo getByEmailAddress(final String s) {
-        throw new OIDCException("Operation is not supported");
-    }
 }

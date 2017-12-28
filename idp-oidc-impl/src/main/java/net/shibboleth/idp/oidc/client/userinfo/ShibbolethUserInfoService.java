@@ -19,6 +19,7 @@ package net.shibboleth.idp.oidc.client.userinfo;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.mitre.openid.connect.model.UserInfo;
+import org.mitre.openid.connect.repository.UserInfoRepository;
 import org.mitre.openid.connect.service.PairwiseIdentiferService;
 import org.mitre.openid.connect.service.UserInfoService;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -32,6 +33,9 @@ import org.springframework.stereotype.Service;
 
 /**
  * The type Shibboleth user info service.
+ * This component is almost identical to the default {@link org.mitre.openid.connect.service.impl.DefaultUserInfoService}
+ * except that it has a concrete reference to the shibboleth userinfo repository implemented by OIDC  at {@link ShibbolethUserInfoRepository}
+ * in order to retrieve userinfo values based on client id and username.
  */
 @Service("openIdConnectUserInfoService")
 @Primary
@@ -65,22 +69,13 @@ public class ShibbolethUserInfoService implements UserInfoService {
         return userInfoRepository.getByUsername(username);
     }
 
-    /**
-     * Initialize.
-     *
-     * @param prc the prc
-     */
-    public void initialize(final ProfileRequestContext prc) {
-        this.userInfoRepository.initialize(prc);
-    }
-
     @Override
     public UserInfo getByUsernameAndClientId(final String username, final String clientId) {
 
         log.debug("Locating client {} for username {}", clientId, username);
 
         final ClientDetailsEntity client = clientService.loadClientByClientId(clientId);
-        final UserInfo userInfo = getByUsername(username);
+        final UserInfo userInfo = this.userInfoRepository.getByUsernameAndClientId(username, clientId);
 
         if (client == null || userInfo == null) {
             log.debug("No client or userinfo found for {} and {}", clientId, username);

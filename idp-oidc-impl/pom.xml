@@ -50,6 +50,18 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-profile-impl</artifactId>
+            <version>${idp.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.mitre</groupId>
             <artifactId>openid-connect-common</artifactId>
             <version>${mitreid.version}</version>

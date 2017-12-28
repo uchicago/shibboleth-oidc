@@ -10,7 +10,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="ShibbolethClientRepositoryBootstrapper" class="net.shibboleth.idp.oidc.client.ShibbolethClientRepositoryBootstrapper"
+    <bean id="ShibbolethClientRepositoryBootstrapper"
+          class="net.shibboleth.idp.oidc.client.ShibbolethClientRepositoryBootstrapper"
           c:definedClients-ref="oidcClients"/>
     <!-- 
     OIDC clients defined here will be imported on startup to the client repository.
