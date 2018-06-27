@@ -18,7 +18,6 @@ We are working on adding support for the OpenID Connect protocol to the Shibbole
 are the items we are planning to address:
 
 * Authorization code workflow
-* Implicit flow
 * Dynamic discovery
 * Administration and registration of OIDC RPs with the IdP. 
 * Ability to resolve, consume and release OIDC claims, taking advantage of IdP's machinery to release attributes. 
@@ -36,6 +35,7 @@ Note that no significant UI enhancements are taken into account. All configurati
 The following may be considered in future versions:
 
 * Hybrid flow
+* Implicit flow
 * Dynamic RP registration
 * Logout
 * Web UIs that facilitate managing tokens, whitelisted/blacklisted RPs, etc. 
