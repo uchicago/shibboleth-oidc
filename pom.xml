@@ -213,7 +213,7 @@
         <org.aspectj-version>1.6.9</org.aspectj-version>
         <spring.security.version>3.2.8.RELEASE</spring.security.version>
         
-        <checkstyle.version>8.18</checkstyle.version>
+        <checkstyle.version>8.29</checkstyle.version>
         <license.plugin>2.11</license.plugin>
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
         <maven.plugin.exec>1.4.0</maven.plugin.exec>
